@@ -37,6 +37,7 @@ function Interpolator(steps, timestamps, time) {
 }
 
 // export default Interpolator;
+
 // source: Natural Earth http://www.naturalearthdata.com/ via geojson.xyz
 const COUNTRIES =
   "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_scale_rank.geojson"; //eslint-disable-line
