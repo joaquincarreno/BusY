@@ -3,7 +3,7 @@ services:
   frontend:
     image: node:21
     ports:
-      - "8888:5712"
+      - "8888:8888"
     tty: true
     restart:
       always
