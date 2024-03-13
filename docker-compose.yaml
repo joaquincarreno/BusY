@@ -1,0 +1,15 @@
+version: '3'
+services:
+  frontend:
+    image: node:21
+    ports:
+      - "8888:5712"
+    tty: true
+    restart:
+      always
+    volumes:
+      - type: bind
+        source: ./frontend
+        target: /srv/app
+    working_dir: /srv/app
+    command: bash -c 'npm install && npm --host run dev '
