@@ -1,21 +1,30 @@
 import { useState, useEffect } from "react";
 import DeckGlMap from "./modules/DeckGlMap";
-import ExampleMeshMap from "./modules/ExampleMeshMap";
+import get from "axios";
 import "./App.css";
 
 // time managment constants
-const step = 0.001;
+const step = 0.003;
 const intervalMS = 8;
 const loopLength = 1;
 
+const BACKEND_URL = "http://0.0.0.0:8000/api/";
+const ZONES_API = BACKEND_URL + "zones777/";
+const GPS_API = BACKEND_URL + "gps/";
+
 class MovingBus {
   constructor(info) {
-    // console.log(info);
-    this.coordinates = info.steps;
-    this.timestamps = info.timestamps;
+    this.coordinates = info.coords;
+    const first = Date.parse(info.timestamps[0]);
+    const timeRange =
+      Date.parse(info.timestamps[info.timestamps.length - 1]) - first;
+    this.timestamps = info.timestamps.map(
+      (x) => (Date.parse(x) - first) / timeRange
+    );
     this.currentStep = 0;
     this.position = [0, 0];
     this.orientation = 0;
+    console.log("-  logs  -");
   }
   updateStep(time) {
     var i = 0;
@@ -25,7 +34,9 @@ class MovingBus {
         return new Error("time out of range");
       }
     }
-    this.currentStep = i;
+    if (this.currentStep != i) {
+      this.currentStep = i;
+    }
   }
   getRelativeTime(start, end, current) {
     end = end - start;
@@ -51,12 +62,62 @@ class MovingBus {
     return this.getCurrentCoordinates(step, relTime);
   }
   getOrientation() {
-    console.log(this.orientation);
+    // console.log(this.orientation);
     return (360 * this.orientation) / (2 * Math.PI);
+  }
+}
+// const bunnyMesh = "./src/assets/bunny.obj";
+// const exampleData =
+//   "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/bart-stations.json";
+// const exampleMesh =
+//   "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/humanoid_quad.obj";
+
+class Buses {
+  constructor(busList) {
+    this.dict = {};
+    console.log(busList);
+    busList.forEach((b) => {
+      this.dict[b.patente] = new MovingBus(b);
+    });
+    // console.log(this);
+  }
+  getBus(patente) {
+    return this.dict[patente];
   }
 }
 
 function App() {
+  const [time, setTime] = useState(0);
+  const [zones, setZones] = useState({});
+  const [gpsData, setGpsData] = useState([{}]);
+  // const [apiData, setApiData] = useState([{}]);
+  const [movingBuses, setMovingBuses] = useState(null);
+
+  useEffect(() => {
+    get(ZONES_API).then((response) => {
+      setZones(JSON.parse(response.data));
+    });
+  }, []);
+  // CJRR-25    35
+  // CJRB-69    35
+  // BJFD-98    35
+  // FLXK-24    35
+  // BKXV-89    35
+
+  useEffect(() => {
+    get(GPS_API + "CJRR-25").then((response) => {
+      const data = response.data;
+      // console.log(data);
+      setGpsData(data);
+      setMovingBuses(new Buses(data));
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log("holaa");
+    console.log(movingBuses);
+  }, [movingBuses]);
+
   const staticBusData = [
     {
       coordinates: [-70.65387, -33.443018],
@@ -74,21 +135,6 @@ function App() {
       scale: [100, 100, 100],
     },
   ];
-
-  const movingBusData = [
-    {
-      steps: [
-        [-70.64387, -33.453018],
-        [-70.65387, -33.443018],
-        [-70.66387, -33.443018],
-        [-70.65387, -33.433018],
-      ],
-      timestamps: [0, 0.4, 0.9, 1],
-      id: 0,
-    },
-    // { start: [0, 0], end: [0, 0] },
-  ];
-  const movingBus = new MovingBus(movingBusData[0]);
   const viewState = {
     latitude: -33.443018,
     longitude: -70.65387,
@@ -96,32 +142,30 @@ function App() {
     minZoom: 2,
     maxZoom: 15,
   };
-  const [time, setTime] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime((t) => (t + step) % loopLength);
-    }, intervalMS);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setTime((t) => (t + step) % loopLength);
+  //   }, intervalMS);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
-  const exampleData =
-    "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/bart-stations.json";
+  // console.log("movingbuses @ app");
+  // console.log(movingBuses);
 
-  const bunnyMesh = "./src/assets/bunny.obj";
   const busMesh = "./src/assets/bus/JETSET.obj";
-  const exampleMesh =
-    "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/humanoid_quad.obj";
 
+  // console.log(movingBuses);
   return (
     <>
       {/*style={{ width: "100vw", height: "90vh", position: "relative" }}*/}
       <div>
         <DeckGlMap
           staticBusData={staticBusData}
-          movingBuses={[movingBus]}
-          movingBusData={movingBusData}
+          movingBuses={movingBuses}
+          gpsData={gpsData}
+          zonesData={zones}
           mesh={busMesh}
           viewstate={viewState}
           time={time}

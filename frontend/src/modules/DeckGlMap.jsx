@@ -1,4 +1,4 @@
-import { React } from "react";
+import { React, useEffect } from "react";
 import { DeckGL } from "@deck.gl/react";
 import { GeoJsonLayer } from "@deck.gl/layers";
 import { SimpleMeshLayer } from "@deck.gl/mesh-layers";
@@ -25,12 +25,15 @@ const INITIAL_VIEW_STATE = {
 function DeckGlMap({
   viewstate = INITIAL_VIEW_STATE,
   staticBusData = [],
-  movingBusData = [],
-  movingBuses = [],
+  gpsData = [],
+  movingBuses = {},
+  zonesData = JSON.parse([]),
   mesh = null,
   time = 0,
 }) {
-  // console.log(staticBusData);
+  // console.log(gpsData);
+  // console.log("moving buses @ deckglmap");
+  // console.log(movingBuses);
   const countriesLayer = new GeoJsonLayer({
     id: "countries",
     data: COUNTRIES,
@@ -41,6 +44,22 @@ function DeckGlMap({
     opacity: 0.4,
     getLineColor: [60, 60, 60],
     getFillColor: [200, 200, 200],
+  });
+
+  // useEffect(() => {
+  //   console.log("alo alo");
+  //   console.log(movingBuses), [movingBuses];
+  // });
+
+  const zonesLayer = new GeoJsonLayer({
+    id: "zones",
+    data: zonesData,
+    // Styles
+    stroked: true,
+    filled: true,
+    getLineColor: [60, 60, 60],
+    getFillColor: [200, 200, 200],
+    getElevation: 0.1,
   });
 
   const busesLayer = new SimpleMeshLayer({
@@ -55,28 +74,34 @@ function DeckGlMap({
     opacity: 0.2,
   });
 
-  // const bus = buses[0];
-  const movingBus = new SimpleMeshLayer({
+  // console.log(movingBuses);
+  const movingBusLayer = new SimpleMeshLayer({
     id: "moving-buses",
-    data: movingBusData,
+    data: gpsData,
     mesh: mesh,
     loaders: [OBJLoader],
 
-    getPosition: (d) => movingBuses[d.id].getPosition(time),
+    getPosition: (d) => {
+      console.log(movingBuses.dict[d.patente]);
+      // console.log(d);
+      return movingBuses.getBus(d.patente).getPosition(time);
+    },
 
     getColor: (d) => [255 * time * time, (1 - time) * 255, 255 * time * time],
-    getOrientation: (d) => {
-      // console.log();
-      return [0, 180 - movingBuses[d.id].getOrientation(), 90];
-    },
+    // getOrientation: (d) => {
+    //   // console.log();
+    //   return [0, 180 - movingBuses.getBus(d.patente).getOrientation(), 90];
+    // },
     sizeScale: 50,
     visible: true,
   });
 
+  // console.log(movingBuses);
+
   return (
     <DeckGL
       initialViewState={viewstate}
-      layers={[countriesLayer, busesLayer, movingBus]}
+      layers={[countriesLayer, zonesLayer, busesLayer, movingBusLayer]}
       controller={true}
     />
   );
