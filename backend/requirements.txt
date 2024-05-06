@@ -30,6 +30,7 @@ Django==5.0.3
 django-cors-headers==4.3.1
 django-rest-framework==0.1.0
 djangorestframework==3.14.0
+et-xmlfile==1.1.0
 executing==2.0.1
 fastjsonschema==2.19.1
 fiona==1.9.6
@@ -79,6 +80,7 @@ nest-asyncio==1.6.0
 notebook==7.1.2
 notebook_shim==0.2.4
 numpy==1.26.4
+openpyxl==3.1.2
 overrides==7.7.0
 packaging==24.0
 pandas==2.2.1

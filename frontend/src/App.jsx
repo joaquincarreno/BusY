@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DeckGlMap from "./modules/DeckGlMap";
 import get from "axios";
 import "./App.css";
@@ -24,7 +24,7 @@ class MovingBus {
     this.currentStep = 0;
     this.position = [0, 0];
     this.orientation = 0;
-    console.log("-  logs  -");
+    // console.log("-  logs  -");u
   }
   updateStep(time) {
     var i = 0;
@@ -48,8 +48,8 @@ class MovingBus {
     const end = this.coordinates[step + 1];
     const dx = end[0] - start[0];
     const dy = end[1] - start[1];
-    this.orientation = Math.atan(dx / dy);
-    return [start[0] + dx * relativeTime, start[1] + dy * relativeTime];
+    this.orientation = Math.atan(dy / dx);
+    return [start[1] + dy * relativeTime, start[0] + dx * relativeTime];
   }
   getPosition(time) {
     this.updateStep(time);
@@ -88,14 +88,18 @@ class Buses {
 
 function App() {
   const [time, setTime] = useState(0);
+  const timeRef = useRef(time);
   const [zones, setZones] = useState({});
   const [gpsData, setGpsData] = useState([{}]);
   // const [apiData, setApiData] = useState([{}]);
   const [movingBuses, setMovingBuses] = useState(null);
+  const [zonesReady, setZonesReady] = useState(false);
+  const [gpsReady, setGpsReady] = useState(false);
 
   useEffect(() => {
     get(ZONES_API).then((response) => {
       setZones(JSON.parse(response.data));
+      setZonesReady(true);
     });
   }, []);
   // CJRR-25    35
@@ -105,11 +109,12 @@ function App() {
   // BKXV-89    35
 
   useEffect(() => {
-    get(GPS_API + "CJRR-25").then((response) => {
+    get(GPS_API + "BKXV-89").then((response) => {
       const data = response.data;
       // console.log(data);
       setGpsData(data);
       setMovingBuses(new Buses(data));
+      setGpsReady(true);
     });
   }, []);
 
@@ -138,39 +143,40 @@ function App() {
   const viewState = {
     latitude: -33.443018,
     longitude: -70.65387,
-    zoom: 14,
+    zoom: 11,
     minZoom: 2,
     maxZoom: 15,
   };
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setTime((t) => (t + step) % loopLength);
-  //   }, intervalMS);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime((t) => (t + step) % loopLength);
+    }, intervalMS);
 
-  //   return () => clearInterval(interval);
-  // }, []);
-
-  // console.log("movingbuses @ app");
-  // console.log(movingBuses);
+    return () => clearInterval(interval);
+  }, []);
 
   const busMesh = "./src/assets/bus/JETSET.obj";
 
-  // console.log(movingBuses);
   return (
     <>
-      {/*style={{ width: "100vw", height: "90vh", position: "relative" }}*/}
-      <div>
-        <DeckGlMap
-          staticBusData={staticBusData}
-          movingBuses={movingBuses}
-          gpsData={gpsData}
-          zonesData={zones}
-          mesh={busMesh}
-          viewstate={viewState}
-          time={time}
-        />
-      </div>
+      {zonesReady && gpsReady ? (
+        <div
+        // style={{ width: "100vw", height: "90vh", position: "relative" }}
+        >
+          <DeckGlMap
+            staticBusData={staticBusData}
+            movingBuses={movingBuses}
+            gpsData={gpsData}
+            zonesData={zones}
+            mesh={busMesh}
+            viewstate={viewState}
+            time={time}
+          />
+        </div>
+      ) : (
+        <p>loading</p>
+      )}
       {/* <div style={{ width: "100%", marginTop: "1.5rem" }}>
         <input
           style={{ width: "100%" }}

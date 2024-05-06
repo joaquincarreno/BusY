@@ -1,6 +1,7 @@
 import { React, useEffect } from "react";
 import { DeckGL } from "@deck.gl/react";
-import { GeoJsonLayer } from "@deck.gl/layers";
+import { GeoJsonLayer, BitmapLayer } from "@deck.gl/layers";
+import { TileLayer } from "@deck.gl/geo-layers";
 import { SimpleMeshLayer } from "@deck.gl/mesh-layers";
 import { OBJLoader } from "@loaders.gl/obj";
 
@@ -11,15 +12,9 @@ const COUNTRIES =
 const INITIAL_VIEW_STATE = {
   latitude: -33.443018,
   longitude: -70.65387,
-  zoom: 11,
+  zoom: 7,
   minZoom: 2,
   maxZoom: 15,
-  // zoom: 11,
-  // maxZoom: 20,
-  // pitch: 30,
-  // bearing: 0,
-  // longitude: -122.4,
-  // latitude: 37.74,
 };
 
 function DeckGlMap({
@@ -31,9 +26,26 @@ function DeckGlMap({
   mesh = null,
   time = 0,
 }) {
-  // console.log(gpsData);
+  // console.log(time);
   // console.log("moving buses @ deckglmap");
   // console.log(movingBuses);
+
+  // console.log(movingBuses.getBus("CJRR-25").getPosition(time));
+  // console.log(movingBuses.getBus("BKXV-89").coordinates);
+  // console.log(time);
+
+  const getPosition = (d) => {
+    {
+      // console.log(movingBuses.dict[d.patente]);
+      // console.log(d);
+      console.log("holaa");
+      console.log(d.patente);
+      console.log(time);
+
+      return movingBuses.getBus(d.patente).getPosition(time);
+    }
+  };
+
   const countriesLayer = new GeoJsonLayer({
     id: "countries",
     data: COUNTRIES,
@@ -45,11 +57,6 @@ function DeckGlMap({
     getLineColor: [60, 60, 60],
     getFillColor: [200, 200, 200],
   });
-
-  // useEffect(() => {
-  //   console.log("alo alo");
-  //   console.log(movingBuses), [movingBuses];
-  // });
 
   const zonesLayer = new GeoJsonLayer({
     id: "zones",
@@ -74,6 +81,29 @@ function DeckGlMap({
     opacity: 0.2,
   });
 
+  const osmMapLayer = new TileLayer({
+    id: "TileLayer",
+    data: "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    maxZoom: 19,
+    minZoom: 0,
+
+    renderSubLayers: (props) => {
+      const { boundingBox } = props.tile;
+
+      return new BitmapLayer(props, {
+        data: null,
+        image: props.data,
+        bounds: [
+          boundingBox[0][0],
+          boundingBox[0][1],
+          boundingBox[1][0],
+          boundingBox[1][1],
+        ],
+      });
+    },
+    pickable: true,
+  });
+
   // console.log(movingBuses);
   const movingBusLayer = new SimpleMeshLayer({
     id: "moving-buses",
@@ -82,18 +112,26 @@ function DeckGlMap({
     loaders: [OBJLoader],
 
     getPosition: (d) => {
-      console.log(movingBuses.dict[d.patente]);
-      // console.log(d);
-      return movingBuses.getBus(d.patente).getPosition(time);
+      {
+        console.log("holaa");
+        console.log(d.patente);
+        console.log(time);
+
+        return movingBuses.getBus(d.patente).getPosition(time);
+      }
     },
 
     getColor: (d) => [255 * time * time, (1 - time) * 255, 255 * time * time],
-    // getOrientation: (d) => {
-    //   // console.log();
-    //   return [0, 180 - movingBuses.getBus(d.patente).getOrientation(), 90];
-    // },
+    getOrientation: (d) => {
+      return [0, movingBuses.getBus(d.patente).getOrientation(), 90];
+    },
     sizeScale: 50,
     visible: true,
+    updateTriggers: {
+      getPosition: [time],
+      getColor: [time],
+      getOrientation: [time],
+    },
   });
 
   // console.log(movingBuses);
@@ -101,7 +139,7 @@ function DeckGlMap({
   return (
     <DeckGL
       initialViewState={viewstate}
-      layers={[countriesLayer, zonesLayer, busesLayer, movingBusLayer]}
+      layers={[osmMapLayer, busesLayer, movingBusLayer]}
       controller={true}
     />
   );

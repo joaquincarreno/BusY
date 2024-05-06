@@ -36,6 +36,8 @@ def getGPS(request, patente='XXXX-XX'):
     query.group_by = ['patente']
     results = QuerySet(query=query, model=GPSRegistry)
 
+    # print(results)
+
     data = []
     patente_actual = results[0].patente
     coords = []
