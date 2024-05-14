@@ -31,7 +31,7 @@ def setupBusStops(model):
         row = uniques.iloc[i, :]
         object = model(
             TSCode=row['Código paradero TS'],
-            userCode=row['Código Usuario'],
+            userCode=row['Código  paradero Usuario'],
             name=row['Nombre Paradero'],
             positionX=row['x'],
             positionY=row['y']

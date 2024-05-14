@@ -10,9 +10,12 @@ from django.db.models.query import QuerySet
 from api.serializers import GPSRegistrySerializer
 from api.scripts.zones import getZonesGdf
 
-from api.models import GPSRegistry
+from api.models import GPSRegistry, BusStops
 
 from time import time
+
+import pandas as pd
+import geopandas as gpd
 
 @api_view(['GET'])
 def apiTest(request):
@@ -66,3 +69,16 @@ def getGPS(request, patente='XXXX-XX'):
 
     
     return Response(data)
+
+from shapely import Point
+@api_view(['GET'])
+def getStops(request):
+
+    df = pd.DataFrame(list(BusStops.objects.all().values()))
+    # print(df.columns)
+    geoms = df.apply(lambda x: Point(x['positionX'], x['positionY']), axis=1)
+    print(geoms)
+    geodf = gpd.GeoDataFrame(data=df.drop(columns=['positionX', 'positionY']), geometry=geoms)
+
+    return Response(geodf.to_json())
+
