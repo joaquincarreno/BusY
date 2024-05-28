@@ -11,6 +11,9 @@ const loopLength = 1;
 const BACKEND_URL = "http://0.0.0.0:8000/api/";
 const ZONES_API = BACKEND_URL + "zones777/";
 const GPS_API = BACKEND_URL + "gps/";
+const STOPS_API = BACKEND_URL + "stops/";
+
+const ASSETS = "./src/assets/";
 
 class MovingBus {
   constructor(info) {
@@ -75,7 +78,7 @@ class MovingBus {
 class Buses {
   constructor(busList) {
     this.dict = {};
-    console.log(busList);
+    // console.log(busList);
     busList.forEach((b) => {
       this.dict[b.patente] = new MovingBus(b);
     });
@@ -91,10 +94,12 @@ function App() {
   const timeRef = useRef(time);
   const [zones, setZones] = useState({});
   const [gpsData, setGpsData] = useState([{}]);
+  const [stopsData, setStopsData] = useState([{}]);
   // const [apiData, setApiData] = useState([{}]);
   const [movingBuses, setMovingBuses] = useState(null);
   const [zonesReady, setZonesReady] = useState(false);
   const [gpsReady, setGpsReady] = useState(false);
+  const [stopsReady, setStopsReady] = useState(false);
 
   useEffect(() => {
     get(ZONES_API).then((response) => {
@@ -111,7 +116,8 @@ function App() {
   useEffect(() => {
     get(GPS_API + "BKXV-89").then((response) => {
       const data = response.data;
-      // console.log(data);
+      console.log("gps");
+      console.log(data);
       setGpsData(data);
       setMovingBuses(new Buses(data));
       setGpsReady(true);
@@ -119,27 +125,15 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log("holaa");
-    console.log(movingBuses);
-  }, [movingBuses]);
+    get(STOPS_API).then((response) => {
+      const data = response.data;
+      console.log("stops");
+      console.log(data);
+      setStopsData(data);
+      setStopsReady(true);
+    });
+  }, []);
 
-  const staticBusData = [
-    {
-      coordinates: [-70.65387, -33.443018],
-      color: [255, 1, 1],
-      scale: [1, 1, 1],
-    },
-    {
-      coordinates: [-70.66387, -33.443018],
-      color: [1, 255, 1],
-      scale: [10, 10, 10],
-    },
-    {
-      coordinates: [-70.65387, -33.433018],
-      color: [1, 1, 255],
-      scale: [100, 100, 100],
-    },
-  ];
   const viewState = {
     latitude: -33.443018,
     longitude: -70.65387,
@@ -156,26 +150,31 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  const busMesh = "./src/assets/bus/JETSET.obj";
-
   return (
     <>
-      {zonesReady && gpsReady ? (
+      {zonesReady && gpsReady && stopsReady ? (
         <div
         // style={{ width: "100vw", height: "90vh", position: "relative" }}
         >
           <DeckGlMap
-            staticBusData={staticBusData}
+            // staticBusData={staticBusData}
             movingBuses={movingBuses}
             gpsData={gpsData}
+            stopsData={stopsData}
             zonesData={zones}
-            mesh={busMesh}
+            busMesh={ASSETS + "bus/JETSET.obj"}
+            busStopMesh={ASSETS + "bus_stop/bus_stop.obj"}
             viewstate={viewState}
             time={time}
           />
         </div>
       ) : (
-        <p>loading</p>
+        <div>
+          <p>loading:</p>
+          <p v-if="!zonesReady"> waiting on zones</p>
+          <p v-if="!gpsReady"> waiting on gps</p>
+          <p v-if="!stopsReady"> waiting on stops</p>
+        </div>
       )}
       {/* <div style={{ width: "100%", marginTop: "1.5rem" }}>
         <input

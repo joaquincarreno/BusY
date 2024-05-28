@@ -74,11 +74,5 @@ from shapely import Point
 @api_view(['GET'])
 def getStops(request):
 
-    df = pd.DataFrame(list(BusStops.objects.all().values()))
-    # print(df.columns)
-    geoms = df.apply(lambda x: Point(x['positionX'], x['positionY']), axis=1)
-    print(geoms)
-    geodf = gpd.GeoDataFrame(data=df.drop(columns=['positionX', 'positionY']), geometry=geoms)
-
-    return Response(geodf.to_json())
+    return Response({'stops': list(BusStops.objects.all().values())})
 

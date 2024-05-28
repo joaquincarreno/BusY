@@ -1,6 +1,8 @@
 import { React, useEffect } from "react";
 import { DeckGL } from "@deck.gl/react";
 import { GeoJsonLayer, BitmapLayer } from "@deck.gl/layers";
+
+import { IconLayer } from "@deck.gl/layers";
 import { TileLayer } from "@deck.gl/geo-layers";
 import { SimpleMeshLayer } from "@deck.gl/mesh-layers";
 import { OBJLoader } from "@loaders.gl/obj";
@@ -19,28 +21,22 @@ const INITIAL_VIEW_STATE = {
 
 function DeckGlMap({
   viewstate = INITIAL_VIEW_STATE,
-  staticBusData = [],
+  // staticBusData = [],
   gpsData = [],
   movingBuses = {},
+  stopsData = JSON.parse([]),
   zonesData = JSON.parse([]),
-  mesh = null,
+  busMesh = null,
+  busStopMesh = null,
   time = 0,
 }) {
-  // console.log(time);
-  // console.log("moving buses @ deckglmap");
-  // console.log(movingBuses);
-
-  // console.log(movingBuses.getBus("CJRR-25").getPosition(time));
-  // console.log(movingBuses.getBus("BKXV-89").coordinates);
-  // console.log(time);
-
   const getPosition = (d) => {
     {
       // console.log(movingBuses.dict[d.patente]);
       // console.log(d);
-      console.log("holaa");
-      console.log(d.patente);
-      console.log(time);
+      // console.log("holaa");
+      // console.log(d.patente);
+      // console.log(time);
 
       return movingBuses.getBus(d.patente).getPosition(time);
     }
@@ -69,18 +65,6 @@ function DeckGlMap({
     getElevation: 0.1,
   });
 
-  const busesLayer = new SimpleMeshLayer({
-    id: "static-buses",
-    data: staticBusData,
-    mesh: mesh,
-    loaders: [OBJLoader],
-    getPosition: (d) => d.coordinates,
-    getColor: (d) => d.color,
-    sizeScale: 50,
-    visible: true,
-    opacity: 0.2,
-  });
-
   const osmMapLayer = new TileLayer({
     id: "TileLayer",
     data: "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -104,19 +88,32 @@ function DeckGlMap({
     pickable: true,
   });
 
+  const stopsLayer = new IconLayer({
+    id: "IconLayer",
+    data: stopsData["stops"],
+    getColor: (d) => [Math.sqrt(d.exits), 140, 0],
+    getIcon: (d) => "marker",
+    getPosition: (d) => {
+      // console.log(d);
+      return [d.positionX, d.positionY];
+    },
+    getSize: 7,
+    iconAtlas:
+      "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
+    iconMapping:
+      "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json",
+    pickable: true,
+  });
+
   // console.log(movingBuses);
   const movingBusLayer = new SimpleMeshLayer({
     id: "moving-buses",
     data: gpsData,
-    mesh: mesh,
+    mesh: busMesh,
     loaders: [OBJLoader],
 
     getPosition: (d) => {
       {
-        console.log("holaa");
-        console.log(d.patente);
-        console.log(time);
-
         return movingBuses.getBus(d.patente).getPosition(time);
       }
     },
@@ -134,12 +131,12 @@ function DeckGlMap({
     },
   });
 
-  // console.log(movingBuses);
+  // console.log(stopsData);
 
   return (
     <DeckGL
       initialViewState={viewstate}
-      layers={[osmMapLayer, busesLayer, movingBusLayer]}
+      layers={[osmMapLayer, movingBusLayer, stopsLayer]}
       controller={true}
     />
   );
