@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import DeckGlMap from "./modules/DeckGlMap";
+import Navbar from "./modules/Navbar";
 import get from "axios";
 import "./App.css";
 
@@ -152,6 +153,9 @@ function App() {
 
   return (
     <>
+      <div>
+        <Navbar />
+      </div>
       {zonesReady && gpsReady && stopsReady ? (
         <div
         // style={{ width: "100vw", height: "90vh", position: "relative" }}
