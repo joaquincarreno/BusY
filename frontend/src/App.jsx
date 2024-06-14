@@ -13,6 +13,7 @@ const BACKEND_URL = "http://0.0.0.0:8000/api/";
 const ZONES_API = BACKEND_URL + "zones777/";
 const GPS_API = BACKEND_URL + "gps/";
 const STOPS_API = BACKEND_URL + "stops/";
+const ROUTES_API = BACKEND_URL + "availableRoutes/";
 
 const ASSETS = "./src/assets/";
 
@@ -91,16 +92,20 @@ class Buses {
 }
 
 function App() {
+  //
   const [time, setTime] = useState(0);
   const timeRef = useRef(time);
   const [zones, setZones] = useState({});
   const [gpsData, setGpsData] = useState([{}]);
   const [stopsData, setStopsData] = useState([{}]);
+  const [availableRoutes, setAvailableRoutes] = useState([]);
   // const [apiData, setApiData] = useState([{}]);
   const [movingBuses, setMovingBuses] = useState(null);
   const [zonesReady, setZonesReady] = useState(false);
   const [gpsReady, setGpsReady] = useState(false);
   const [stopsReady, setStopsReady] = useState(false);
+  const [routesReady, setRoutesReady] = useState(false);
+  const [selectedRoute, setSelectedRoute] = useState('')
 
   useEffect(() => {
     get(ZONES_API).then((response) => {
@@ -108,17 +113,12 @@ function App() {
       setZonesReady(true);
     });
   }, []);
-  // CJRR-25    35
-  // CJRB-69    35
-  // BJFD-98    35
-  // FLXK-24    35
-  // BKXV-89    35
 
   useEffect(() => {
     get(GPS_API + "BKXV-89").then((response) => {
       const data = response.data;
-      console.log("gps");
-      console.log(data);
+      // console.log("gps");
+      // console.log(data);
       setGpsData(data);
       setMovingBuses(new Buses(data));
       setGpsReady(true);
@@ -128,10 +128,20 @@ function App() {
   useEffect(() => {
     get(STOPS_API).then((response) => {
       const data = response.data;
-      console.log("stops");
-      console.log(data);
+      // console.log("stops");
+      // console.log(data);
       setStopsData(data);
       setStopsReady(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    get(ROUTES_API).then((response) => {
+      const data = response.data;
+      // console.log("Routes");
+      // console.log(data);
+      setAvailableRoutes(data);
+      setRoutesReady(true);
     });
   }, []);
 
@@ -150,16 +160,16 @@ function App() {
 
     return () => clearInterval(interval);
   }, []);
-
   return (
     <>
-      <div>
-        <Navbar />
-      </div>
-      {zonesReady && gpsReady && stopsReady ? (
+      {zonesReady && gpsReady && stopsReady && routesReady ? (
         <div
         // style={{ width: "100vw", height: "90vh", position: "relative" }}
         >
+          <div>
+            <Navbar availableRoutes={availableRoutes}
+            routeSetter={setSelectedRoute} />
+          </div>
           <DeckGlMap
             // staticBusData={staticBusData}
             movingBuses={movingBuses}
@@ -178,6 +188,7 @@ function App() {
           <p v-if="!zonesReady"> waiting on zones</p>
           <p v-if="!gpsReady"> waiting on gps</p>
           <p v-if="!stopsReady"> waiting on stops</p>
+          <p v-if="!routesReady"> waiting on stops</p>
         </div>
       )}
       {/* <div style={{ width: "100%", marginTop: "1.5rem" }}>

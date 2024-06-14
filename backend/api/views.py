@@ -28,6 +28,14 @@ def getZones777(request):
     return Response(json)
 
 @api_view(['GET'])
+def getAvailableRoutes(request):
+    objects = GPSRegistry.objects.values_list('recorrido', flat=True).distinct()
+
+    return Response(list(objects))
+
+
+
+@api_view(['GET'])
 def getGPS(request, patente='XXXX-XX'):
     # print(patente)
     if patente == 'XXXX-XX':
@@ -70,9 +78,9 @@ def getGPS(request, patente='XXXX-XX'):
     
     return Response(data)
 
-from shapely import Point
 @api_view(['GET'])
 def getStops(request):
-
-    return Response({'stops': list(BusStops.objects.all().values())})
+    objects = list(BusStops.objects.all().values())
+    
+    return Response({'stops': objects})
 
