@@ -4,8 +4,10 @@ import "./Navbar.css";
 const Navbar = ({
   availableRoutes = [],
   routeSetter = () => {},
+  selectedRoute = "",
   availableBuses = [],
   busSetter = () => {},
+  selectedBus = "",
 }) => {
   const handleSelectRoute = (event) => {
     routeSetter(event.target.value);
@@ -21,13 +23,12 @@ const Navbar = ({
   // console.log(availableRoutes);
   return (
     <div className="navbar">
-      <a href="#">Home</a>
-      <a href="#">About</a>
-      <a href="#">Contact</a>
+      <a href="https://www.youtube.com/watch?v=GDw9_kIEDaY">Busy</a>
+
       {/* selector de rut */}
       <select onChange={handleSelectRoute}>
         <option value="" hidden>
-          Ruta
+          {selectedRoute != "" ? selectedRoute : "Servicio"}
         </option>
         {availableRoutes.map((item, index) => (
           <option key={index} value={item}>
@@ -38,7 +39,7 @@ const Navbar = ({
       {/* selector de bus */}
       <select onChange={handleSelectBus}>
         <option value="" hidden>
-          Patente
+          {selectedBus != "" ? selectedBus : "Patente"}
         </option>
         {availableBuses.map((item, index) => (
           <option key={index} value={item}>

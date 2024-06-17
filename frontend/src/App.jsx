@@ -125,15 +125,23 @@ function App() {
 
   // gps API call
   useEffect(() => {
-    get(GPS_API + "BKXV-89").then((response) => {
-      const data = response.data;
-      // console.log("gps");
-      // console.log(data);
-      setGpsData(data);
-      setMovingBuses(new Buses(data));
+    setGpsReady(false);
+    if (selectedBus != "") {
+      get(GPS_API + selectedBus).then((response) => {
+        const data = response.data;
+        // console.log("gps");
+        // console.log(data);
+        setGpsData(data);
+        setMovingBuses(new Buses(data));
+        setGpsReady(true);
+      });
+      // } else if(selectedRoute != ''){
+    } else {
+      setGpsData([]);
+      setMovingBuses([]);
       setGpsReady(true);
-    });
-  }, []);
+    }
+  }, [selectedBus]);
 
   // bus stops API call
   useEffect(() => {
@@ -199,8 +207,10 @@ function App() {
             <Navbar
               availableRoutes={availableRoutes}
               routeSetter={setSelectedRoute}
+              selectedRoute={selectedRoute}
               availableBuses={availableBuses}
               busSetter={setSelectedBus}
+              selectedBus={selectedBus}
             />
           </div>
           <DeckGlMap
@@ -218,10 +228,11 @@ function App() {
       ) : (
         <div>
           <p>loading:</p>
-          <p v-if="!zonesReady"> waiting on zones</p>
-          <p v-if="!gpsReady"> waiting on gps</p>
-          <p v-if="!stopsReady"> waiting on stops</p>
-          <p v-if="!routesReady"> waiting on stops</p>
+          {!zonesReady ? <p>waiting on zones</p> : <></>}
+          {!gpsReady ? <p>waiting on gps</p> : <></>}
+          {!stopsReady ? <p>waiting on stops</p> : <></>}
+          {!routesReady ? <p>waiting on routes</p> : <></>}
+          {!zonesReady ? <p>waiting on zones</p> : <></>}
         </div>
       )}
       {/* <div style={{ width: "100%", marginTop: "1.5rem" }}>
