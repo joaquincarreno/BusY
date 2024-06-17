@@ -54,7 +54,12 @@ class MovingBus {
     const end = this.coordinates[step + 1];
     const dx = end[0] - start[0];
     const dy = end[1] - start[1];
-    this.orientation = Math.atan(dy / dx);
+    // console.log("getCurrentCoords: dx=", dx, "dy=", dy);
+    if (dx == 0) {
+      this.orientation = dy >= 0 ? Math.PI : -Math.PI;
+    } else {
+      this.orientation = Math.atan(dy / dx);
+    }
     return [start[1] + dy * relativeTime, start[0] + dx * relativeTime];
   }
   getPosition(time) {
@@ -68,7 +73,6 @@ class MovingBus {
     return this.getCurrentCoordinates(step, relTime);
   }
   getOrientation() {
-    // console.log(this.orientation);
     return (360 * this.orientation) / (2 * Math.PI);
   }
 }
@@ -115,6 +119,8 @@ function App() {
   const [availableBuses, setAvailableBuses] = useState([]);
   const [availableBusesReady, setAvailableBusesReady] = useState(false);
   const [selectedBus, setSelectedBus] = useState("");
+
+  const [showStops, setShowStops] = useState(false);
 
   useEffect(() => {
     get(ZONES_API).then((response) => {
@@ -176,13 +182,15 @@ function App() {
     });
   }, [selectedRoute]);
 
-  const viewState = {
+  const initialViewState = {
     latitude: -33.443018,
     longitude: -70.65387,
-    zoom: 11,
+    zoom: 10,
     minZoom: 2,
     maxZoom: 15,
   };
+
+  const [viewState, setViewState] = useState(initialViewState);
 
   // time passing
   useEffect(() => {
@@ -211,18 +219,22 @@ function App() {
               availableBuses={availableBuses}
               busSetter={setSelectedBus}
               selectedBus={selectedBus}
+              showStops={showStops}
+              setShowStops={setShowStops}
             />
           </div>
           <DeckGlMap
             // staticBusData={staticBusData}
+            viewState={viewState}
+            viewStateSetter={setViewState}
             movingBuses={movingBuses}
             gpsData={gpsData}
             stopsData={stopsData}
             zonesData={zones}
             busMesh={ASSETS + "bus/JETSET.obj"}
             busStopMesh={ASSETS + "bus_stop/bus_stop.obj"}
-            viewstate={viewState}
             time={time}
+            showStops={showStops}
           />
         </div>
       ) : (
@@ -245,9 +257,9 @@ function App() {
           value={time}
           onChange={(e) => {
             setTime(Number(e.target.value));
-          }}
-        />
-      </div> */}
+            }}
+            />
+            </div> */}
     </>
   );
 }

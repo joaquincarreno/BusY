@@ -8,6 +8,8 @@ const Navbar = ({
   availableBuses = [],
   busSetter = () => {},
   selectedBus = "",
+  showStops = false,
+  setShowStops = () => {},
 }) => {
   const handleSelectRoute = (event) => {
     routeSetter(event.target.value);
@@ -47,6 +49,13 @@ const Navbar = ({
           </option>
         ))}
       </select>
+      <button
+        onClick={() => {
+          setShowStops(!showStops);
+        }}
+      >
+        {showStops ? "ocultar paraderos" : "mostrar paraderos"}{" "}
+      </button>
     </div>
   );
 };

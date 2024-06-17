@@ -1,4 +1,4 @@
-import { React, useEffect } from "react";
+import { React, useEffect, useState } from "react";
 import { DeckGL } from "@deck.gl/react";
 import { GeoJsonLayer, BitmapLayer } from "@deck.gl/layers";
 
@@ -14,13 +14,14 @@ const COUNTRIES =
 const INITIAL_VIEW_STATE = {
   latitude: -33.443018,
   longitude: -70.65387,
-  zoom: 7,
+  zoom: 15,
   minZoom: 2,
   maxZoom: 15,
 };
 
 function DeckGlMap({
-  viewstate = INITIAL_VIEW_STATE,
+  viewState,
+  viewStateSetter = () => {},
   // staticBusData = [],
   gpsData = [],
   movingBuses = {},
@@ -29,7 +30,16 @@ function DeckGlMap({
   busMesh = null,
   busStopMesh = null,
   time = 0,
+  showStops = true,
 }) {
+  const [scale, setScale] = useState(1);
+  const onViewStateChange = ({ viewState, interactionState, oldViewState }) => {
+    // console.log("viewState changed: ", viewState);
+    viewStateSetter(viewState);
+    setScale((viewState.zoom - 2) / 13) + 1;
+    // console.log(viewState.zoom);
+  };
+
   const getPosition = (d) => {
     {
       // console.log(movingBuses.dict[d.patente]);
@@ -97,14 +107,24 @@ function DeckGlMap({
       // console.log(d);
       return [d.positionX, d.positionY];
     },
-    getSize: 7,
+    getSize: (d) => {
+      // console.log("updated size");
+      return 15 / scale;
+    },
     iconAtlas:
       "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
     iconMapping:
       "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json",
     pickable: true,
+
+    visible: showStops,
+
+    updateTriggers: {
+      getSize: [scale],
+    },
   });
 
+  // console.log(gpsData);
   // console.log(movingBuses);
   const movingBusLayer = new SimpleMeshLayer({
     id: "moving-buses",
@@ -113,29 +133,36 @@ function DeckGlMap({
     loaders: [OBJLoader],
 
     getPosition: (d) => {
-      {
-        return movingBuses.getBus(d.patente).getPosition(time);
-      }
+      return movingBuses.getBus(d.patente).getPosition(time);
     },
 
     getColor: (d) => [255 * time * time, (1 - time) * 255, 255 * time * time],
     getOrientation: (d) => {
+      // console.log(
+      //   "[movingBusLayer] getOrientation:",
+      //   movingBuses.getBus(d.patente).getOrientation()
+      // );
+
       return [0, movingBuses.getBus(d.patente).getOrientation(), 90];
     },
-    sizeScale: 50,
+    getScale: (d) => {
+      const s = 30 / scale;
+      // console.log("scale updated", s);
+      return [s, s, s];
+    },
     visible: true,
     updateTriggers: {
       getPosition: [time],
       getColor: [time],
       getOrientation: [time],
+      getScale: [scale],
     },
   });
 
-  // console.log(stopsData);
-
   return (
     <DeckGL
-      initialViewState={viewstate}
+      initialViewState={viewState}
+      onViewStateChange={onViewStateChange}
       layers={[osmMapLayer, movingBusLayer, stopsLayer]}
       controller={true}
     />
