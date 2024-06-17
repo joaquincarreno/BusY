@@ -14,6 +14,7 @@ const ZONES_API = BACKEND_URL + "zones777/";
 const GPS_API = BACKEND_URL + "gps/";
 const STOPS_API = BACKEND_URL + "stops/";
 const ROUTES_API = BACKEND_URL + "availableRoutes/";
+const BUSES_API = BACKEND_URL + "availableBuses/";
 
 const ASSETS = "./src/assets/";
 
@@ -96,16 +97,24 @@ function App() {
   const [time, setTime] = useState(0);
   const timeRef = useRef(time);
   const [zones, setZones] = useState({});
-  const [gpsData, setGpsData] = useState([{}]);
-  const [stopsData, setStopsData] = useState([{}]);
-  const [availableRoutes, setAvailableRoutes] = useState([]);
+  const [zonesReady, setZonesReady] = useState(false);
+
   // const [apiData, setApiData] = useState([{}]);
   const [movingBuses, setMovingBuses] = useState(null);
-  const [zonesReady, setZonesReady] = useState(false);
+
+  const [gpsData, setGpsData] = useState([{}]);
   const [gpsReady, setGpsReady] = useState(false);
+
+  const [stopsData, setStopsData] = useState([{}]);
   const [stopsReady, setStopsReady] = useState(false);
+
+  const [availableRoutes, setAvailableRoutes] = useState([]);
   const [routesReady, setRoutesReady] = useState(false);
-  const [selectedRoute, setSelectedRoute] = useState('')
+  const [selectedRoute, setSelectedRoute] = useState("");
+
+  const [availableBuses, setAvailableBuses] = useState([]);
+  const [availableBusesReady, setAvailableBusesReady] = useState(false);
+  const [selectedBus, setSelectedBus] = useState("");
 
   useEffect(() => {
     get(ZONES_API).then((response) => {
@@ -114,6 +123,7 @@ function App() {
     });
   }, []);
 
+  // gps API call
   useEffect(() => {
     get(GPS_API + "BKXV-89").then((response) => {
       const data = response.data;
@@ -125,6 +135,7 @@ function App() {
     });
   }, []);
 
+  // bus stops API call
   useEffect(() => {
     get(STOPS_API).then((response) => {
       const data = response.data;
@@ -135,6 +146,7 @@ function App() {
     });
   }, []);
 
+  // available bus routes API call
   useEffect(() => {
     get(ROUTES_API).then((response) => {
       const data = response.data;
@@ -145,6 +157,17 @@ function App() {
     });
   }, []);
 
+  // available buses API call
+  useEffect(() => {
+    get(BUSES_API + selectedRoute).then((response) => {
+      const data = response.data["buses"];
+      // console.log("Buses");
+      // console.log(data);
+      setAvailableBuses(data);
+      setAvailableBusesReady(true);
+    });
+  }, [selectedRoute]);
+
   const viewState = {
     latitude: -33.443018,
     longitude: -70.65387,
@@ -153,6 +176,7 @@ function App() {
     maxZoom: 15,
   };
 
+  // time passing
   useEffect(() => {
     const interval = setInterval(() => {
       setTime((t) => (t + step) % loopLength);
@@ -160,15 +184,24 @@ function App() {
 
     return () => clearInterval(interval);
   }, []);
+
   return (
     <>
-      {zonesReady && gpsReady && stopsReady && routesReady ? (
+      {zonesReady &&
+      gpsReady &&
+      stopsReady &&
+      routesReady &&
+      availableBusesReady ? (
         <div
         // style={{ width: "100vw", height: "90vh", position: "relative" }}
         >
           <div>
-            <Navbar availableRoutes={availableRoutes}
-            routeSetter={setSelectedRoute} />
+            <Navbar
+              availableRoutes={availableRoutes}
+              routeSetter={setSelectedRoute}
+              availableBuses={availableBuses}
+              busSetter={setSelectedBus}
+            />
           </div>
           <DeckGlMap
             // staticBusData={staticBusData}

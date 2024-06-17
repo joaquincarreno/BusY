@@ -33,6 +33,14 @@ def getAvailableRoutes(request):
 
     return Response(list(objects))
 
+@api_view(['GET'])
+def getAvailableBuses(request, route='X00'):
+    if route == 'X00':
+        objects = GPSRegistry.objects.values_list('patente', flat=True).distinct()
+    else:
+        objects = GPSRegistry.objects.filter(recorrido=route).values_list('patente', flat=True).distinct()
+
+    return Response({'buses': objects})
 
 
 @api_view(['GET'])
