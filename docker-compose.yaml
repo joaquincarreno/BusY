@@ -12,6 +12,9 @@ services:
         source: ./frontend
         target: /srv/app
     working_dir: /srv/app
+    networks:
+      default:
+        ipv4_address: 172.19.0.3
     command: bash -c 'npm install && npm --host run dev '
   backend:
     build:
