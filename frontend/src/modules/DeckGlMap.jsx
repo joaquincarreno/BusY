@@ -36,7 +36,7 @@ function DeckGlMap({
   const onViewStateChange = ({ viewState, interactionState, oldViewState }) => {
     // console.log("viewState changed: ", viewState);
     viewStateSetter(viewState);
-    setScale((viewState.zoom - 2) / 13) + 1;
+    setScale((viewState.zoom - 2) / 13);
     // console.log(viewState.zoom);
   };
 
@@ -109,7 +109,7 @@ function DeckGlMap({
     },
     getSize: (d) => {
       // console.log("updated size");
-      return 15 / scale;
+      return 50 - 25 * scale;
     },
     iconAtlas:
       "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
@@ -146,7 +146,7 @@ function DeckGlMap({
       return [0, movingBuses.getBus(d.patente).getOrientation(), 90];
     },
     getScale: (d) => {
-      const s = 30 / scale;
+      const s = 120 - 60 * scale;
       // console.log("scale updated", s);
       return [s, s, s];
     },
