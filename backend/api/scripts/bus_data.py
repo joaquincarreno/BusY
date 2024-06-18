@@ -31,30 +31,55 @@ def process_file(file_name):
     
 
 
-def read_buses(date, sample=False):
+def read_gps(date, sample=False):
     # if sample:
     #     return pd.read_csv(buses_processed / 'sample.gps.csv', sep=';')
-    return pd.read_csv(buses_raw / date, sep=';')
+    gps = pd.read_csv(buses_raw / date, sep=';')
+
+    value_counts = gps['patente'].value_counts()
+    multiple_entries = value_counts[value_counts > 1].index
+
+    filtered = gps[gps['patente'].isin(multiple_entries)]
+
+    print(str(len(gps) - len(filtered)) + ' buses with single gps entry')
+
+    return filtered
 
         
-def setup_buses(model):
-    if len(model.objects.all()) > 0:
+def setup_buses(model, fill=False):
+    # model.objects.all().delete()
+    if not fill:
         return
-    files=os.listdir(process_file)
+    files=os.listdir(buses_raw)
     print(files)
     for f in files:
-        if(not (process_file / f).exists()):
-            process_file(f)        
-        data = read_buses(f)
+        if(not (buses_processed / f).exists()):
+            print('processing ' + f)
+            process_file(f)   
+        else:
+            print(f + ' already processed')     
+        data = read_gps(f)
+        step = 0.0
+        l = len(data)
+        limiter = 0.0
+        progress = 0.0
         for i in data.index:
             row = data.iloc[i, :]
             datetime = row['datetime'].split(' ')
+            recorrido = row['recorrido']
             object = model(
                 patente = row['patente'],
-                recorrido = row['recorrido'],
+                recorrido = recorrido.split(' ')[0],
+                sentido = recorrido[-1],
                 date = datetime[0],
                 time = datetime[1],
                 latitude = row['lat'], 
                 longitude = row['lon'],
             )
             object.save() 
+            step+=1
+            progress = step / l
+            if(progress > limiter):
+                print('progress: ' + str(progress) + '%')
+                limiter += 0.01
+        print('done with ' + str(f))
