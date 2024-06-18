@@ -47,12 +47,9 @@ def getAvailableBuses(request, route='X00', direction='X'):
 
 
 @api_view(['GET'])
-def getGPS(request, patente='XXXX-XX'):
+def getGPS(request, patente='ZN-6498'):
     # print(patente)
-    if patente == 'XXXX-XX':
-        objects = GPSRegistry.objects.all()
-    else:
-        objects = GPSRegistry.objects.filter(patente=patente)
+    objects = GPSRegistry.objects.filter(patente=patente)
 
     query = objects.query
     query.group_by = ['patente']
