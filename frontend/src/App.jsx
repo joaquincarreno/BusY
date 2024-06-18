@@ -122,12 +122,46 @@ function App() {
 
   const [showStops, setShowStops] = useState(false);
 
+  const [selectedBus, setSelectedBus] = useState("");
+  const [selectedDirection, setSelectedDirection] = useState("");
+
   useEffect(() => {
     get(ZONES_API).then((response) => {
       setZones(JSON.parse(response.data));
       setZonesReady(true);
     });
   }, []);
+
+  // available bus routes API call
+  useEffect(() => {
+    get(ROUTES_API).then((response) => {
+      const data = response.data;
+      // console.log("Routes");
+      // console.log(data);
+      setAvailableRoutes(data);
+      setRoutesReady(true);
+    });
+  }, []);
+
+  // available buses API call
+  useEffect(() => {
+    // if (selectedRoute == "") {
+    //   return;
+    // }
+    get(
+      BUSES_API +
+        selectedRoute +
+        (selectedRoute != "" && selectedDirection != ""
+          ? "/" + selectedDirection
+          : "")
+    ).then((response) => {
+      const data = response.data["buses"];
+      // console.log("Buses");
+      // console.log(data);
+      setAvailableBuses(data);
+      setAvailableBusesReady(true);
+    });
+  }, [selectedRoute, selectedDirection]);
 
   // gps API call
   useEffect(() => {
@@ -217,8 +251,10 @@ function App() {
               routeSetter={setSelectedRoute}
               selectedRoute={selectedRoute}
               availableBuses={availableBuses}
-              busSetter={setSelectedBus}
               selectedBus={selectedBus}
+              busSetter={setSelectedBus}
+              selectedDirection={selectedDirection}
+              directionSetter={setSelectedDirection}
               showStops={showStops}
               setShowStops={setShowStops}
             />

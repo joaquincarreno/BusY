@@ -3,11 +3,17 @@ import "./Navbar.css";
 
 const Navbar = ({
   availableRoutes = [],
-  routeSetter = () => {},
-  selectedRoute = "",
   availableBuses = [],
-  busSetter = () => {},
+
+  selectedRoute = "",
+  routeSetter = () => {},
+
   selectedBus = "",
+  busSetter = () => {},
+
+  selectedDirection = "",
+  directionSetter = () => {},
+
   showStops = false,
   setShowStops = () => {},
 }) => {
@@ -39,15 +45,17 @@ const Navbar = ({
         ))}
       </select>
       {/* selector de bus */}
-      <select onChange={handleSelectBus}>
-        <option value="" hidden>
-          {selectedBus != "" ? selectedBus : "Patente"}
-        </option>
-        {availableBuses.map((item, index) => (
-          <option key={index} value={item}>
-            {item}
-          </option>
-        ))}
+      {createSelector(
+        "Patente",
+        selectedBus,
+        availableBuses,
+        createHandler("bus", busSetter)
+      )}
+
+      <select onClick={createHandler("direction", directionSetter)}>
+        <option value=""> Ambos sentidos </option>
+        <option value="I"> Ida </option>
+        <option value="R"> Retorno </option>
       </select>
       <button
         onClick={() => {
