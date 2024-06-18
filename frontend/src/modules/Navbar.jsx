@@ -17,33 +17,40 @@ const Navbar = ({
   showStops = false,
   setShowStops = () => {},
 }) => {
-  const handleSelectRoute = (event) => {
-    routeSetter(event.target.value);
-    console.log("selected route: " + event.target.value);
+  const createHandler = (varName, setter) => {
+    return (event) => {
+      const value = event.target.value;
+      setter(value);
+      console.log("selected " + varName + ": " + value);
+    };
   };
 
-  const handleSelectBus = (event) => {
-    busSetter(event.target.value);
-    console.log("selected bus: " + event.target.value);
-  };
-  // console.log("navbar log");
-  // console.log(availableBuses);
-  // console.log(availableRoutes);
-  return (
-    <div className="navbar">
-      <a href="https://www.youtube.com/watch?v=GDw9_kIEDaY">Busy</a>
-
-      {/* selector de rut */}
-      <select onChange={handleSelectRoute}>
+  const createSelector = (defaultValue, currentValue, options, handler) => {
+    return (
+      <select onChange={handler}>
         <option value="" hidden>
-          {selectedRoute != "" ? selectedRoute : "Servicio"}
+          {currentValue != "" ? currentValue : defaultValue}
         </option>
-        {availableRoutes.map((item, index) => (
+        {options.map((item, index) => (
           <option key={index} value={item}>
             {item}
           </option>
         ))}
       </select>
+    );
+  };
+
+  return (
+    <div className="navbar">
+      <a href="https://www.youtube.com/watch?v=GDw9_kIEDaY">Busy</a>
+
+      {/* selector de ruta */}
+      {createSelector(
+        "Servicio",
+        selectedRoute,
+        availableRoutes,
+        createHandler("route", routeSetter)
+      )}
       {/* selector de bus */}
       {createSelector(
         "Patente",
@@ -57,6 +64,7 @@ const Navbar = ({
         <option value="I"> Ida </option>
         <option value="R"> Retorno </option>
       </select>
+
       <button
         onClick={() => {
           setShowStops(!showStops);

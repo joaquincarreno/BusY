@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import DeckGlMap from "./modules/DeckGlMap";
 import Navbar from "./modules/Navbar";
 import get from "axios";
 import "./App.css";
 
 // time managment constants
-const step = 0.003;
+const step = 0.0003;
 const intervalMS = 8;
 const loopLength = 1;
 
@@ -99,7 +99,7 @@ class Buses {
 function App() {
   //
   const [time, setTime] = useState(0);
-  const timeRef = useRef(time);
+  // const timeRef = useRef(time);
   const [zones, setZones] = useState({});
   const [zonesReady, setZonesReady] = useState(false);
 
@@ -118,7 +118,6 @@ function App() {
 
   const [availableBuses, setAvailableBuses] = useState([]);
   const [availableBusesReady, setAvailableBusesReady] = useState(false);
-  const [selectedBus, setSelectedBus] = useState("");
 
   const [showStops, setShowStops] = useState(false);
 
@@ -194,28 +193,6 @@ function App() {
     });
   }, []);
 
-  // available bus routes API call
-  useEffect(() => {
-    get(ROUTES_API).then((response) => {
-      const data = response.data;
-      // console.log("Routes");
-      // console.log(data);
-      setAvailableRoutes(data);
-      setRoutesReady(true);
-    });
-  }, []);
-
-  // available buses API call
-  useEffect(() => {
-    get(BUSES_API + selectedRoute).then((response) => {
-      const data = response.data["buses"];
-      // console.log("Buses");
-      // console.log(data);
-      setAvailableBuses(data);
-      setAvailableBusesReady(true);
-    });
-  }, [selectedRoute]);
-
   const initialViewState = {
     latitude: -33.443018,
     longitude: -70.65387,
@@ -281,6 +258,7 @@ function App() {
           {!stopsReady ? <p>waiting on stops</p> : <></>}
           {!routesReady ? <p>waiting on routes</p> : <></>}
           {!zonesReady ? <p>waiting on zones</p> : <></>}
+          {!availableBusesReady ? <p>waiting on available buses</p> : <></>}
         </div>
       )}
       {/* <div style={{ width: "100%", marginTop: "1.5rem" }}>
