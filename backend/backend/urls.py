@@ -31,6 +31,7 @@ urlpatterns = [
     path('api/availableRoutes/', getAvailableRoutes),
     path('api/availableBuses/', getAvailableBuses),
     path('api/availableBuses/<str:route>', getAvailableBuses),
+    path('api/availableBuses/<str:route>/<str:direction>', getAvailableBuses),
 ]
 
 
