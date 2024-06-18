@@ -1,9 +1,17 @@
 from django.db import models
 
-# Create your models here.
+class Sentido(models.TextChoices):
+    IDA = 'I', 'Ida'
+    RET = 'R', 'Retorno'
+
 class GPSRegistry(models.Model):
     patente = models.TextField()
     recorrido = models.TextField(blank=True)
+    sentido = models.CharField(
+        max_length=1,
+        choices=Sentido.choices,
+        default=Sentido.IDA
+    )
     date = models.DateField()
     time = models.TimeField()
     latitude = models.FloatField()
