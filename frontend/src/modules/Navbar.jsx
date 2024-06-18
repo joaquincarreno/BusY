@@ -11,6 +11,7 @@ const Navbar = ({
   selectedBus = "",
   busSetter = () => {},
 
+  availableDirections = [],
   selectedDirection = "",
   directionSetter = () => {},
 
@@ -59,12 +60,16 @@ const Navbar = ({
         createHandler("bus", busSetter)
       )}
 
-      <select onClick={createHandler("direction", directionSetter)}>
-        <option value=""> Ambos sentidos </option>
-        <option value="I"> Ida </option>
-        <option value="R"> Retorno </option>
-      </select>
-
+      {availableDirections.length > 0 ? (
+        <select onChange={createHandler("direction", directionSetter)}>
+          <option value=""> Cualquier sentido </option> +
+          availableDirections.includes("I") ? (<option value="I"> Ida </option>)
+          : <></> + availableDirections.includes("R") ? (
+          <option value="R"> Retorno </option>) : (<></>)
+        </select>
+      ) : (
+        <></>
+      )}
       <button
         onClick={() => {
           setShowStops(!showStops);

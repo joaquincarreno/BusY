@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from api.views import apiTest, getZones777, getGPS, getStops, getAvailableRoutes, getAvailableBuses
+from api.views import apiTest, getZones777, getGPS, getStops, getAvailableRoutes, getAvailableBuses, getAvailableDirections
 
 from api.models import GPSRegistry, BusStops 
 
@@ -26,12 +26,14 @@ urlpatterns = [
     path('api/test/', apiTest),
     path('api/zones777/', getZones777),
     path('api/gps/<str:patente>/', getGPS),
+    path('api/gps/<str:patente>/<str:sentido>/', getGPS),
     path('api/gps/', getGPS),
     path('api/stops/', getStops),
     path('api/availableRoutes/', getAvailableRoutes),
     path('api/availableBuses/', getAvailableBuses),
-    path('api/availableBuses/<str:route>', getAvailableBuses),
-    path('api/availableBuses/<str:route>/<str:direction>', getAvailableBuses),
+    path('api/availableBuses/<str:recorrido>', getAvailableBuses),
+    path('api/availableBuses/<str:recorrido>/<str:sentido>', getAvailableBuses),
+    path('api/availableDirections/<str:recorrido>/<str:patente>', getAvailableDirections),
 ]
 
 

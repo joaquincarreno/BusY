@@ -34,22 +34,25 @@ def getAvailableRoutes(request):
     return Response(list(objects))
 
 @api_view(['GET'])
-def getAvailableBuses(request, route='X00', direction='X'):
-    if route == 'X00':
+def getAvailableBuses(request, recorrido='X00', sentido='X'):
+    if recorrido == 'X00':
         values = GPSRegistry.objects.values_list('patente', flat=True).distinct()
     else:
-        if(direction == 'X'):
-            values = GPSRegistry.objects.filter(recorrido=route).values_list('patente', flat=True).distinct()
+        if(sentido == 'X'):
+            values = GPSRegistry.objects.filter(recorrido=recorrido).values_list('patente', flat=True).distinct()
         else:
-            values = GPSRegistry.objects.filter(recorrido=route, sentido=direction).values_list('patente', flat=True).distinct()
+            values = GPSRegistry.objects.filter(recorrido=recorrido, sentido=sentido).values_list('patente', flat=True).distinct()
 
     return Response({'buses': values})
 
 
 @api_view(['GET'])
-def getGPS(request, patente='ZN-6498'):
+def getGPS(request, patente='ZN-6498', sentido=''):
     # print(patente)
-    objects = GPSRegistry.objects.filter(patente=patente)
+    if(sentido == ''):
+        objects = GPSRegistry.objects.filter(patente=patente)
+    else:
+        objects = GPSRegistry.objects.filter(patente=patente, sentido=sentido)
 
     query = objects.query
     query.group_by = ['patente']
@@ -92,3 +95,8 @@ def getStops(request):
     
     return Response({'stops': objects})
 
+@api_view(['GET'])
+def getAvailableDirections(request, recorrido, patente):
+    values = GPSRegistry.objects.filter(recorrido=recorrido, patente=patente).values_list('sentido', flat=True).distinct()
+
+    return Response({'directions': values})

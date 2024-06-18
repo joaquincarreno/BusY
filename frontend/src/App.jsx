@@ -15,6 +15,7 @@ const GPS_API = BACKEND_URL + "gps/";
 const STOPS_API = BACKEND_URL + "stops/";
 const ROUTES_API = BACKEND_URL + "availableRoutes/";
 const BUSES_API = BACKEND_URL + "availableBuses/";
+const DIRECTIONS_API = BACKEND_URL + "availableDirections/";
 
 const ASSETS = "./src/assets/";
 
@@ -119,8 +120,9 @@ function App() {
   const [availableBuses, setAvailableBuses] = useState([]);
   const [availableBusesReady, setAvailableBusesReady] = useState(false);
 
-  const [showStops, setShowStops] = useState(false);
+  const [availableDirections, setAvailableDirections] = useState([]);
 
+  const [showStops, setShowStops] = useState(false);
   const [selectedBus, setSelectedBus] = useState("");
   const [selectedDirection, setSelectedDirection] = useState("");
 
@@ -155,18 +157,33 @@ function App() {
           : "")
     ).then((response) => {
       const data = response.data["buses"];
-      // console.log("Buses");
-      // console.log(data);
       setAvailableBuses(data);
       setAvailableBusesReady(true);
     });
   }, [selectedRoute, selectedDirection]);
 
+  // available directions API call
+  useEffect(() => {
+    if (selectedRoute != "" && selectedBus != "") {
+      get(DIRECTIONS_API + selectedRoute + "/" + selectedBus).then(
+        (response) => {
+          const data = response.data["directions"];
+          console.log(data);
+          setAvailableDirections(data);
+        }
+      );
+    }
+  }, [selectedBus]);
+
   // gps API call
   useEffect(() => {
     setGpsReady(false);
     if (selectedBus != "") {
-      get(GPS_API + selectedBus).then((response) => {
+      get(
+        GPS_API +
+          selectedBus +
+          (selectedDirection == "" ? "" : "/" + selectedDirection)
+      ).then((response) => {
         const data = response.data;
         // console.log("gps");
         // console.log(data);
@@ -180,7 +197,7 @@ function App() {
       setMovingBuses([]);
       setGpsReady(true);
     }
-  }, [selectedBus]);
+  }, [selectedBus, selectedDirection]);
 
   // bus stops API call
   useEffect(() => {
@@ -230,6 +247,7 @@ function App() {
               availableBuses={availableBuses}
               selectedBus={selectedBus}
               busSetter={setSelectedBus}
+              availableDirections={availableDirections}
               selectedDirection={selectedDirection}
               directionSetter={setSelectedDirection}
               showStops={showStops}
