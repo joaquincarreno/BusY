@@ -7,18 +7,6 @@ import { TileLayer } from "@deck.gl/geo-layers";
 import { SimpleMeshLayer } from "@deck.gl/mesh-layers";
 import { OBJLoader } from "@loaders.gl/obj";
 
-// source: Natural Earth http://www.naturalearthdata.com/ via geojson.xyz
-const COUNTRIES =
-  "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_scale_rank.geojson"; //eslint-disable-line
-
-const INITIAL_VIEW_STATE = {
-  latitude: -33.443018,
-  longitude: -70.65387,
-  zoom: 15,
-  minZoom: 2,
-  maxZoom: 15,
-};
-
 function DeckGlMap({
   viewState,
   viewStateSetter = () => {},
@@ -39,41 +27,6 @@ function DeckGlMap({
     setScale((viewState.zoom - 2) / 13);
     // console.log(viewState.zoom);
   };
-
-  const getPosition = (d) => {
-    {
-      // console.log(movingBuses.dict[d.patente]);
-      // console.log(d);
-      // console.log("holaa");
-      // console.log(d.patente);
-      // console.log(time);
-
-      return movingBuses.getBus(d.patente).getPosition(time);
-    }
-  };
-
-  const countriesLayer = new GeoJsonLayer({
-    id: "countries",
-    data: COUNTRIES,
-    // Styles
-    stroked: true,
-    filled: true,
-    lineWidthMinPixels: 2,
-    opacity: 0.4,
-    getLineColor: [60, 60, 60],
-    getFillColor: [200, 200, 200],
-  });
-
-  const zonesLayer = new GeoJsonLayer({
-    id: "zones",
-    data: zonesData,
-    // Styles
-    stroked: true,
-    filled: true,
-    getLineColor: [60, 60, 60],
-    getFillColor: [200, 200, 200],
-    getElevation: 0.1,
-  });
 
   const osmMapLayer = new TileLayer({
     id: "TileLayer",

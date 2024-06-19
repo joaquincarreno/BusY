@@ -51,8 +51,8 @@ const Navbar = ({
 
     const log_in_min = Math.log10(1);
     const log_in_max = Math.log10(100);
-    const log_out_min = Math.log10(0.0001);
-    const log_out_max = Math.log10(0.1);
+    const log_out_min = Math.log10(1.0 / 24 / 60 / 60);
+    const log_out_max = Math.log10(0.01);
 
     const log_x = Math.log10(x);
 
