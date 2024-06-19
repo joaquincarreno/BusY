@@ -6,17 +6,22 @@ const Navbar = ({
   availableBuses = [],
 
   selectedRoute = "",
-  routeSetter = () => {},
+  routeSetter = (_) => {},
 
   selectedBus = "",
-  busSetter = () => {},
+  busSetter = (_) => {},
 
   availableDirections = [],
   selectedDirection = "",
-  directionSetter = () => {},
+  directionSetter = (_) => {},
 
   showStops = false,
-  setShowStops = () => {},
+  setShowStops = (_) => {},
+
+  step = 0.001,
+  stepSetter = (_) => {},
+
+  time = 0,
 }) => {
   const createHandler = (varName, setter) => {
     return (event) => {
@@ -41,42 +46,90 @@ const Navbar = ({
     );
   };
 
+  const handleStepChange = (e) => {
+    const x = Number(e.target.value);
+
+    const log_in_min = Math.log10(1);
+    const log_in_max = Math.log10(100);
+    const log_out_min = Math.log10(0.0001);
+    const log_out_max = Math.log10(0.1);
+
+    const log_x = Math.log10(x);
+
+    const log_mapped =
+      log_out_min +
+      ((log_x - log_in_min) * (log_out_max - log_out_min)) /
+        (log_in_max - log_in_min);
+
+    // const log = Math.log10(0.001) + ()
+
+    stepSetter(Math.pow(10, log_mapped));
+    console.log(step);
+  };
+
   return (
     <div className="navbar">
-      <a href="https://www.youtube.com/watch?v=GDw9_kIEDaY">Busy</a>
+      <div className="navbar-left">
+        <a href="https://www.youtube.com/watch?v=GDw9_kIEDaY">Busy</a>
+        <div className="navbar-item">
+          {/* selector de ruta */}
+          {createSelector(
+            "Servicio",
+            selectedRoute,
+            availableRoutes,
+            createHandler("route", routeSetter)
+          )}
+        </div>
+        <div className="navbar-item">
+          {/* selector de bus */}
+          {createSelector(
+            "Patente",
+            selectedBus,
+            availableBuses,
+            createHandler("bus", busSetter)
+          )}
+        </div>
 
-      {/* selector de ruta */}
-      {createSelector(
-        "Servicio",
-        selectedRoute,
-        availableRoutes,
-        createHandler("route", routeSetter)
-      )}
-      {/* selector de bus */}
-      {createSelector(
-        "Patente",
-        selectedBus,
-        availableBuses,
-        createHandler("bus", busSetter)
-      )}
+        <div className="navbar-item">
+          {/* selector de sentido */}
+          {availableDirections.length > 0 ? (
+            <select onChange={createHandler("direction", directionSetter)}>
+              <option value=""> Cualquier sentido </option> +
+              availableDirections.includes("I") ? (
+              <option value="I"> Ida </option>) : <></> +
+              availableDirections.includes("R") ? (
+              <option value="R"> Retorno </option>) : (<></>)
+            </select>
+          ) : (
+            <></>
+          )}
+        </div>
+      </div>
 
-      {availableDirections.length > 0 ? (
-        <select onChange={createHandler("direction", directionSetter)}>
-          <option value=""> Cualquier sentido </option> +
-          availableDirections.includes("I") ? (<option value="I"> Ida </option>)
-          : <></> + availableDirections.includes("R") ? (
-          <option value="R"> Retorno </option>) : (<></>)
-        </select>
-      ) : (
-        <></>
-      )}
-      <button
-        onClick={() => {
-          setShowStops(!showStops);
-        }}
-      >
-        {showStops ? "ocultar paraderos" : "mostrar paraderos"}{" "}
-      </button>
+      <div className="navbar-right">
+        <div className="navbar-item">
+          <p>current time: {time}</p>
+        </div>
+        <div className="navbar-item">
+          <input
+            type="range"
+            min="1"
+            max="100"
+            step="1"
+            // value={step}
+            onChange={handleStepChange}
+          />
+        </div>
+        <div className="navbar-item">
+          <button
+            onClick={() => {
+              setShowStops(!showStops);
+            }}
+          >
+            {showStops ? "ocultar paraderos" : "mostrar paraderos"}{" "}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

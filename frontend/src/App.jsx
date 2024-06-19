@@ -5,7 +5,6 @@ import get from "axios";
 import "./App.css";
 
 // time managment constants
-const step = 0.0003;
 const intervalMS = 8;
 const loopLength = 1;
 
@@ -100,11 +99,11 @@ class Buses {
 function App() {
   //
   const [time, setTime] = useState(0);
-  // const timeRef = useRef(time);
+  const [step, setStep] = useState(0.005);
+
   const [zones, setZones] = useState({});
   const [zonesReady, setZonesReady] = useState(false);
 
-  // const [apiData, setApiData] = useState([{}]);
   const [movingBuses, setMovingBuses] = useState(null);
 
   const [gpsData, setGpsData] = useState([{}]);
@@ -224,10 +223,10 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       setTime((t) => (t + step) % loopLength);
+      // console.log(time);
     }, intervalMS);
-
     return () => clearInterval(interval);
-  }, []);
+  }, [step]);
 
   return (
     <>
@@ -252,6 +251,9 @@ function App() {
               directionSetter={setSelectedDirection}
               showStops={showStops}
               setShowStops={setShowStops}
+              time={time}
+              step={step}
+              stepSetter={setStep}
             />
           </div>
           <DeckGlMap
@@ -279,19 +281,6 @@ function App() {
           {!availableBusesReady ? <p>waiting on available buses</p> : <></>}
         </div>
       )}
-      {/* <div style={{ width: "100%", marginTop: "1.5rem" }}>
-        <input
-          style={{ width: "100%" }}
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={time}
-          onChange={(e) => {
-            setTime(Number(e.target.value));
-            }}
-            />
-            </div> */}
     </>
   );
 }

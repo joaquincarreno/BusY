@@ -3,17 +3,32 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 50px;
+    height: 65px;
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
     display: flex;
+    flex-direction: row;
     align-items: center;
-    padding: 0 20px;
+    justify-content: space-between;
+    padding: 0 10px;
     z-index: 10;
 }
 
 .navbar a {
     color: white;
     text-decoration: none;
-    margin-right: 20px;
+    margin-right: 10px;
+}
+
+.navbar-left,
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-item {
+    color: white;
+    padding: 14px;
+    text-decoration: none;
+    text-align: center;
 }
