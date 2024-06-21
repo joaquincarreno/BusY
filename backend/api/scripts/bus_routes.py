@@ -20,33 +20,40 @@ def load_data():
     # llenamos los vacíos con un string vacío
     df['Variante'] = df['Variante'].fillna('')
 
-    df.head()
     return df
 
     
 
 ALLREADY_FILLED = False
 
-def setupRoutes(model, refill = False):
+def setupRoutes(routeModel, stopsModel, empty_and_refill = False):
     global ALLREADY_FILLED
 
-    if(not ALLREADY_FILLED and refill):
-        model.objects.all().delete()
-    elif(len(model.objects.all()) > 0):
+    if(not ALLREADY_FILLED and empty_and_refill):
+        routeModel.objects.all().delete()
+    elif(len(routeModel.objects.all()) > 0):
         return
 
-    df = load_data()
 
     def fill_model(row):
-        object = model(
-            serviceUserCode = row['Código Usuario'],
-            serviceTSCode = row['Código TS'],
-            serviceDirection = row['Sentido Servicio'],
-            order =  row['Orden\nCirc.'],
-            variant =  row['Variante'],
-        )
-        object.save()
-    print('Filling the Stops model')
+        try:
+            stop = stopsModel.obje.get(TSCode=row['Código paradero TS'])
+            object = routeModel(
+                stop = stop,
+                serviceTSCode = row['Servicio TS'],
+                serviceDirection = row['Sentido Servicio'],
+                order =  row['Orden'],
+                variant =  row['Variante'],
+            )
+            object.save()
+        except stopsModel.DoesNotExist:
+            print('Stop {ts_code} not found'.format(ts_code=row['Código paradero TS']))
+        except stopsModel.MultipleObjectsReturned:
+            print('Multiples stops found with the TS code {ts_code}'.format(ts_code=row['Código paradero TS']))
+
+    print('Filling the Stops routeModel')
+    df = load_data()
     df.apply(fill_model, axis=1)
-    print('Stops model filled with ', len(model.objects.all()), ' stops.')
+    print('Stops routeModel filled with ', len(routeModel.objects.all()), ' stops.')
     ALLREADY_FILLED = True
+    
