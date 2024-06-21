@@ -200,14 +200,14 @@ function App() {
 
   // bus stops API call
   useEffect(() => {
-    get(STOPS_API).then((response) => {
+    get(STOPS_API + selectedRoute).then((response) => {
       const data = response.data;
       // console.log("stops");
       // console.log(data);
       setStopsData(data);
       setStopsReady(true);
     });
-  }, []);
+  }, [selectedRoute]);
 
   const initialViewState = {
     latitude: -33.443018,
