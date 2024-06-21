@@ -25,7 +25,7 @@ class BusStops(models.Model):
     positionY = models.FloatField()
 
 class Routes(models.Model):
-    serviceUserCode = models.TextField()
+    stop = models.ForeignKey(BusStops, null=True, on_delete=models.CASCADE)
     serviceTSCode = models.TextField()
     serviceDirection = models.TextField()
     order = models.IntegerField()
