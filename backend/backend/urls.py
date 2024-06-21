@@ -19,7 +19,7 @@ from django.urls import path
 
 from api.views import apiTest, getZones777, getGPS, getStops, getAvailableRoutes, getAvailableBuses, getAvailableDirections
 
-from api.models import GPSRegistry, BusStops 
+from api.models import GPSRegistry, BusStops, Routes
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,7 +41,10 @@ urlpatterns = [
 from api.scripts.zones import setUpZones
 from api.scripts.bus_data import setup_buses
 from api.scripts.bus_stops import setupBusStops
+from api.scripts.bus_routes import setupRoutes
 
 setUpZones()
 setup_buses(GPSRegistry)
 setupBusStops(BusStops)
+
+setupRoutes(Routes)
