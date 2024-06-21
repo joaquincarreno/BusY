@@ -10,7 +10,7 @@ from django.db.models.query import QuerySet
 from api.serializers import GPSRegistrySerializer
 from api.scripts.zones import getZonesGdf
 
-from api.models import GPSRegistry, BusStops
+from api.models import GPSRegistry, BusStops, Routes
 
 from time import time
 
@@ -90,8 +90,17 @@ def getGPS(request, patente='ZN-6498', sentido=''):
     return Response(data)
 
 @api_view(['GET'])
-def getStops(request):
-    objects = list(BusStops.objects.all().values())
+def getStops(request, recorrido=''):
+    if(recorrido == ''):
+        objects = list(BusStops.objects.all().values())
+
+    else:
+        recorrido = recorrido[1:] if recorrido[0] == 'T' else recorrido
+        paradas = list(Routes.objects.filter(serviceTSCode=recorrido).values_list('stop', flat=True))
+
+        objects = list(BusStops.objects.filter(id__in=paradas).values())
+
+
     
     return Response({'stops': objects})
 

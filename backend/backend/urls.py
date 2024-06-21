@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/gps/<str:patente>/<str:sentido>/', getGPS),
     path('api/gps/', getGPS),
     path('api/stops/', getStops),
+    path('api/stops/<str:recorrido>', getStops),
     path('api/availableRoutes/', getAvailableRoutes),
     path('api/availableBuses/', getAvailableBuses),
     path('api/availableBuses/<str:recorrido>', getAvailableBuses),
@@ -39,12 +40,11 @@ urlpatterns = [
 
 # SERVER SETUP (SHOULD THIS EVEN BE HERE?)
 from api.scripts.zones import setUpZones
-from api.scripts.bus_data import setup_buses
+from api.scripts.bus_data import setupGPSEntries
 from api.scripts.bus_stops import setupBusStops
 from api.scripts.bus_routes import setupRoutes
 
 setUpZones()
-setup_buses(GPSRegistry)
+setupGPSEntries(GPSRegistry)
 setupBusStops(BusStops)
-
-setupRoutes(Routes)
+setupRoutes(Routes, BusStops)
