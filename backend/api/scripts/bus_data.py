@@ -46,7 +46,7 @@ def read_gps(date, sample=False):
     return filtered
 
         
-def setup_buses(model, fill=False):
+def setupGPSEntries(model, fill=False):
     # model.objects.all().delete()
     if not fill:
         return
