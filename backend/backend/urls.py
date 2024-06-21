@@ -30,6 +30,7 @@ urlpatterns = [
     path('api/gps/', getGPS),
     path('api/stops/', getStops),
     path('api/stops/<str:recorrido>', getStops),
+    path('api/stops/<str:recorrido>/<str:sentido>', getStops),
     path('api/availableRoutes/', getAvailableRoutes),
     path('api/availableBuses/', getAvailableBuses),
     path('api/availableBuses/<str:recorrido>', getAvailableBuses),

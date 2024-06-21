@@ -90,15 +90,20 @@ def getGPS(request, patente='ZN-6498', sentido=''):
     return Response(data)
 
 @api_view(['GET'])
-def getStops(request, recorrido=''):
+def getStops(request, recorrido='', sentido=''):
     if(recorrido == ''):
         objects = list(BusStops.objects.all().values())
 
     else:
         recorrido = recorrido[1:] if recorrido[0] == 'T' else recorrido
-        paradas = list(Routes.objects.filter(serviceTSCode=recorrido).values_list('stop', flat=True))
+        if(sentido != ''):
+            paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection=sentido)
+        else:
+            paradas = Routes.objects.filter(serviceTSCode=recorrido)
+            
+        ids = list(paradas.values_list('stop', flat=True))
 
-        objects = list(BusStops.objects.filter(id__in=paradas).values())
+        objects = list(BusStops.objects.filter(id__in=ids).values())
 
 
     
