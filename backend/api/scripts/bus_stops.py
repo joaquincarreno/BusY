@@ -6,29 +6,36 @@ from rdp import rdp
 import dask.dataframe as dd
 import os
 
-from api.scripts.constants import RAW_DATA
+from api.scripts.constants import current_paradas
 
 def fix_crs(geodf):
     return geodf.set_crs().to_crs()
 
-def setupBusStops(model):
-    # model.objects.all().delete()
+def setupBusStops(model, refill=False):
+    if(refill):
+        model.objects.all().delete()
     if(len(model.objects.all()) != 0):
         return
     print('setting stops')
-    df = pd.read_excel(RAW_DATA / 'paraderos_2018-1.xlsx').drop(columns=[
-        'Orden\nCirc.',
+    df = pd.read_excel(current_paradas)
+
+    # nombres columnas
+    df = df.rename(columns={'Varian-te': 'Variante', 'Zonas Pagas (horario de operación)': 'Zonas Pagas'})
+    
+    df.drop(columns=[
+        'Orden',
         'Sentido Servicio',
-        'Varian-te',
+        'Variante',
         'UN',
-        'Código TS',
-        'Código Usuario',
+        'Servicio TS',
+        'Servicio Usuario',
         'Comuna',
         'Eje',
         'Desde ( Cruce 1)',
         'Hacia ( Cruce 2)',
-        'Operación con Zona Paga',
+        'Zonas Pagas',
         'Paradas con Excepciones'])
+    
     uniques = df.drop_duplicates(subset='Código paradero TS')
     defined_code = uniques['Código paradero TS'] != 'POR DEFINIR'
     defined_x = uniques['x'] != 'POR DEFINIR'

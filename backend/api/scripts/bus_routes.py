@@ -1,12 +1,12 @@
 import pandas as pd
 
-from api.scripts.constants import RAW_DATA
+from api.scripts.constants import current_paradas
 
 def load_data():
-    df = pd.read_excel(RAW_DATA / 'paraderos_2018-1.xlsx', dtype={'Orden\\nCirc.': int, 'Código TS': str, 'Variante': str, 'Sentido Servicio': str})
+    df = pd.read_excel(current_paradas, dtype={'Orden': int, 'Código TS': str, 'Variante': str, 'Sentido Servicio': str})
 
     # nonmbres columnas
-    df = df.rename(columns={'Varian-te': 'Variante'})
+    df = df.rename(columns={'Varian-te': 'Variante', 'Zonas Pagas (horario de operación)': 'Zonas Pagas'})
 
     # eliminamos paradas con datos faltantes 
     defined_code = df['Código paradero TS'] != 'POR DEFINIR'
@@ -18,7 +18,9 @@ def load_data():
     df['Sentido Servicio'] = df['Sentido Servicio'].apply(lambda x: x if x != 'ida' else 'Ida')
 
     # llenamos los vacíos con un string vacío
-    df['Variante'] = df['Variante'].fillna('-')
+    df['Variante'] = df['Variante'].fillna('')
+
+    df.head()
     return df
 
     
