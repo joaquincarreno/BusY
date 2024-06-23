@@ -7,8 +7,8 @@ import "./App.css";
 // time managment constants
 const intervalMS = 8;
 const loopLength = 1;
-
-const BACKEND_URL = "http://0.0.0.0:8000/api/";
+const BACKEND_IP = "http://192.168.100.17:8000/";
+const BACKEND_URL = BACKEND_IP + "api/";
 const ZONES_API = BACKEND_URL + "zones777/";
 const GPS_API = BACKEND_URL + "gps/";
 const STOPS_API = BACKEND_URL + "stops/";
