@@ -21,6 +21,8 @@ const Navbar = ({
   step = 0.001,
   stepSetter = (_) => {},
 
+  stopCount = 0,
+
   time = 0,
 }) => {
   const createHandler = (varName, setter) => {
@@ -108,7 +110,7 @@ const Navbar = ({
 
       <div className="navbar-right">
         <div className="navbar-item">
-          <p>current time: {time}</p>
+          <p>current time: {time.toFixed(4)}</p>
         </div>
         <div className="navbar-item">
           <input
@@ -116,7 +118,7 @@ const Navbar = ({
             min="1"
             max="100"
             step="1"
-            // value={step}
+            defaultValue={10}
             onChange={handleStepChange}
           />
         </div>
@@ -126,7 +128,11 @@ const Navbar = ({
               setShowStops(!showStops);
             }}
           >
-            {showStops ? "ocultar paraderos" : "mostrar paraderos"}{" "}
+            {stopCount
+              ? showStops
+                ? "ocultar paraderos"
+                : "mostrar paraderos"
+              : "no hay paraderos"}
           </button>
         </div>
       </div>
