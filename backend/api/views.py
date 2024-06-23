@@ -45,14 +45,19 @@ def getAvailableBuses(request, recorrido='X00', sentido='X'):
 
     return Response({'buses': values})
 
+from django.db.models import Q
 
 @api_view(['GET'])
-def getGPS(request, patente='ZN-6498', sentido=''):
+def getGPS(request, recorrido= '', patente='', sentido=''):
     # print(patente)
-    if(sentido == ''):
-        objects = GPSRegistry.objects.filter(patente=patente)
-    else:
-        objects = GPSRegistry.objects.filter(patente=patente, sentido=sentido)
+
+    objects = GPSRegistry.objects.filter(recorrido=recorrido).order_by('patente', 'date', 'time')
+    
+    if(patente != ''):
+        objects = objects.filter(patente=patente)
+    
+    if(sentido != ''):
+        objects = objects.filter(sentido=sentido)
 
     query = objects.query
     query.group_by = ['patente']
