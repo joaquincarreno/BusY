@@ -76,11 +76,6 @@ class MovingBus {
     return (360 * this.orientation) / (2 * Math.PI);
   }
 }
-// const bunnyMesh = "./src/assets/bunny.obj";
-// const exampleData =
-//   "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/bart-stations.json";
-// const exampleMesh =
-//   "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/humanoid_quad.obj";
 
 class Buses {
   constructor(busList) {
@@ -145,9 +140,6 @@ function App() {
 
   // available buses API call
   useEffect(() => {
-    // if (selectedRoute == "") {
-    //   return;
-    // }
     get(
       BUSES_API +
         selectedRoute +
@@ -177,10 +169,11 @@ function App() {
   // gps API call
   useEffect(() => {
     setGpsReady(false);
-    if (selectedBus != "") {
+    if (selectedRoute != "") {
       get(
         GPS_API +
-          selectedBus +
+          selectedRoute +
+          (selectedBus == "" ? "" : "/" + selectedBus) +
           (selectedDirection == "" ? "" : "/" + selectedDirection)
       ).then((response) => {
         const data = response.data;
@@ -190,13 +183,12 @@ function App() {
         setMovingBuses(new Buses(data));
         setGpsReady(true);
       });
-      // } else if(selectedRoute != ''){
     } else {
       setGpsData([]);
       setMovingBuses([]);
       setGpsReady(true);
     }
-  }, [selectedBus, selectedDirection]);
+  }, [selectedRoute, selectedBus, selectedDirection]);
 
   // bus stops API call
   useEffect(() => {
