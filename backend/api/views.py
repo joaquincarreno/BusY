@@ -64,6 +64,8 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
     results = QuerySet(query=query, model=GPSRegistry)
 
     # print(results)
+    if(len(results) == 0):
+        return Response([])
 
     data = []
     patente_actual = results[0].patente
@@ -73,13 +75,14 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
     for o in results:
         i+=1
         if(patente_actual != o.patente):
-            data += [
-                {
-                    'patente': patente_actual,
-                    'timestamps': timestamps,
-                    'coords': coords
-                }
-            ]
+            if(len(timestamps) > 1):
+                data += [
+                    {
+                        'patente': patente_actual,
+                        'timestamps': timestamps,
+                        'coords': coords
+                    }
+                ]
             patente_actual = o.patente
             coords = []
             timestamps = []
