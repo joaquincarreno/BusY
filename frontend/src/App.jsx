@@ -180,6 +180,18 @@ function App() {
         // console.log("gps");
         // console.log(data);
         setGpsData(data);
+        setGpsReady(true);
+        if (data.length == 0) {
+          alert(
+            "No hay datos GPS para " +
+              selectedRoute +
+              " " +
+              selectedBus +
+              " " +
+              selectedDirection
+          );
+          return;
+        }
         setMovingBuses(new Buses(data));
         setGpsReady(true);
       });
