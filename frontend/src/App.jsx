@@ -7,7 +7,8 @@ import "./App.css";
 // time managment constants
 const intervalMS = 8;
 const loopLength = 1;
-const BACKEND_IP = "http://192.168.100.17:8000/";
+const BACKEND_IP = "http://0.0.0.0:8000/";
+// const BACKEND_IP = "http://192.168.100.17:8000/";
 const BACKEND_URL = BACKEND_IP + "api/";
 const ZONES_API = BACKEND_URL + "zones777/";
 const GPS_API = BACKEND_URL + "gps/";
@@ -52,6 +53,8 @@ class MovingBus {
   getCurrentCoordinates(step, relativeTime) {
     const start = this.coordinates[step];
     const end = this.coordinates[step + 1];
+    // console.log("[getCurrentCoords] step count = ");
+    // console.log(this.coordinates.length);
     const dx = end[0] - start[0];
     const dy = end[1] - start[1];
     // console.log("getCurrentCoords: dx=", dx, "dy=", dy);
@@ -177,7 +180,6 @@ function App() {
           (selectedDirection == "" ? "" : "/" + selectedDirection)
       ).then((response) => {
         const data = response.data;
-        // console.log("gps");
         // console.log(data);
         setGpsData(data);
         setGpsReady(true);
@@ -233,7 +235,7 @@ function App() {
       if (pause) {
         setTime((t) => (t + 0) % loopLength);
       } else {
-      setTime((t) => (t + step) % loopLength);
+        setTime((t) => (t + step) % loopLength);
       }
       // console.log(time);
     }, intervalMS);
@@ -266,6 +268,8 @@ function App() {
               time={time}
               step={step}
               stepSetter={setStep}
+              pause={pause}
+              pauseSetter={setPause}
             />
           </div>
           <DeckGlMap
