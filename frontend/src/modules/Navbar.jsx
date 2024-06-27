@@ -113,9 +113,10 @@ const Navbar = ({
 
       <div className="navbar-right">
         <div className="navbar-item">
-          <button onClick={() => pauseSetter(!pause)}>
-            {pause ? "continuar" : "pausar"}
-          </button>
+          <button
+            onClick={() => pauseSetter(!pause)}
+            className={pause ? "stop" : "play"}
+          />
         </div>
         <div className="navbar-item">
           <p>current time: {time.toFixed(4)}</p>

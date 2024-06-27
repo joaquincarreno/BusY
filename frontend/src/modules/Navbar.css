@@ -32,3 +32,55 @@
     text-decoration: none;
     text-align: center;
 }
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s;
+    position: relative;
+}
+
+button.play::before,
+button.stop::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+}
+
+button.play::before {
+    border-width: 15px 0 15px 26px;
+    border-color: transparent transparent transparent white;
+    left: 10px;
+}
+
+button.stop::before {
+    width: 50%;
+    height: 50%;
+    background-color: white;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button:focus {
+    outline: none;
+}
