@@ -193,7 +193,6 @@ function App() {
           return;
         }
         setMovingBuses(new Buses(data));
-        setGpsReady(true);
       });
     } else {
       setGpsData([]);
