@@ -97,7 +97,7 @@ class Buses {
 function App() {
   //
   const [time, setTime] = useState(0);
-  const [step, setStep] = useState(0.005);
+  const [step, setStep] = useState(0.00028);
 
   const [zones, setZones] = useState({});
   const [zonesReady, setZonesReady] = useState(false);

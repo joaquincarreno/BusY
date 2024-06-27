@@ -1,6 +1,9 @@
 import React from "react";
 import "./Navbar.css";
 
+const VEL_MIN = 1.0 / 24 / 60 / 60; // un segundo por segundo
+const VEL_MAX = 90.0 / 24 / 60 / 60; // 1.5 min por segundo
+
 const Navbar = ({
   availableRoutes = [],
   availableBuses = [],
@@ -56,8 +59,8 @@ const Navbar = ({
 
     const log_in_min = Math.log10(1);
     const log_in_max = Math.log10(100);
-    const log_out_min = Math.log10(1.0 / 24 / 60 / 60);
-    const log_out_max = Math.log10(0.01);
+    const log_out_min = Math.log10(VEL_MIN);
+    const log_out_max = Math.log10(VEL_MAX);
 
     const log_x = Math.log10(x);
 
@@ -69,7 +72,24 @@ const Navbar = ({
     // const log = Math.log10(0.001) + ()
 
     stepSetter(Math.pow(10, log_mapped));
-    console.log(step);
+    console.log(step * 3600 * 24 + " segundos/segundo");
+  };
+
+  const parseTimeToHoursMinutes = (time) => {
+    if (time < 0 || time > 1) {
+      throw new Error("[parseTimeToHour] Error: Time value out of range");
+    }
+    const tiempoEnHoras = time * 24;
+
+    const horas = Math.floor(tiempoEnHoras);
+    const minutos = Math.floor((tiempoEnHoras - horas) * 60);
+    const segundos = Math.floor(((tiempoEnHoras - horas) * 60 - minutos) * 60);
+
+    // Step 4: Return the formatted time
+    return `${String(horas).padStart(2, "0")}:${String(minutos).padStart(
+      2,
+      "0"
+    )}:${String(segundos).padStart(2, "0")}`;
   };
 
   return (
@@ -119,7 +139,10 @@ const Navbar = ({
           />
         </div>
         <div className="navbar-item">
-          <p>current time: {time.toFixed(4)}</p>
+          <p>
+            Hora actual: <br />
+            {parseTimeToHoursMinutes(time)}
+          </p>
         </div>
         <div className="navbar-item">
           <input
