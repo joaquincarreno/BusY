@@ -24,6 +24,9 @@ const Navbar = ({
   stopCount = 0,
 
   time = 0,
+
+  pause = false,
+  pauseSetter = (_) => {},
 }) => {
   const createHandler = (varName, setter) => {
     return (event) => {
@@ -109,6 +112,11 @@ const Navbar = ({
       </div>
 
       <div className="navbar-right">
+        <div className="navbar-item">
+          <button onClick={() => pauseSetter(!pause)}>
+            {pause ? "continuar" : "pausar"}
+          </button>
+        </div>
         <div className="navbar-item">
           <p>current time: {time.toFixed(4)}</p>
         </div>

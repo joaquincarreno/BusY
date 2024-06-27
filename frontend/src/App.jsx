@@ -214,15 +214,20 @@ function App() {
   };
 
   const [viewState, setViewState] = useState(initialViewState);
+  const [pause, setPause] = useState(false);
 
   // time passing
   useEffect(() => {
     const interval = setInterval(() => {
+      if (pause) {
+        setTime((t) => (t + 0) % loopLength);
+      } else {
       setTime((t) => (t + step) % loopLength);
+      }
       // console.log(time);
     }, intervalMS);
     return () => clearInterval(interval);
-  }, [step]);
+  }, [step, pause]);
 
   return (
     <>
