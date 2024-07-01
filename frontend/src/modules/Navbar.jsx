@@ -31,9 +31,12 @@ const Navbar = ({
   pause = false,
   pauseSetter = (_) => {},
 }) => {
-  const createHandler = (varName, setter) => {
+  const createHandler = (varName, setter, unSetterers = []) => {
     return (event) => {
       const value = event.target.value;
+      unSetterers.map((setter) => {
+        setter("");
+      });
       setter(value);
       console.log("selected " + varName + ": " + value);
     };
@@ -41,9 +44,9 @@ const Navbar = ({
 
   const createSelector = (defaultValue, currentValue, options, handler) => {
     return (
-      <select onChange={handler}>
+      <select value={currentValue} onChange={handler}>
         <option value="" hidden>
-          {currentValue != "" ? currentValue : defaultValue}
+          {defaultValue}
         </option>
         {options.map((item, index) => (
           <option key={index} value={item}>
@@ -92,6 +95,10 @@ const Navbar = ({
     )}:${String(segundos).padStart(2, "0")}`;
   };
 
+  const directionNames = {
+    I: "Ida",
+    R: "Retorno",
+  };
   return (
     <div className="navbar">
       <div className="navbar-left">
@@ -102,7 +109,7 @@ const Navbar = ({
             "Servicio",
             selectedRoute,
             availableRoutes,
-            createHandler("route", routeSetter)
+            createHandler("route", routeSetter, [directionSetter, busSetter])
           )}
         </div>
         <div className="navbar-item">
@@ -111,7 +118,7 @@ const Navbar = ({
             "Patente",
             selectedBus,
             availableBuses,
-            createHandler("bus", busSetter)
+            createHandler("bus", busSetter, [directionSetter])
           )}
         </div>
 
@@ -119,11 +126,15 @@ const Navbar = ({
           {/* selector de sentido */}
           {availableDirections.length > 0 ? (
             <select onChange={createHandler("direction", directionSetter)}>
-              <option value=""> Cualquier sentido </option> +
-              availableDirections.includes("I") ? (
-              <option value="I"> Ida </option>) : <></> +
-              availableDirections.includes("R") ? (
-              <option value="R"> Retorno </option>) : (<></>)
+              {availableDirections.lenght > 1 ? (
+                availableDirections.map((dir) => {
+                  return <option value={dir}>{directionNames[dir]}</option>;
+                })
+              ) : (
+                <option value={availableDirections[0]}>
+                  Solo {directionNames[availableDirections[0]]} disponible
+                </option>
+              )}
             </select>
           ) : (
             <></>
