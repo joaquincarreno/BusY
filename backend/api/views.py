@@ -106,15 +106,41 @@ def getStops(request, recorrido='', sentido=''):
         recorrido = recorrido[1:] if recorrido[0] == 'T' else recorrido
         if(sentido != ''):
             paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection=sentido)
+            ids = list(paradas.values_list('stop', flat=True))
+            objects = list(BusStops.objects.filter(id__in=ids).values())
+
+            assert len(ids) == len(objects)
+
+            for i in range(len(ids)):
+                obj = objects[i]
+                obj['direction'] = sentido
+                objects[i] = obj
+
         else:
-            paradas = Routes.objects.filter(serviceTSCode=recorrido)
+            paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='I')
+            idsIda = list(paradas.values_list('stop', flat=True))
+            objectsIda = list(BusStops.objects.filter(id__in=idsIda).values())
+
+            assert len(idsIda) == len(objectsIda)
+
+            for i in range(len(idsIda)):
+                obj = objectsIda[i]
+                obj['direction'] = 'I'
+                objectsIda[i] = obj
+
+            paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='R')
+            idsRet = list(paradas.values_list('stop', flat=True))
+            objectsRet = list(BusStops.objects.filter(id__in=idsRet).values())
+
+            assert len(idsRet) == len(objectsRet)
+
+            for i in range(len(idsRet)):
+                obj = objectsRet[i]
+                obj['direction'] = 'R'
+                objectsRet[i] = obj
+
+            objects = objectsIda + objectsRet
             
-        ids = list(paradas.values_list('stop', flat=True))
-
-        objects = list(BusStops.objects.filter(id__in=ids).values())
-
-
-    
     return Response({'stops': objects})
 
 @api_view(['GET'])
