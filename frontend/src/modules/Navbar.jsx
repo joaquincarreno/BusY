@@ -20,11 +20,10 @@ const Navbar = ({
 
   showStops = false,
   setShowStops = (_) => {},
+  stopCount = 0,
 
   step = 0.001,
   stepSetter = (_) => {},
-
-  stopCount = 0,
 
   time = 0,
 
@@ -171,7 +170,7 @@ const Navbar = ({
               setShowStops(!showStops);
             }}
           >
-            {stopCount
+            {stopCount > 0
               ? showStops
                 ? "ocultar paraderos"
                 : "mostrar paraderos"

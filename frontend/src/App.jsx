@@ -197,6 +197,7 @@ function App() {
               directionSetter={setSelectedDirection}
               showStops={showStops}
               setShowStops={setShowStops}
+              stopCount={stopsData["stops"].length}
               time={time}
               step={step}
               stepSetter={setStep}
