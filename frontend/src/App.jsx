@@ -123,11 +123,13 @@ function App() {
 
   // bus stops API call
   useEffect(() => {
-    get(
+    const url =
       STOPS_API +
-        selectedRoute +
-        (selectedDirection == "" ? "" : "/" + selectedDirection)
-    ).then((response) => {
+      selectedRoute +
+      (selectedDirection == "" ? "" : "/" + selectedDirection);
+    // console.log("[get stops]", url);
+    // console.log("[get stops]", availableDirections);
+    get(url).then((response) => {
       const data = response.data;
       // console.log("stops");
       // console.log(data);
