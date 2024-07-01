@@ -8,10 +8,9 @@ import "./App.css";
 // time managment constants
 const intervalMS = 8;
 const loopLength = 1;
-const BACKEND_IP = "http://0.0.0.0:8000/";
-// const BACKEND_IP = "http://192.168.100.17:8000/";
+// const BACKEND_IP = "http://localhost:8000/";
+const BACKEND_IP = "http://192.168.100.17:8000/";
 const BACKEND_URL = BACKEND_IP + "api/";
-const ZONES_API = BACKEND_URL + "zones777/";
 const GPS_API = BACKEND_URL + "gps/";
 const STOPS_API = BACKEND_URL + "stops/";
 const ROUTES_API = BACKEND_URL + "availableRoutes/";
@@ -24,9 +23,6 @@ function App() {
   //
   const [time, setTime] = useState(0);
   const [step, setStep] = useState(0.00028);
-
-  const [zones, setZones] = useState({});
-  const [zonesReady, setZonesReady] = useState(false);
 
   const [movingBuses, setMovingBuses] = useState(null);
 
@@ -48,13 +44,6 @@ function App() {
   const [showStops, setShowStops] = useState(false);
   const [selectedBus, setSelectedBus] = useState("");
   const [selectedDirection, setSelectedDirection] = useState("");
-
-  useEffect(() => {
-    get(ZONES_API).then((response) => {
-      setZones(JSON.parse(response.data));
-      setZonesReady(true);
-    });
-  }, []);
 
   // available bus routes API call
   useEffect(() => {
@@ -170,11 +159,7 @@ function App() {
 
   return (
     <>
-      {zonesReady &&
-      gpsReady &&
-      stopsReady &&
-      routesReady &&
-      availableBusesReady ? (
+      {gpsReady && stopsReady && routesReady && availableBusesReady ? (
         <div
         // style={{ width: "100vw", height: "90vh", position: "relative" }}
         >
@@ -205,9 +190,8 @@ function App() {
             movingBuses={movingBuses}
             gpsData={gpsData}
             stopsData={stopsData}
-            zonesData={zones}
             busMesh={ASSETS + "bus/JETSET.obj"}
-            busStopMesh={ASSETS + "bus_stop/bus_stop.obj"}
+            // busStopMesh={ASSETS + "bus_stop/bus_stop.obj"}
             time={time}
             showStops={showStops}
           />
@@ -215,11 +199,9 @@ function App() {
       ) : (
         <div>
           <p>loading:</p>
-          {!zonesReady ? <p>waiting on zones</p> : <></>}
           {!gpsReady ? <p>waiting on gps</p> : <></>}
           {!stopsReady ? <p>waiting on stops</p> : <></>}
           {!routesReady ? <p>waiting on routes</p> : <></>}
-          {!zonesReady ? <p>waiting on zones</p> : <></>}
           {!availableBusesReady ? <p>waiting on available buses</p> : <></>}
         </div>
       )}

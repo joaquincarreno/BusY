@@ -14,9 +14,8 @@ function DeckGlMap({
   gpsData = [],
   movingBuses = {},
   stopsData = JSON.parse([]),
-  zonesData = JSON.parse([]),
   busMesh = null,
-  busStopMesh = null,
+  // busStopMesh = null,
   time = 0,
   showStops = true,
 }) {
