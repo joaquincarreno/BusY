@@ -53,7 +53,16 @@ function DeckGlMap({
   const stopsLayer = new IconLayer({
     id: "IconLayer",
     data: stopsData["stops"],
-    getColor: (d) => [Math.sqrt(d.exits), 140, 0],
+    getColor: (d) => {
+      const s = d.direction;
+      if (s == "I") {
+        return [255, 80, 80];
+      } else if (s == "R") {
+        return [80, 80, 255];
+      } else {
+        return [80, 255, 80];
+      }
+    },
     getIcon: (d) => "marker",
     getPosition: (d) => {
       // console.log(d);
