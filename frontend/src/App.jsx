@@ -143,6 +143,24 @@ function App() {
   };
 
   const [viewState, setViewState] = useState(initialViewState);
+
+  useEffect(() => {
+    if (selectedBus != "" && movingBuses.getBus(selectedBus)) {
+      const bus = movingBuses.getBus(selectedBus);
+      const coords = bus.getPosition(time);
+      const bearing = bus.getOrientation();
+      setViewState({
+        latitude: coords[1],
+        longitude: coords[0],
+        zoom: viewState.zoom,
+        minZoom: 12,
+        maxZoom: 15,
+        pitch: 50,
+        bearing: 180 - bearing,
+      });
+    }
+  }, [time]);
+
   const [pause, setPause] = useState(false);
 
   // time passing
