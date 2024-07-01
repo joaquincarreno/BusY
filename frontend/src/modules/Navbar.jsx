@@ -44,9 +44,7 @@ const Navbar = ({
   const createSelector = (defaultValue, currentValue, options, handler) => {
     return (
       <select value={currentValue} onChange={handler}>
-        <option value="" hidden>
-          {defaultValue}
-        </option>
+        <option value="">{defaultValue}</option>
         {options.map((item, index) => (
           <option key={index} value={item}>
             {item}
@@ -98,6 +96,7 @@ const Navbar = ({
     I: "Ida",
     R: "Retorno",
   };
+
   return (
     <div className="navbar">
       <div className="navbar-left">
@@ -105,7 +104,7 @@ const Navbar = ({
         <div className="navbar-item">
           {/* selector de ruta */}
           {createSelector(
-            "Servicio",
+            "Seleccione Servicio",
             selectedRoute,
             availableRoutes,
             createHandler("route", routeSetter, [directionSetter, busSetter])
@@ -114,7 +113,7 @@ const Navbar = ({
         <div className="navbar-item">
           {/* selector de bus */}
           {createSelector(
-            "Patente",
+            selectedRoute != "" ? "Todos los buses" : "Seleccione Servicio",
             selectedBus,
             availableBuses,
             createHandler("bus", busSetter, [directionSetter])
@@ -124,11 +123,16 @@ const Navbar = ({
         <div className="navbar-item">
           {/* selector de sentido */}
           {availableDirections.length > 0 ? (
-            <select onChange={createHandler("direction", directionSetter)}>
-              {availableDirections.lenght > 1 ? (
-                availableDirections.map((dir) => {
-                  return <option value={dir}>{directionNames[dir]}</option>;
-                })
+            <select
+              value={selectedDirection}
+              onChange={createHandler("direction", directionSetter)}
+            >
+              {availableDirections.length == 2 ? (
+                <>
+                  <option value={""}> Ambos Sentidos </option> +
+                  <option value={"I"}>Ida</option> +
+                  <option value={"R"}>Retorno</option>
+                </>
               ) : (
                 <option value={availableDirections[0]}>
                   Solo {directionNames[availableDirections[0]]} disponible
