@@ -9,7 +9,11 @@ class Buses {
     // console.log(this);
   }
   getBus(patente) {
-    return this.dict[patente];
+    if(patente in this.dict){
+      return this.dict[patente];
+    }else{
+      return false;
+    }
   }
 }
 

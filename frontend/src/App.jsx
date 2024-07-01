@@ -107,6 +107,7 @@ function App() {
               " " +
               selectedDirection
           );
+          setMovingBuses(new Buses([]));
           return;
         }
         setMovingBuses(new Buses(data));
