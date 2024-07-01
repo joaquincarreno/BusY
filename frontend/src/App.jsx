@@ -81,6 +81,8 @@ function App() {
           setAvailableDirections(data);
         }
       );
+    } else {
+      setAvailableDirections([]);
     }
   }, [selectedBus]);
 
