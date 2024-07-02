@@ -125,11 +125,12 @@ function App() {
 
   useEffect(() => {
     if (selectedRoute != "") {
-      // console.log("updating buses with new gps data", gpsData);
-      setMovingBuses(new Buses(gpsData));
+      const newBuses = new Buses(gpsData);
+      console.log("updating buses with new gps data", newBuses);
+      setMovingBuses(newBuses);
       setFirstDate(movingBuses.earliestTimeStamp);
       setLastDate(movingBuses.latestTimeStamp);
-      setLoopLenght((lastDate - firstDate) / 1000);
+      setLoopLenght(movingBuses.timeRange);
       console.log("[gps api call] update loopLenght", loopLength);
     }
   }, [gpsData]);
@@ -217,8 +218,8 @@ function App() {
               setShowStops={setShowStops}
               stopCount={stopsData["stops"].length}
               time={time}
-              firstTimeStamp={movingBuses.earliestTimeStamp}
-              lastTimeStamp={movingBuses.latestTimeStamp}
+              firstTimeStamp={firstDate}
+              lastTimeStamp={lastDate}
               step={step}
               stepSetter={setStep}
               pause={pause}
