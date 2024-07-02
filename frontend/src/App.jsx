@@ -22,6 +22,7 @@ const ASSETS = "./src/assets/";
 function App() {
   //
   const [time, setTime] = useState(0);
+  const [resetTime, setResetTime] = useState(false);
   const [step, setStep] = useState(5);
   const intervalMS = 10;
 
@@ -189,16 +190,20 @@ function App() {
     const interval = setInterval(() => {
       if (!pause) {
         setTime((t) => {
-          // console.log("[time management]");
-          // console.log("time", t);
-          // console.log("loopLenght", loopLength);
+          if (resetTime) {
+            t = 0;
+            setResetTime(false);
+          }
+          console.log("[time management]");
+          console.log("time", t);
+          console.log("loopLenght", loopLength);
           return (t + step) % loopLength;
         });
       }
       // console.log(time);
     }, intervalMS);
     return () => clearInterval(interval);
-  }, [step, pause]);
+  }, [step, pause, resetTime]);
 
   return (
     <>
@@ -221,6 +226,7 @@ function App() {
               setShowStops={setShowStops}
               stopCount={stopsData["stops"].length}
               time={time}
+              timeResetter={setResetTime}
               firstTimeStamp={firstDate}
               lastTimeStamp={lastDate}
               step={step}

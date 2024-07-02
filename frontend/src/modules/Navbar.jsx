@@ -23,7 +23,7 @@ const Navbar = ({
   stopCount = 0,
 
   time = 0,
-  timeSetter = (_) => {},
+  timeResetter = (_) => {},
 
   firstTimeStamp = new Date("2018/01/01"),
   lastTimeStamp = new Date("2019/12/31"),
@@ -79,8 +79,8 @@ const Navbar = ({
 
   const getDateTime = (time) => {
     // time should be in seconds (how do we check this?)
-    console.log(new Date(firstTimeStamp));
-    console.log(new Date(lastTimeStamp));
+    // console.log(new Date(firstTimeStamp));
+    // console.log(new Date(lastTimeStamp));
     const currTime = new Date(firstTimeStamp + time * 1000);
     // console.log("[currTime]", currTime);
     // console.log("[currMonth]", currTime.getMonth());
@@ -145,7 +145,15 @@ const Navbar = ({
 
       <div className="navbar-right">
         <div className="navbar-item">
-          <button onClick={() => timeSetter(0)}>reset</button>
+          <button
+            onClick={() => {
+              console.log("time resetted");
+              timeResetter(true);
+              pauseSetter(true);
+            }}
+          >
+            reset
+          </button>
         </div>
         <div className="navbar-item">
           <button
