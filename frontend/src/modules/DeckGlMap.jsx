@@ -92,18 +92,12 @@ function DeckGlMap({
     data: gpsData,
     mesh: busMesh,
     loaders: [OBJLoader],
-
     getPosition: (d) => {
       return movingBuses.getBus(d.patente).getPosition(time);
     },
 
     getColor: (d) => [255 * time * time, (1 - time) * 255, 255 * time * time],
     getOrientation: (d) => {
-      // console.log(
-      //   "[movingBusLayer] getOrientation:",
-      //   movingBuses.getBus(d.patente).getOrientation()
-      // );
-
       return [0, movingBuses.getBus(d.patente).getOrientation(), 90];
     },
     getScale: (d) => {
