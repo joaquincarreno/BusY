@@ -1,12 +1,13 @@
 class MovingBusAbsolute {
   constructor(info) {
+    this.nSteps = info.coords.length 
     this.coordinates = info.coords;
     // console.log(Date.parse(info.timeStamps[0]))
     this.timeStamps = info.timeStamps.map((x) => (Date.parse(x)));
 
     // console.log(this.timeStamps)\
     this.firstTimeStamp = this.timeStamps[0]
-    this.lastTimeStamp = this.timeStamps[info.timeStamps.length - 1]
+    this.lastTimeStamp = this.timeStamps[this.nSteps - 1]
     this.currentStep = 0;
     this.position = [0, 0];
     this.orientation = 0;
@@ -14,13 +15,15 @@ class MovingBusAbsolute {
   }
     updateStep(time) {
     if(time < this.timeStamps[0]){
-      this.currentStep = -1
+      this.currentStep = 0
+      return
     }
     var i = 0;
     while (time > this.timeStamps[i + 1]) {
       i = i + 1;
-      if (i >= this.timeStamps.lenght) {
-        this.currentStep = -1
+      if (i >= this.nSteps) {
+        this.currentStep = this.nSteps-1
+        return
       }
     }
     this.currentStep = i;
@@ -46,9 +49,6 @@ class MovingBusAbsolute {
   getPosition(time) {
     this.updateStep(time);
     const step = this.currentStep;
-    if(step == -1){
-      return [0, 0]
-    }
     const startTime = this.timeStamps[step];
     const endTime = this.timeStamps[step + 1];
     const relTime = this.getRelativeTime(
