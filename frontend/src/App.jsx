@@ -22,9 +22,11 @@ const ASSETS = "./src/assets/";
 function App() {
   //
   const [time, setTime] = useState(0);
-  const [step, setStep] = useState(0.00028);
-
-  const [movingBuses, setMovingBuses] = useState(null);
+  const [step, setStep] = useState(5);
+  const intervalMS = 10;
+  const [loopLength, setLoopLenght] = useState(
+    (new Date("3000/01/01") - new Date("1000/01/01")) / 1000
+  );
 
   const [gpsData, setGpsData] = useState([{}]);
   const [gpsReady, setGpsReady] = useState(false);
