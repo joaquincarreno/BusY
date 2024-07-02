@@ -28,8 +28,10 @@ function App() {
     (new Date("3000/01/01") - new Date("1000/01/01")) / 1000
   );
 
-  const [gpsData, setGpsData] = useState([{}]);
+  const [gpsData, setGpsData] = useState([]);
   const [gpsReady, setGpsReady] = useState(false);
+
+  const [movingBuses, setMovingBuses] = useState(new Buses(gpsData));
 
   const [stopsData, setStopsData] = useState([{}]);
   const [stopsReady, setStopsReady] = useState(false);
