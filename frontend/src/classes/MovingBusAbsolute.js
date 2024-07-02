@@ -1,5 +1,6 @@
 class MovingBusAbsolute {
   constructor(info) {
+    this.patente = info.patente
     this.nSteps = info.coords.length 
     this.coordinates = info.coords;
     // console.log(Date.parse(info.timeStamps[0]))
