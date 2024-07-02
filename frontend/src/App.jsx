@@ -126,7 +126,10 @@ function App() {
   useEffect(() => {
     if (selectedRoute != "") {
       const newBuses = new Buses(gpsData);
-      console.log("updating buses with new gps data", newBuses);
+      console.log(
+        "[gps api call] updating movingBuses with new gps data",
+        newBuses
+      );
       setMovingBuses(newBuses);
       setFirstDate(movingBuses.earliestTimeStamp);
       setLastDate(movingBuses.latestTimeStamp);
