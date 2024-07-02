@@ -35,7 +35,7 @@ function App() {
   const [gpsData, setGpsData] = useState([]);
   const [gpsReady, setGpsReady] = useState(false);
 
-  const [movingBuses, setMovingBuses] = useState(new Buses(gpsData));
+  const [movingBuses, setMovingBuses] = useState(() => new Buses(gpsData));
 
   const [stopsData, setStopsData] = useState([{}]);
   const [stopsReady, setStopsReady] = useState(false);
