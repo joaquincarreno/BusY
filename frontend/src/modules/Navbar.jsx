@@ -23,6 +23,8 @@ const Navbar = ({
   stopCount = 0,
 
   time = 0,
+  timeSetter = (_) => {},
+
   firstTimeStamp = new Date("2018/01/01"),
   lastTimeStamp = new Date("2019/12/31"),
 
@@ -139,6 +141,9 @@ const Navbar = ({
       </div>
 
       <div className="navbar-right">
+        <div className="navbar-item">
+          <button onClick={() => timeSetter(0)}>reset</button>
+        </div>
         <div className="navbar-item">
           <button
             onClick={() => pauseSetter(!pause)}
