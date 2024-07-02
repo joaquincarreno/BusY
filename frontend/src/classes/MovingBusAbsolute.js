@@ -13,21 +13,20 @@ class MovingBusAbsolute {
     // console.log("-  logs  -");u
   }
     updateStep(time) {
+    if(time < this.timeStamps[0]){
+      this.currentStep = -1
+    }
     var i = 0;
     while (time > this.timeStamps[i + 1]) {
       i = i + 1;
       if (i >= this.timeStamps.lenght) {
-        return new Error("time out of range");
+        this.currentStep = -1
       }
     }
-    if (this.currentStep != i) {
-      this.currentStep = i;
-    }
+    this.currentStep = i;
   }
   getRelativeTime(start, end, current) {
-    end = end - start;
-    current = current - start;
-    return current / end;
+    return (current - start) / (end - start);
   }
   getCurrentCoordinates(step, relativeTime) {
     const start = this.coordinates[step];
@@ -47,9 +46,14 @@ class MovingBusAbsolute {
   getPosition(time) {
     this.updateStep(time);
     const step = this.currentStep;
+    if(step == -1){
+      return [0, 0]
+    }
+    const startTime = this.timeStamps[step];
+    const endTime = this.timeStamps[step + 1];
     const relTime = this.getRelativeTime(
-      this.timeStamps[step],
-      this.timeStamps[step + 1],
+      startTime,
+      endTime,
       time
     );
     return this.getCurrentCoordinates(step, relTime);
