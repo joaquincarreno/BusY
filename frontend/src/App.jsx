@@ -24,8 +24,12 @@ function App() {
   const [time, setTime] = useState(0);
   const [step, setStep] = useState(5);
   const intervalMS = 10;
+
+  const [firstDate, setFirstDate] = useState("1000/01/01");
+  const [lastDate, setLastDate] = useState("3000/01/01");
+
   const [loopLength, setLoopLenght] = useState(
-    (new Date("3000/01/01") - new Date("1000/01/01")) / 1000
+    (new Date(lastDate) - new Date(firstDate)) / 1000
   );
 
   const [gpsData, setGpsData] = useState([]);
@@ -123,8 +127,10 @@ function App() {
     if (selectedRoute != "") {
       // console.log("updating buses with new gps data", gpsData);
       setMovingBuses(new Buses(gpsData));
-      setLoopLenght(movingBuses.timeRange);
-      // console.log("[gps api call] update loopLenght", loopLength);
+      setFirstDate(movingBuses.earliestTimeStamp);
+      setLastDate(movingBuses.latestTimeStamp);
+      setLoopLenght((lastDate - firstDate) / 1000);
+      console.log("[gps api call] update loopLenght", loopLength);
     }
   }, [gpsData]);
 
