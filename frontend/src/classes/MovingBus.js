@@ -1,10 +1,10 @@
 class MovingBus {
   constructor(info) {
     this.coordinates = info.coords;
-    const first = Date.parse(info.timestamps[0]);
+    const first = Date.parse(info.timeStamps[0]);
     const timeRange =
-      Date.parse(info.timestamps[info.timestamps.length - 1]) - first;
-    this.timestamps = info.timestamps.map(
+      Date.parse(info.timeStamps[info.timeStamps.length - 1]) - first;
+    this.timeStamps = info.timeStamps.map(
       (x) => (Date.parse(x) - first) / timeRange
     );
     this.currentStep = 0;
@@ -14,9 +14,9 @@ class MovingBus {
   }
   updateStep(time) {
     var i = 0;
-    while (time > this.timestamps[i + 1]) {
+    while (time > this.timeStamps[i + 1]) {
       i = i + 1;
-      if (i >= this.timestamps.lenght) {
+      if (i >= this.timeStamps.lenght) {
         return new Error("time out of range");
       }
     }
@@ -48,8 +48,8 @@ class MovingBus {
     this.updateStep(time);
     const step = this.currentStep;
     const relTime = this.getRelativeTime(
-      this.timestamps[step],
-      this.timestamps[step + 1],
+      this.timeStamps[step],
+      this.timeStamps[step + 1],
       time
     );
     return this.getCurrentCoordinates(step, relTime);
