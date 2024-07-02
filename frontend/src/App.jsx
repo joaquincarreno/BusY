@@ -167,15 +167,18 @@ function App() {
     }
   }, [time]);
 
-  const [pause, setPause] = useState(false);
+  const [pause, setPause] = useState(true);
 
   // time passing
   useEffect(() => {
     const interval = setInterval(() => {
-      if (pause) {
-        setTime((t) => (t + 0) % loopLength);
-      } else {
-        setTime((t) => (t + step) % loopLength);
+      if (!pause) {
+        setTime((t) => {
+          // console.log("[time management]");
+          // console.log("time", t);
+          // console.log("loopLenght", loopLength);
+          return (t + step) % loopLength;
+        });
       }
       // console.log(time);
     }, intervalMS);
