@@ -8,18 +8,24 @@ class Buses {
     
 
     this.dict = {};
-    // console.log(busList);
-    busList.forEach((b) => {
-      this.dict[b.patente] = new MovingBusAbsolute(b);
-      // console.log(new Date(this.dict[b.patente].firstTimeStamp))
-      if(this.dict[b.patente].firstTimeStamp < this.earliestTimeStamp){
-        this.earliestTimeStamp = this.dict[b.patente].firstTimeStamp
-      }
-      
-      if(this.dict[b.patente].lastTimeStamp > this.latestTimeStamp){
-        this.latestTimeStamp = this.dict[b.patente].lastTimeStamp
-      }
-    });
+    if(busList.length > 0){
+      console.log('Adding', busList.length ,'buses to dict');
+      busList.forEach((b) => {
+        const bus = new MovingBusAbsolute(b);
+        this.dict[b.patente] = bus
+        // console.log(new Date(this.dict[b.patente].firstTimeStamp))
+        if(bus.firstTimeStamp < this.earliestTimeStamp){
+          this.earliestTimeStamp = bus.firstTimeStamp
+        }
+        
+        if(bus.lastTimeStamp > this.latestTimeStamp){
+          this.latestTimeStamp = bus.lastTimeStamp
+        }
+      });
+      console.log('Added the following buses:', Object.keys(this.dict))
+    }else{
+      console.log('empty busList')
+    }
     
     this.timeRange = this.latestTimeStamp - this.earliestTimeStamp;
 
