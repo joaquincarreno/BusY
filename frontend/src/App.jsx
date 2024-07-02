@@ -99,9 +99,8 @@ function App() {
           (selectedDirection == "" ? "" : "/" + selectedDirection)
       ).then((response) => {
         const data = response.data;
-        // console.log(data);
+        console.log("[GPS data]", data);
         setGpsData(data);
-        setGpsReady(true);
         if (data.length == 0) {
           alert(
             "No hay datos GPS para " +
@@ -111,17 +110,21 @@ function App() {
               " " +
               selectedDirection
           );
-          setMovingBuses(new Buses([]));
-          return;
         }
-        setMovingBuses(new Buses(data));
       });
-    } else {
-      setGpsData([]);
-      setMovingBuses([]);
       setGpsReady(true);
     }
+    setGpsReady(true);
   }, [selectedRoute, selectedBus, selectedDirection]);
+
+  useEffect(() => {
+    if (selectedRoute != "") {
+      // console.log("updating buses with new gps data", gpsData);
+      setMovingBuses(new Buses(gpsData));
+      setLoopLenght(movingBuses.timeRange);
+      // console.log("[gps api call] update loopLenght", loopLength);
+    }
+  }, [gpsData]);
 
   // bus stops API call
   useEffect(() => {
