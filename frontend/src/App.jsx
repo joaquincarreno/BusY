@@ -203,13 +203,15 @@ function App() {
               setShowStops={setShowStops}
               stopCount={stopsData["stops"].length}
               time={time}
+              firstTimeStamp={movingBuses.earliestTimeStamp}
+              lastTimeStamp={movingBuses.latestTimeStamp}
               step={step}
               stepSetter={setStep}
               pause={pause}
               pauseSetter={setPause}
             />
           </div>
-          <DeckGlMap
+          {/* <DeckGlMap
             // staticBusData={staticBusData}
             viewState={viewState}
             viewStateSetter={setViewState}
@@ -220,7 +222,7 @@ function App() {
             // busStopMesh={ASSETS + "bus_stop/bus_stop.obj"}
             time={time}
             showStops={showStops}
-          />
+          /> */}
         </div>
       ) : (
         <div>
