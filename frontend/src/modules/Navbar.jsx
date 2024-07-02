@@ -82,9 +82,12 @@ const Navbar = ({
     console.log(new Date(firstTimeStamp));
     console.log(new Date(lastTimeStamp));
     const currTime = new Date(firstTimeStamp + time * 1000);
-    // console.log(currTime);
     // console.log("[currTime]", currTime);
-    return `${currTime.getHours()}:${currTime.getMinutes()}:${currTime.getSeconds()} ${currTime.getDate()}/${currTime.getMonth()}/${currTime.getFullYear()}`;
+    // console.log("[currMonth]", currTime.getMonth());
+    // el +1 es porque los meses en Date() se indexan desde el 0
+    return `${currTime.getHours()}:${currTime.getMinutes()}:${currTime.getSeconds()} ${currTime.getDate()}/${
+      currTime.getMonth() + 1
+    }/${currTime.getFullYear()}`;
   };
 
   const directionNames = {
