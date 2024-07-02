@@ -26,7 +26,7 @@ function App() {
   const [step, setStep] = useState(5);
   const intervalMS = 10;
 
-  const [firstDate, setFirstDate] = useState("1000/01/01");
+  const [firstDate, setFirstDate] = useState("1970/01/01");
   const [lastDate, setLastDate] = useState("3000/01/01");
 
   const [loopLength, setLoopLenght] = useState(
@@ -132,10 +132,13 @@ function App() {
         newBuses
       );
       setMovingBuses(newBuses);
-      setFirstDate(movingBuses.earliestTimeStamp);
-      setLastDate(movingBuses.latestTimeStamp);
-      setLoopLenght(movingBuses.timeRange);
-      console.log("[gps api call] update loopLenght", loopLength);
+      setFirstDate(newBuses.earliestTimeStamp);
+      setLastDate(newBuses.latestTimeStamp);
+      setLoopLenght(newBuses.timeRange / 1000);
+      console.log("[gps api call] updated loop");
+      console.log("start", newBuses.earliestTimeStamp);
+      console.log("end", newBuses.latestTimeStamp);
+      console.log("lenght", newBuses.timeRange / 1000);
     }
   }, [gpsData]);
 

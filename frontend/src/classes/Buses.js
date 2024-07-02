@@ -3,7 +3,7 @@ import MovingBusAbsolute from "./MovingBusAbsolute";
 class Buses {
   constructor(busList) {
     // console.log('[busList]', busList)
-    this.earliestTimeStamp = new Date('3000/01/01'); // máxima fecha posible
+    this.earliestTimeStamp = new Date('1970/01/01'); // máxima fecha posible
     this.latestTimeStamp = new Date('1000/01/01'); // míxima fecha posble
     
 
