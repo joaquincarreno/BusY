@@ -17,6 +17,7 @@ function DeckGlMap({
   busMesh = null,
   // busStopMesh = null,
   time = 0,
+  startingTime = 0,
   showStops = true,
 }) {
   const [scale, setScale] = useState(1);
@@ -89,16 +90,26 @@ function DeckGlMap({
   // console.log(movingBuses);
   const movingBusLayer = new SimpleMeshLayer({
     id: "moving-buses",
-    data: gpsData,
+    data: Object.keys(movingBuses.dict),
     mesh: busMesh,
     loaders: [OBJLoader],
     getPosition: (d) => {
+      const bus = movingBuses.getBus(d);
+      if (bus) {
+        return bus.getPosition(time, startingTime);
+      } else {
+        console.log("patente", d, "no fue encontrado entre", movingBuses.dict);
+        return [0, 0];
+      }
+    },
+
     getColor: (d) => {
       const bus = movingBuses.getBus(d);
       return bus.getColor(0);
     },
     getOrientation: (d) => {
-      return [0, movingBuses.getBus(d.patente).getOrientation(), 90];
+      const bus = movingBuses.getBus(d);
+      return [0, bus.getOrientation(), 90];
     },
     getScale: (d) => {
       const s = 120 - 60 * scale;
