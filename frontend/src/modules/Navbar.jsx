@@ -63,8 +63,10 @@ const Navbar = ({
 
     const log_in_min = Math.log10(1);
     const log_in_max = Math.log10(100);
-    const log_out_min = Math.log10(60); // vel min = 1 min/s
-    const log_out_max = Math.log10(20 * 60); // vel max = 20 min/s
+    // loop se actualiza 10 veces por segundo
+    const loopSpeed = 10;
+    const log_out_min = Math.log10(6 / loopSpeed); // vel min = 1 min/s
+    const log_out_max = Math.log10((45 * 60) / loopSpeed); // vel max = 20 min/s
 
     const log_x = Math.log10(x);
 
@@ -72,9 +74,13 @@ const Navbar = ({
       log_out_min +
       ((log_x - log_in_min) * (log_out_max - log_out_min)) /
         (log_in_max - log_in_min);
-
-    stepSetter(Math.pow(10, log_mapped));
-    console.log("[handleStepChange] step =", step / 60, " minutos/segundo");
+    const newStep = Math.round(Math.pow(10, log_mapped));
+    stepSetter(newStep);
+    console.log(
+      "[handleStepChange] step =",
+      (newStep / 60) * 10,
+      " minutos/segundo"
+    );
   };
 
   const getDateTime = (time) => {
