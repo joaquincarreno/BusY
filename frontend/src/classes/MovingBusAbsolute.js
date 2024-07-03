@@ -62,6 +62,15 @@ class MovingBusAbsolute {
   getOrientation() {
     return (360 * this.orientation) / (2 * Math.PI);
   }
+  getColor(time){
+    if(time > this.lastTimeStamp || time < this.first){
+      return [0, 0, 0, 0]
+    }else{
+      const relTime = this.getRelativeTime(this.firstTimeStamp, this.lastTimeStamp, time)
+      // console.log(relTime)
+      return [255 * relTime, 255 * relTime, 150]
+    }
+  }
 }
 
 export default MovingBusAbsolute;

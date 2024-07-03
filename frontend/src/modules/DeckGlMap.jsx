@@ -93,10 +93,10 @@ function DeckGlMap({
     mesh: busMesh,
     loaders: [OBJLoader],
     getPosition: (d) => {
-      return movingBuses.getBus(d.patente).getPosition(time);
+    getColor: (d) => {
+      const bus = movingBuses.getBus(d);
+      return bus.getColor(0);
     },
-
-    getColor: (d) => [255 * time * time, (1 - time) * 255, 255 * time * time],
     getOrientation: (d) => {
       return [0, movingBuses.getBus(d.patente).getOrientation(), 90];
     },
