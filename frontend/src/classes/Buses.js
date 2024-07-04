@@ -3,8 +3,8 @@ import MovingBusAbsolute from "./MovingBusAbsolute";
 class Buses {
   constructor(busList) {
     // console.log('[busList]', busList)
-    this.earliestTimeStamp = new Date('1970/01/01'); // máxima fecha posible
-    this.latestTimeStamp = new Date('1000/01/01'); // míxima fecha posble
+    this.earliestTimeStamp = (new Date('3000/01/01')).getTime(); // máxima fecha posible
+    this.latestTimeStamp = (new Date('1970/01/01')).getTime(); // míxima fecha posble
     
 
     this.dict = {};
@@ -24,6 +24,9 @@ class Buses {
       });
       console.log('Added the following buses:', Object.keys(this.dict))
     }else{
+      const aux = this.earliestTimeStamp;
+      this.earliestTimeStamp = this.latestTimeStamp;
+      this.latestTimeStamp = aux;
       console.log('empty busList')
     }
     
