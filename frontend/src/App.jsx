@@ -172,7 +172,7 @@ function App() {
   useEffect(() => {
     if (selectedBus != "" && movingBuses.getBus(selectedBus)) {
       const bus = movingBuses.getBus(selectedBus);
-      const coords = bus.getPosition(time);
+      const coords = bus.getPosition();
       const bearing = bus.getOrientation();
       setViewState({
         latitude: coords[1],
@@ -197,9 +197,9 @@ function App() {
             t = 0;
             setResetTime(false);
           }
-          console.log("[time management]");
-          console.log("time", t);
-          console.log("loopLenght", loopLength);
+          // console.log("[time management]");
+          // console.log("time", t);
+          // console.log("loopLenght", loopLength);
           return (t + step) % loopLength;
         });
       }
@@ -207,6 +207,10 @@ function App() {
     }, intervalMS);
     return () => clearInterval(interval);
   }, [step, pause, resetTime]);
+
+  useEffect(() => {
+    movingBuses.updateBuses(time);
+  }, [time]);
 
   return (
     <>
