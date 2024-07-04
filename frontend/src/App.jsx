@@ -242,8 +242,7 @@ function App() {
               pauseSetter={setPause}
             />
           </div>
-          {/* <DeckGlMap
-            // staticBusData={staticBusData}
+          <DeckGlMap
             viewState={viewState}
             viewStateSetter={setViewState}
             movingBuses={movingBuses}
