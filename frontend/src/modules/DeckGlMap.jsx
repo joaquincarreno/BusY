@@ -94,9 +94,12 @@ function DeckGlMap({
     mesh: busMesh,
     loaders: [OBJLoader],
     getPosition: (d) => {
+      // console.log(d);
+      // console.log(movingBuses);
       const bus = movingBuses.getBus(d);
+      // console.log(bus);
       if (bus) {
-        return bus.getPosition(time, startingTime);
+        return bus.getPosition();
       } else {
         console.log("patente", d, "no fue encontrado entre", movingBuses.dict);
         return [0, 0];
@@ -105,7 +108,7 @@ function DeckGlMap({
 
     getColor: (d) => {
       const bus = movingBuses.getBus(d);
-      return bus.getColor(0);
+      return bus.getColor();
     },
     getOrientation: (d) => {
       const bus = movingBuses.getBus(d);
