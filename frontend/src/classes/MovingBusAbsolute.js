@@ -15,49 +15,16 @@ class MovingBusAbsolute {
     // console.log("-  logs  -");u
   }
   // updaters
-  updateBus(time, startingTime){
-    const currentTime = time * 1000 + startingTime
-    console.log('updating', this.patente)
-    console.log('time', time, 'starting time', startingTime)
-    this.updateStep(currentTime);
-    this.updatePosition(currentTime);
-    this.updateColor(currentTime);
-  }
-  updateColor(time){
-    if(time > this.lastTimeStamp || time < this.first){
-      this.color = [0, 0, 0, 0]
-    }else{
-      const relTime = this.getRelativeTime(this.firstTimeStamp, this.lastTimeStamp, time)
-      // console.log(relTime)
-      this.color = [255 * relTime, 255 * relTime, 150]
-    }
-  }
-  updatePosition(time) {
-    const step = this.currentStep;
-    const startTime = this.timeStamps[step];
-    const endTime = this.timeStamps[step + 1];
-    const relTime = (time - startTime) / (endTime - startTime)
-
-    const startPosition = this.coordinates[step];
-    const endPosition = this.coordinates[step + 1];
-    
-    const dx = endPosition[0] - startPosition[0];
-    const dy = endPosition[1] - startPosition[1];
-    
-    if (dx == 0) {
-      this.orientation = dy >= 0 ? Math.PI : -Math.PI;
-    } else {
-      this.orientation = Math.atan(dy / dx);
-    }
-    this.position [startPosition[1] + dy * relTime, startPosition[0] + dx * relTime];
+  updateBus(time){
+    this.updateStep(time);
+    this.updatePosition(time);
+    this.updateColor(time);
   }
   updateStep(time) {
-    console.log('currentTime', time)
-    console.log('as date', new Date(time))
-    console.log('currentStep', this.currentStep)
+    // console.log('currentStep', this.currentStep)
     if(time < this.timeStamps[0]){
       this.currentStep = 0
-      console.log('time earlier than first step for', this.patente)
+      // console.log('time earlier than first step for', this.patente)
       // console.log(new Date(time), '<' , new Date(this.timeStamps[0]))
       return
     }
@@ -72,7 +39,36 @@ class MovingBusAbsolute {
         return
       }
     }
+    // console.log('newStep', i)
     this.currentStep = i;
+  }
+  updatePosition(time) {
+    const step = this.currentStep;
+    const startTime = this.timeStamps[step];
+    const endTime = this.timeStamps[step + 1];
+    const relTime = (time - startTime) / (endTime - startTime)
+    
+    const startPosition = this.coordinates[step];
+    const endPosition = this.coordinates[step + 1];
+    
+    const dx = endPosition[0] - startPosition[0];
+    const dy = endPosition[1] - startPosition[1];
+    
+    if (dx == 0) {
+      this.orientation = dy >= 0 ? Math.PI : -Math.PI;
+    } else {
+      this.orientation = Math.atan(dy / dx);
+    }
+    this.position = [startPosition[1] + dy * relTime, startPosition[0] + dx * relTime];
+  }
+  updateColor(time){
+    if(time > this.lastTimeStamp || time < this.first){
+      this.color = [0, 0, 0, 0]
+    }else{
+      const relTime = this.getRelativeTime(this.firstTimeStamp, this.lastTimeStamp, time)
+      // console.log(relTime)
+      this.color = [255 * relTime, 255 * relTime, 150]
+    }
   }
 
   //getters
