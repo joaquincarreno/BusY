@@ -10,14 +10,10 @@ import { OBJLoader } from "@loaders.gl/obj";
 function DeckGlMap({
   viewState,
   viewStateSetter = () => {},
-  // staticBusData = [],
-  gpsData = [],
   movingBuses = {},
   stopsData = JSON.parse([]),
   busMesh = null,
-  // busStopMesh = null,
   time = 0,
-  startingTime = 0,
   showStops = true,
 }) {
   const [scale, setScale] = useState(1);

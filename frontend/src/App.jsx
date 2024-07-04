@@ -247,13 +247,11 @@ function App() {
             viewState={viewState}
             viewStateSetter={setViewState}
             movingBuses={movingBuses}
-            gpsData={gpsData}
             stopsData={stopsData}
             busMesh={ASSETS + "bus/JETSET.obj"}
-            // busStopMesh={ASSETS + "bus_stop/bus_stop.obj"}
             time={time}
             showStops={showStops}
-          /> */}
+          />
         </div>
       ) : (
         <div>
