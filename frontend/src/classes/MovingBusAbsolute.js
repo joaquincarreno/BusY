@@ -23,34 +23,48 @@ class MovingBusAbsolute {
   updateStep(time) {
     // console.log('currentStep', this.currentStep)
     if(time < this.timeStamps[0]){
-      this.currentStep = 0
-      // console.log('time earlier than first step for', this.patente)
+      this.currentStep = -1
+      // console.log('time earlier than first step for', this.patente, 'setting step to -1')
+      
       // console.log(new Date(time), '<' , new Date(this.timeStamps[0]))
       return
     }
     var i = 0;
-    while (time > this.timeStamps[i + 1]) {
+    while (time > this.timeStamps[i]) {
       i = i + 1;
-      if (i >= this.nSteps) {
-        this.currentStep = this.nSteps-1
+      if (i >= this.nSteps - 1) {
+        this.currentStep = -2
+        // console.log('time later than last step for', this.patente, 'setting step to -2')
         
-        // console.log('time later than last step for', this.patente)
         // console.log(new Date(time), '>' , new Date(this.timeStamps[this.nSteps-1]))
         return
       }
     }
     // console.log('newStep', i)
-    this.currentStep = i;
+    this.currentStep = i; 
   }
   updatePosition(time) {
     const step = this.currentStep;
+    if(step < 0){
+        // console.log('negative step')
+      
+      this.position = step == -1 ? this.coordinates[0] : this.coordinates[this.nSteps-1]
+      // this.orientation = -> se mantiene la última orientación
+      return
+    }
     const startTime = this.timeStamps[step];
     const endTime = this.timeStamps[step + 1];
     const relTime = (time - startTime) / (endTime - startTime)
     
     const startPosition = this.coordinates[step];
     const endPosition = this.coordinates[step + 1];
+
+    // console.log(this.patente);     
+    // console.log(this.currentStep);
+    // console.log(this.nSteps);
     
+    // console.log(endPosition)
+    // console.log(time)
     const dx = endPosition[0] - startPosition[0];
     const dy = endPosition[1] - startPosition[1];
     
