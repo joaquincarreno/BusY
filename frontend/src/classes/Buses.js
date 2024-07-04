@@ -43,6 +43,13 @@ class Buses {
       return false;
     }
   }
+  updateBuses(time){
+    const currTime = this.earliestTimeStamp + time * 1000;
+    Object.keys(this.dict).map((patente) => {
+      this.dict[patente].updateBus(currTime)
+    })
+
+  }
 }
 
 export default Buses;
