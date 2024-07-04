@@ -45,8 +45,13 @@ class Buses {
   }
   updateBuses(time){
     const currTime = this.earliestTimeStamp + time * 1000;
+    // console.log('updating buses');
+    // console.log('time:', time * 1000);
+    // console.log('currTime:', currTime)
+    // console.log('in date', new Date(currTime))
     Object.keys(this.dict).map((patente) => {
-      this.dict[patente].updateBus(currTime)
+      // console.log('updating', patente);
+      this.dict[patente].updateBus(currTime);
     })
 
   }
