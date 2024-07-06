@@ -5,7 +5,6 @@ from shapely import Point, LineString, distance
 
 def calculateDeviationScore(gps, stops):
     stops_line = LineString(stops)
-
     distances = [distance(Point(x), stops_line) for x in gps]
     n = len(distances)
 
