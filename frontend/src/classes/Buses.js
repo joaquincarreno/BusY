@@ -1,5 +1,4 @@
 import MovingBus from "./MovingBus";
-import MovingBusAbsolute from "./MovingBusAbsolute";
 class Buses {
   constructor(busList) {
     // console.log('[busList]', busList)
@@ -11,7 +10,7 @@ class Buses {
     if(busList.length > 0){
       console.log('Adding', busList.length ,'buses to dict');
       busList.forEach((b) => {
-        const bus = new MovingBusAbsolute(b);
+        const bus = new MovingBus(b);
         this.dict[b.patente] = bus
         // console.log(new Date(this.dict[b.patente].firstTimeStamp))
         if(bus.firstTimeStamp < this.earliestTimeStamp){
