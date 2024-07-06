@@ -10,12 +10,9 @@ import { OBJLoader } from "@loaders.gl/obj";
 function DeckGlMap({
   viewState,
   viewStateSetter = () => {},
-  // staticBusData = [],
-  gpsData = [],
   movingBuses = {},
   stopsData = JSON.parse([]),
   busMesh = null,
-  // busStopMesh = null,
   time = 0,
   showStops = true,
 }) {
@@ -47,12 +44,12 @@ function DeckGlMap({
         ],
       });
     },
-    pickable: true,
+    pickable: false,
   });
 
   const stopsLayer = new IconLayer({
-    id: "IconLayer",
-    data: stopsData["stops"],
+    id: "stops-layer",
+    data: stopsData,
     getColor: (d) => {
       const s = d.direction;
       if (s == "I") {
@@ -84,27 +81,34 @@ function DeckGlMap({
       getSize: [scale],
     },
   });
-
+  const patentes = Object.keys(movingBuses.dict);
   // console.log(gpsData);
   // console.log(movingBuses);
   const movingBusLayer = new SimpleMeshLayer({
-    id: "moving-buses",
-    data: gpsData,
+    id: "buses-layer",
+    data: patentes,
     mesh: busMesh,
     loaders: [OBJLoader],
-
     getPosition: (d) => {
-      return movingBuses.getBus(d.patente).getPosition(time);
+      // console.log(d);
+      // console.log(movingBuses);
+      const bus = movingBuses.getBus(d);
+      // console.log(bus);
+      if (bus) {
+        return bus.getPosition();
+      } else {
+        console.log("patente", d, "no fue encontrado entre", movingBuses.dict);
+        return [0, 0];
+      }
     },
 
-    getColor: (d) => [255 * time * time, (1 - time) * 255, 255 * time * time],
+    getColor: (d) => {
+      const bus = movingBuses.getBus(d);
+      return bus.getColor();
+    },
     getOrientation: (d) => {
-      // console.log(
-      //   "[movingBusLayer] getOrientation:",
-      //   movingBuses.getBus(d.patente).getOrientation()
-      // );
-
-      return [0, movingBuses.getBus(d.patente).getOrientation(), 90];
+      const bus = movingBuses.getBus(d);
+      return [0, bus.getOrientation(), 90];
     },
     getScale: (d) => {
       const s = 120 - 60 * scale;
@@ -112,6 +116,7 @@ function DeckGlMap({
       return [s, s, s];
     },
     visible: true,
+    pickable: true,
     updateTriggers: {
       getPosition: [time],
       getColor: [time],
@@ -120,11 +125,25 @@ function DeckGlMap({
     },
   });
 
+  const toolTip = (object) => {
+    if (object.layer && object.picked) {
+      // console.log(object);
+      if (object.layer.id == "buses-layer") {
+        return patentes[object.index];
+      } else if (object.layer.id == "stops-layer") {
+        // console.log(stopsData["stops"][object.index]);
+        return stopsData[object.index].name;
+      }
+    }
+  };
+
   return (
     <DeckGL
       initialViewState={viewState}
       onViewStateChange={onViewStateChange}
       layers={[osmMapLayer, movingBusLayer, stopsLayer]}
+      // layers={[movingBusLayer]}
+      getTooltip={toolTip}
       controller={true}
     />
   );

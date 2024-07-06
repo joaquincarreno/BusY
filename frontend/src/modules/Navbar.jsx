@@ -22,10 +22,14 @@ const Navbar = ({
   setShowStops = (_) => {},
   stopCount = 0,
 
+  time = 0,
+  timeResetter = (_) => {},
+
+  firstTimeStamp = new Date("2018/01/01"),
+  lastTimeStamp = new Date("2019/12/31"),
+
   step = 0.001,
   stepSetter = (_) => {},
-
-  time = 0,
 
   pause = false,
   pauseSetter = (_) => {},
@@ -59,8 +63,10 @@ const Navbar = ({
 
     const log_in_min = Math.log10(1);
     const log_in_max = Math.log10(100);
-    const log_out_min = Math.log10(VEL_MIN);
-    const log_out_max = Math.log10(VEL_MAX);
+    // loop se actualiza 10 veces por segundo
+    const loopSpeed = 10;
+    const log_out_min = Math.log10(6 / loopSpeed); // vel min = 1 min/s
+    const log_out_max = Math.log10((45 * 60) / loopSpeed); // vel max = 20 min/s
 
     const log_x = Math.log10(x);
 
@@ -68,28 +74,26 @@ const Navbar = ({
       log_out_min +
       ((log_x - log_in_min) * (log_out_max - log_out_min)) /
         (log_in_max - log_in_min);
-
-    // const log = Math.log10(0.001) + ()
-
-    stepSetter(Math.pow(10, log_mapped));
-    console.log(step * 3600 * 24 + " segundos/segundo");
+    const newStep = Math.round(Math.pow(10, log_mapped));
+    stepSetter(newStep);
+    console.log(
+      "[handleStepChange] step =",
+      (newStep / 60) * 10,
+      " minutos/segundo"
+    );
   };
 
-  const parseTimeToHoursMinutes = (time) => {
-    if (time < 0 || time > 1) {
-      throw new Error("[parseTimeToHour] Error: Time value out of range");
-    }
-    const tiempoEnHoras = time * 24;
-
-    const horas = Math.floor(tiempoEnHoras);
-    const minutos = Math.floor((tiempoEnHoras - horas) * 60);
-    const segundos = Math.floor(((tiempoEnHoras - horas) * 60 - minutos) * 60);
-
-    // Step 4: Return the formatted time
-    return `${String(horas).padStart(2, "0")}:${String(minutos).padStart(
-      2,
-      "0"
-    )}:${String(segundos).padStart(2, "0")}`;
+  const getDateTime = (time) => {
+    // time should be in seconds (how do we check this?)
+    // console.log(new Date(firstTimeStamp));
+    // console.log(new Date(lastTimeStamp));
+    const currTime = new Date(firstTimeStamp + time * 1000);
+    // console.log("[currTime]", currTime);
+    // console.log("[currMonth]", currTime.getMonth());
+    // el +1 es porque los meses en Date() se indexan desde el 0
+    return `${currTime.getHours()}:${currTime.getMinutes()}:${currTime.getSeconds()} ${currTime.getDate()}/${
+      currTime.getMonth() + 1
+    }/${currTime.getFullYear()}`;
   };
 
   const directionNames = {
@@ -148,14 +152,25 @@ const Navbar = ({
       <div className="navbar-right">
         <div className="navbar-item">
           <button
+            onClick={() => {
+              console.log("time resetted");
+              timeResetter(true);
+              pauseSetter(true);
+            }}
+          >
+            reset
+          </button>
+        </div>
+        <div className="navbar-item">
+          <button
             onClick={() => pauseSetter(!pause)}
-            className={pause ? "stop" : "play"}
+            className={!pause ? "stop" : "play"}
           />
         </div>
         <div className="navbar-item">
           <p>
-            Hora actual: <br />
-            {parseTimeToHoursMinutes(time)}
+            Tiempo actual: <br />
+            {getDateTime(time)}
           </p>
         </div>
         <div className="navbar-item">

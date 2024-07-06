@@ -6,8 +6,8 @@ import Buses from "./classes/Buses";
 import "./App.css";
 
 // time managment constants
-const intervalMS = 8;
-const loopLength = 1;
+// const intervalMS = 8;
+// const loopLength = 1;
 // const BACKEND_IP = "http://localhost:8000/";
 const BACKEND_IP = "http://192.168.100.17:8000/";
 const BACKEND_URL = BACKEND_IP + "api/";
@@ -22,12 +22,21 @@ const ASSETS = "./src/assets/";
 function App() {
   //
   const [time, setTime] = useState(0);
-  const [step, setStep] = useState(0.00028);
+  const [resetTime, setResetTime] = useState(false);
+  const [step, setStep] = useState(5);
+  const intervalMS = 10;
 
-  const [movingBuses, setMovingBuses] = useState(null);
+  const [firstDate, setFirstDate] = useState("1970/01/01");
+  const [lastDate, setLastDate] = useState("3000/01/01");
 
-  const [gpsData, setGpsData] = useState([{}]);
+  const [loopLength, setLoopLenght] = useState(
+    (new Date(lastDate) - new Date(firstDate)) / 1000
+  );
+
+  const [gpsData, setGpsData] = useState([]);
   const [gpsReady, setGpsReady] = useState(false);
+
+  const [movingBuses, setMovingBuses] = useState(() => new Buses(gpsData));
 
   const [stopsData, setStopsData] = useState([{}]);
   const [stopsReady, setStopsReady] = useState(false);
@@ -97,9 +106,8 @@ function App() {
           (selectedDirection == "" ? "" : "/" + selectedDirection)
       ).then((response) => {
         const data = response.data;
-        // console.log(data);
+        console.log("[GPS data]", data);
         setGpsData(data);
-        setGpsReady(true);
         if (data.length == 0) {
           alert(
             "No hay datos GPS para " +
@@ -109,17 +117,30 @@ function App() {
               " " +
               selectedDirection
           );
-          setMovingBuses(new Buses([]));
-          return;
         }
-        setMovingBuses(new Buses(data));
       });
-    } else {
-      setGpsData([]);
-      setMovingBuses([]);
       setGpsReady(true);
     }
+    setGpsReady(true);
   }, [selectedRoute, selectedBus, selectedDirection]);
+
+  useEffect(() => {
+    if (selectedRoute != "") {
+      const newBuses = new Buses(gpsData);
+      console.log(
+        "[gps api call] updating movingBuses with new gps data",
+        newBuses
+      );
+      setMovingBuses(newBuses);
+      setFirstDate(newBuses.earliestTimeStamp);
+      setLastDate(newBuses.latestTimeStamp);
+      setLoopLenght(newBuses.timeRange / 1000);
+      console.log("[gps api call] updated loop");
+      console.log("start", newBuses.earliestTimeStamp);
+      console.log("end", newBuses.latestTimeStamp);
+      console.log("lenght", newBuses.timeRange / 1000);
+    }
+  }, [gpsData]);
 
   // bus stops API call
   useEffect(() => {
@@ -151,7 +172,7 @@ function App() {
   useEffect(() => {
     if (selectedBus != "" && movingBuses.getBus(selectedBus)) {
       const bus = movingBuses.getBus(selectedBus);
-      const coords = bus.getPosition(time);
+      const coords = bus.getPosition();
       const bearing = bus.getOrientation();
       setViewState({
         latitude: coords[1],
@@ -165,20 +186,31 @@ function App() {
     }
   }, [time]);
 
-  const [pause, setPause] = useState(false);
+  const [pause, setPause] = useState(true);
 
   // time passing
   useEffect(() => {
     const interval = setInterval(() => {
-      if (pause) {
-        setTime((t) => (t + 0) % loopLength);
-      } else {
-        setTime((t) => (t + step) % loopLength);
+      if (!pause) {
+        setTime((t) => {
+          if (resetTime) {
+            t = 0;
+            setResetTime(false);
+          }
+          // console.log("[time management]");
+          // console.log("time", t);
+          // console.log("loopLenght", loopLength);
+          return (t + step) % loopLength;
+        });
       }
       // console.log(time);
     }, intervalMS);
     return () => clearInterval(interval);
-  }, [step, pause]);
+  }, [step, pause, resetTime]);
+
+  useEffect(() => {
+    movingBuses.updateBuses(time);
+  }, [time]);
 
   return (
     <>
@@ -201,6 +233,9 @@ function App() {
               setShowStops={setShowStops}
               stopCount={stopsData["stops"].length}
               time={time}
+              timeResetter={setResetTime}
+              firstTimeStamp={firstDate}
+              lastTimeStamp={lastDate}
               step={step}
               stepSetter={setStep}
               pause={pause}
@@ -208,14 +243,11 @@ function App() {
             />
           </div>
           <DeckGlMap
-            // staticBusData={staticBusData}
             viewState={viewState}
             viewStateSetter={setViewState}
             movingBuses={movingBuses}
-            gpsData={gpsData}
-            stopsData={stopsData}
+            stopsData={stopsData["stops"]}
             busMesh={ASSETS + "bus/JETSET.obj"}
-            // busStopMesh={ASSETS + "bus_stop/bus_stop.obj"}
             time={time}
             showStops={showStops}
           />

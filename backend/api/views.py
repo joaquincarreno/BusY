@@ -79,7 +79,7 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
                 data += [
                     {
                         'patente': patente_actual,
-                        'timestamps': timestamps,
+                        'timeStamps': timestamps,
                         'coords': coords
                     }
                 ]
@@ -90,7 +90,7 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
         coords += [[o.latitude, o.longitude]]
     data += [{
         'patente': patente_actual,
-        'timestamps': timestamps,
+        'timeStamps': timestamps,
         'coords': coords
     }]
 
