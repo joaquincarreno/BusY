@@ -6,8 +6,8 @@ import Buses from "./classes/Buses";
 import "./App.css";
 
 // time managment constants
-const intervalMS = 8;
-const loopLength = 1;
+// const intervalMS = 8;
+// const loopLength = 1;
 // const BACKEND_IP = "http://localhost:8000/";
 const BACKEND_IP = "http://192.168.100.17:8000/";
 const BACKEND_URL = BACKEND_IP + "api/";
@@ -246,7 +246,7 @@ function App() {
             viewState={viewState}
             viewStateSetter={setViewState}
             movingBuses={movingBuses}
-            stopsData={stopsData}
+            stopsData={stopsData["stops"]}
             busMesh={ASSETS + "bus/JETSET.obj"}
             time={time}
             showStops={showStops}

@@ -48,8 +48,8 @@ function DeckGlMap({
   });
 
   const stopsLayer = new IconLayer({
-    id: "IconLayer",
-    data: stopsData["stops"],
+    id: "stops-layer",
+    data: stopsData,
     getColor: (d) => {
       const s = d.direction;
       if (s == "I") {
@@ -73,7 +73,7 @@ function DeckGlMap({
       "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
     iconMapping:
       "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json",
-    pickable: false,
+    pickable: true,
 
     visible: showStops,
 
@@ -85,7 +85,7 @@ function DeckGlMap({
   // console.log(gpsData);
   // console.log(movingBuses);
   const movingBusLayer = new SimpleMeshLayer({
-    id: "moving-buses",
+    id: "buses-layer",
     data: patentes,
     mesh: busMesh,
     loaders: [OBJLoader],
@@ -126,9 +126,14 @@ function DeckGlMap({
   });
 
   const toolTip = (object) => {
-    const index = object.index;
-    if (index > 0) {
-      return patentes[index];
+    if (object.layer && object.picked) {
+      // console.log(object);
+      if (object.layer.id == "buses-layer") {
+        return patentes[object.index];
+      } else if (object.layer.id == "stops-layer") {
+        // console.log(stopsData["stops"][object.index]);
+        return stopsData[object.index].name;
+      }
     }
   };
 
