@@ -31,4 +31,14 @@ class Routes(models.Model):
     order = models.IntegerField()
     variant = models.TextField()
 
+class DeviationScore(models.Model):
+    score = models.FloatField()
+    # como se dice patente en inglés? licence plate no me gusta
+    busID = models.TextField()
+    serviceTSCode = models.TextField()
+    serviceDirection = models.CharField(
+        max_length=1,
+        choices=Sentido.choices,
+        default=Sentido.IDA
+    )
 
