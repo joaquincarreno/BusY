@@ -76,19 +76,17 @@ class MovingBusAbsolute {
     this.position = [startPosition[1] + dy * relTime, startPosition[0] + dx * relTime];
   }
   updateColor(time){
-    if(time > this.lastTimeStamp || time < this.first){
+    if(this.currentStep < 0){
       this.color = [0, 0, 0, 0]
     }else{
-      const relTime = this.getRelativeTime(this.firstTimeStamp, this.lastTimeStamp, time)
+      // const relTime = this.getRelativeTime(this.firstTimeStamp, this.lastTimeStamp, time)
+      const relTime = (time - this.firstTimeStamp) / (this.lastTimeStamp - this.firstTimeStamp);
       // console.log(relTime)
-      this.color = [255 * relTime, 255 * relTime, 150]
+      this.color = [255 * relTime, 255 * (1 - relTime), 150]
     }
   }
 
   //getters
-  getRelativeTime(start, end, current) {
-    return ;
-  }
   getOrientation() {
     return (360 * this.orientation) / (2 * Math.PI);
   }

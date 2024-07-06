@@ -44,7 +44,7 @@ function DeckGlMap({
         ],
       });
     },
-    pickable: true,
+    pickable: false,
   });
 
   const stopsLayer = new IconLayer({
@@ -73,7 +73,7 @@ function DeckGlMap({
       "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
     iconMapping:
       "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json",
-    pickable: true,
+    pickable: false,
 
     visible: showStops,
 
@@ -81,12 +81,12 @@ function DeckGlMap({
       getSize: [scale],
     },
   });
-
+  const patentes = Object.keys(movingBuses.dict);
   // console.log(gpsData);
   // console.log(movingBuses);
   const movingBusLayer = new SimpleMeshLayer({
     id: "moving-buses",
-    data: Object.keys(movingBuses.dict),
+    data: patentes,
     mesh: busMesh,
     loaders: [OBJLoader],
     getPosition: (d) => {
@@ -116,6 +116,7 @@ function DeckGlMap({
       return [s, s, s];
     },
     visible: true,
+    pickable: true,
     updateTriggers: {
       getPosition: [time],
       getColor: [time],
@@ -124,11 +125,20 @@ function DeckGlMap({
     },
   });
 
+  const toolTip = (object) => {
+    const index = object.index;
+    if (index > 0) {
+      return patentes[index];
+    }
+  };
+
   return (
     <DeckGL
       initialViewState={viewState}
       onViewStateChange={onViewStateChange}
       layers={[osmMapLayer, movingBusLayer, stopsLayer]}
+      // layers={[movingBusLayer]}
+      getTooltip={toolTip}
       controller={true}
     />
   );
