@@ -9,6 +9,7 @@ dask==2024.5.0
 dask-expr==1.1.0
 Django==5.0.6
 django-cors-headers==4.3.1
+django-extensions==3.2.3
 django-rest-framework==0.1.0
 djangorestframework==3.15.1
 et-xmlfile==1.1.0

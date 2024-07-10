@@ -39,16 +39,3 @@ urlpatterns = [
     path('api/deviationScore/<str:recorrido>/<str:patente>/<str:sentido>', deviationScore),
     path('api/listDeviationScore/<str:recorrido>', listDeviationScore),
 ]
-
-
-# SERVER SETUP (SHOULD THIS EVEN BE HERE?)
-from api.models import GPSRegistry, BusStops, Routes
-from api.scripts.zones import setUpZones
-from api.scripts.bus_data import setupGPSEntries
-from api.scripts.bus_stops import setupBusStops
-from api.scripts.bus_routes import setupRoutes
-
-setUpZones()
-setupGPSEntries(GPSRegistry)
-setupBusStops(BusStops)
-setupRoutes(Routes, BusStops)
