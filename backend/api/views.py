@@ -45,8 +45,6 @@ def getAvailableBuses(request, recorrido='X00', sentido='X'):
 
     return Response({'buses': values})
 
-from django.db.models import Q
-
 @api_view(['GET'])
 def getGPS(request, recorrido= '', patente='', sentido=''):
     # print(patente)
@@ -103,43 +101,48 @@ def getStops(request, recorrido='', sentido=''):
         objects = list(BusStops.objects.all().values())
 
     else:
-        recorrido = recorrido[1:] if recorrido[0] == 'T' else recorrido
-        if(sentido != ''):
-            paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection=sentido)
-            ids = list(paradas.values_list('stop', flat=True))
-            objects = list(BusStops.objects.filter(id__in=ids).values())
+        try: 
+            recorrido = recorrido[1:] if recorrido[0] == 'T' else recorrido
+            if(sentido != ''):
+                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection=sentido)
+                ids = list(paradas.values_list('stop', flat=True))
+                objects = list(BusStops.objects.filter(id__in=ids).values())
 
-            assert len(ids) == len(objects)
 
-            for i in range(len(ids)):
-                obj = objects[i]
-                obj['direction'] = sentido
-                objects[i] = obj
+                assert len(ids) == len(objects)
 
-        else:
-            paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='I')
-            idsIda = list(paradas.values_list('stop', flat=True))
-            objectsIda = list(BusStops.objects.filter(id__in=idsIda).values())
+                for i in range(len(ids)):
+                    obj = objects[i]
+                    obj['direction'] = sentido
+                    objects[i] = obj
 
-            assert len(idsIda) == len(objectsIda)
+            else:
+                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='I')
+                idsIda = list(paradas.values_list('stop', flat=True))
+                objectsIda = list(BusStops.objects.filter(id__in=idsIda).values())
 
-            for i in range(len(idsIda)):
-                obj = objectsIda[i]
-                obj['direction'] = 'I'
-                objectsIda[i] = obj
+                assert len(idsIda) == len(objectsIda)
 
-            paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='R')
-            idsRet = list(paradas.values_list('stop', flat=True))
-            objectsRet = list(BusStops.objects.filter(id__in=idsRet).values())
+                for i in range(len(idsIda)):
+                    obj = objectsIda[i]
+                    obj['direction'] = 'I'
+                    objectsIda[i] = obj
 
-            assert len(idsRet) == len(objectsRet)
+                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='R')
+                idsRet = list(paradas.values_list('stop', flat=True))
+                objectsRet = list(BusStops.objects.filter(id__in=idsRet).values())
 
-            for i in range(len(idsRet)):
-                obj = objectsRet[i]
-                obj['direction'] = 'R'
-                objectsRet[i] = obj
+                assert len(idsRet) == len(objectsRet)
 
-            objects = objectsIda + objectsRet
+                for i in range(len(idsRet)):
+                    obj = objectsRet[i]
+                    obj['direction'] = 'R'
+                    objectsRet[i] = obj
+
+                objects = objectsIda + objectsRet
+        except:
+            print('[api getStops] failed assert')
+            objects = []
             
     return Response({'stops': objects})
 
