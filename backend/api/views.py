@@ -10,7 +10,7 @@ from django.db.models.query import QuerySet
 from api.serializers import GPSRegistrySerializer
 from api.scripts.zones import getZonesGdf
 
-from api.models import GPSRegistry, BusStops, Routes, DeviationScore
+from api.models import GPSRegistry, BusStops, Routes, DeviationScores
 
 from time import time
 
@@ -152,7 +152,7 @@ def getAvailableDirections(request, recorrido, patente):
 from api.scripts.deviation_score import calculateDeviationScore
 
 def getDeviationScore(recorrido, patente, sentido):
-    if not DeviationScore.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido).exists():
+    if DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido).exists():
         gps = GPSRegistry.objects.filter(recorrido=recorrido, patente=patente, sentido=sentido).order_by('patente', 'date', 'time').values()
 
         paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection=sentido)
@@ -160,9 +160,9 @@ def getDeviationScore(recorrido, patente, sentido):
         stops = list(BusStops.objects.filter(id__in=ids).values())
         s = calculateDeviationScore([[g['latitude'], g['longitude']] for g in gps], [[s['positionY'], s['positionX']] for s in stops])
 
-        obj = DeviationScore.objects.create(score=s, busID=patente, serviceTSCode=recorrido, serviceDirection=sentido)
+        obj = DeviationScores.objects.create(score=s, busID=patente, serviceTSCode=recorrido, serviceDirection=sentido)
         obj.save()
-    return DeviationScore.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido)[0].score
+    return DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido)[0].score
 
 @api_view(['GET'])
 def deviationScore(request, recorrido, patente, sentido):

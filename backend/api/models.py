@@ -31,7 +31,7 @@ class Routes(models.Model):
     order = models.IntegerField()
     variant = models.TextField()
 
-class DeviationScore(models.Model):
+class DeviationScores(models.Model):
     score = models.FloatField()
     # como se dice patente en inglés? licence plate no me gusta
     busID = models.TextField()
