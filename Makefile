@@ -1,39 +1,39 @@
+COMPOSE = sudo docker compose
 
 build:
-	sudo docker compose build
+	$(COMPOSE) build
 	
 start:
-	sudo docker compose start
+	$(COMPOSE) start
 
 up: 
-	sudo docker-compose up
+	$(COMPOSE) up
+
+down:
+	$(COMPOSE) down
 
 frontend!:
-	sudo docker compose up frontend
+	$(COMPOSE) up frontend -d
 
 backend!:
-	sudo docker compose up backend
+	$(COMPOSE) up backend -d
 
-frontend?:
-	sudo docker compose start frontend
+start-frontend:
+	$(COMPOSE) start frontend
 
-backend?:
-	sudo docker compose start backend
+start-backend:
+	$(COMPOSE) start backend
 
 backend-terminal:
-	sudo docker compose run backend bash -c '\
-		python manage.py makemigrations && \
-		python manage.py migrate && \
-		python manage.py runscript startup && \
-		python manage.py runserver 0.0.0.0:8000 && \
-		bash'
+	$(MAKE) start-backend
+	sudo docker exec -it busy-backend-1 bash
 	
 start-con-terminal:
-	$(MAKE) frontend?
+	$(MAKE) start-frontend
 	$(MAKE) backend-terminal
 
 clean-terminal:
-	sudo docker compose build --no-cache
+	$(COMPOSE) build --no-cache
 	$(MAKE) start-con-terminal
 
 create-venvs:
