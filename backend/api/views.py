@@ -155,17 +155,20 @@ def getAvailableDirections(request, recorrido, patente):
 from api.scripts.deviation_score import calculateDeviationScore
 
 def getDeviationScore(recorrido, patente, sentido):
-    if DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido).exists():
+    if not DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido).exists():
         gps = GPSRegistry.objects.filter(recorrido=recorrido, patente=patente, sentido=sentido).order_by('patente', 'date', 'time').values()
 
-        paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection=sentido)
+        # print('micro:', patente, recorrido, sentido)
+        paradas = Routes.objects.filter(serviceTSCode=recorrido[1:] if recorrido[0] == 'T' else recorrido, serviceDirection=sentido)
         ids = list(paradas.values_list('stop', flat=True))
         stops = list(BusStops.objects.filter(id__in=ids).values())
         s = calculateDeviationScore([[g['latitude'], g['longitude']] for g in gps], [[s['positionY'], s['positionX']] for s in stops])
 
         obj = DeviationScores.objects.create(score=s, busID=patente, serviceTSCode=recorrido, serviceDirection=sentido)
         obj.save()
-    return DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido)[0].score
+        return obj.score
+    else:
+        return DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido)[0].score
 
 @api_view(['GET'])
 def deviationScore(request, recorrido, patente, sentido):
