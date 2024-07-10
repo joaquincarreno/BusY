@@ -1,7 +1,12 @@
 COMPOSE = sudo docker compose
 
 build:
-	$(COMPOSE) build
+	$(COMPOSE) build backend
+	$(COMPOSE) build frontend
+
+build-no-cache:
+	$(COMPOSE) build frontend --no-cache
+	$(COMPOSE) build backend --no-cache
 	
 start:
 	$(COMPOSE) start
@@ -10,6 +15,9 @@ stop:
 	$(COMPOSE) stop
 
 up: 
+	$(COMPOSE) up
+
+up!: 
 	$(COMPOSE) up -d
 
 down:
@@ -35,7 +43,7 @@ start-con-terminal:
 	$(MAKE) backend-terminal
 
 clean-terminal:
-	$(COMPOSE) build --no-cache
+	$(MAKE) up!
 	$(MAKE) start-con-terminal
 
 create-venvs:
