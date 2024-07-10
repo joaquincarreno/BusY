@@ -22,14 +22,19 @@ backend?:
 
 backend-terminal:
 	sudo docker compose run backend bash -c '\
-		python -m pip install -r requirements.txt && \
 		python manage.py makemigrations && \
 		python manage.py migrate && \
+		python manage.py runscript startup && \
+		python manage.py runserver 0.0.0.0:8000 && \
 		bash'
 	
 start-con-terminal:
 	$(MAKE) frontend?
 	$(MAKE) backend-terminal
+
+clean-terminal:
+	sudo docker compose build --no-cache
+	$(MAKE) start-con-terminal
 
 create-venvs:
 	python -m venv venv-backend
