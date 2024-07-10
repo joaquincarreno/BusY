@@ -9,7 +9,6 @@ from django.db.models.query import QuerySet
 
 from api.serializers import GPSRegistrySerializer
 from api.scripts.zones import getZonesGdf
-from api.scripts.deviation_score import calculateDeviationScore
 
 from api.models import GPSRegistry, BusStops, Routes, DeviationScores
 
@@ -70,7 +69,6 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
     patente_actual = results[0].patente
     coords = []
     timestamps = []
-    desviaciones = []
     i=0
     for o in results:
         i+=1
@@ -86,10 +84,8 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
             patente_actual = o.patente
             coords = []
             timestamps = []
-            desviaciones = []
         timestamps += [str(o.date) + ' ' + str(o.time)]
         coords += [[o.latitude, o.longitude]]
-        desviaciones += [o.deviation]
     data += [{
         'patente': patente_actual,
         'timeStamps': timestamps,
@@ -156,6 +152,7 @@ def getAvailableDirections(request, recorrido, patente):
 
     return Response({'directions': values})
 
+from api.scripts.deviation_score import calculateDeviationScore
 
 def getDeviationScore(recorrido, patente, sentido):
     if not DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido).exists():
