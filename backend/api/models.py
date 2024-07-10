@@ -16,6 +16,7 @@ class GPSRegistry(models.Model):
     time = models.TimeField()
     latitude = models.FloatField()
     longitude = models.FloatField()
+    deviation = models.FloatField(default=None, blank=True, null=True)
 
 class BusStops(models.Model):
     TSCode = models.TextField()
