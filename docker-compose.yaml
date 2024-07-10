@@ -28,4 +28,4 @@ services:
         source: ./backend
         target: /srv/app
     working_dir: /srv/app
-    command: bash -c "python -m pip install -r requirements.txt && python manage.py makemigrations && python manage.py migrate && python manage.py runscript startup && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runscript startup && python manage.py runserver 0.0.0.0:8000"
