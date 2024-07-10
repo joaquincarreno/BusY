@@ -174,3 +174,24 @@ def getDeviationScore(recorrido, patente, sentido):
 def deviationScore(request, recorrido, patente, sentido):
         
     return Response({'score': getDeviationScore(recorrido, patente, sentido)})
+
+from time import time
+@api_view(['GET'])
+def listDeviationScore(request, recorrido):
+    data = {
+        'I': {},
+        'R': {}
+    }
+    registries = GPSRegistry.objects.filter(recorrido=recorrido)
+    values = registries.values_list('sentido', 'patente').distinct()
+    # print('[api - listDeviationScore]')
+    # print(recorrido)
+    # print(len(values))
+    t0 = time()
+    for s, p in values:
+        if s == '' or p =='':
+            continue # caso borde que no debería pasar
+        score = getDeviationScore(recorrido=recorrido, patente=p, sentido=s)
+        data[s][p] = score
+    # print(time() - t0)
+    return Response(data)
