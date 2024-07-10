@@ -6,8 +6,11 @@ build:
 start:
 	$(COMPOSE) start
 
+stop:
+	$(COMPOSE) stop
+
 up: 
-	$(COMPOSE) up
+	$(COMPOSE) up -d
 
 down:
 	$(COMPOSE) down
@@ -25,7 +28,6 @@ start-backend:
 	$(COMPOSE) start backend
 
 backend-terminal:
-	$(MAKE) start-backend
 	sudo docker exec -it busy-backend-1 bash
 	
 start-con-terminal:
