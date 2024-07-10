@@ -1,6 +1,11 @@
 
+build:
+	sudo docker compose build
+	
+start:
+	sudo docker compose start
 
-start: 
+up: 
 	sudo docker-compose up
 
 frontend!:
@@ -9,6 +14,12 @@ frontend!:
 backend!:
 	sudo docker compose up backend
 
+frontend?:
+	sudo docker compose start frontend
+
+backend?:
+	sudo docker compose start backend
+
 backend-terminal:
 	sudo docker compose run backend bash -c '\
 		python -m pip install -r requirements.txt && \
@@ -16,6 +27,9 @@ backend-terminal:
 		python manage.py migrate && \
 		bash'
 	
+start-con-terminal:
+	$(MAKE) frontend?
+	$(MAKE) backend-terminal
 
 create-venvs:
 	python -m venv venv-backend
