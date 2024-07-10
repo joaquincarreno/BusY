@@ -28,7 +28,7 @@ start-backend:
 	$(COMPOSE) start backend
 
 backend-terminal:
-	sudo docker exec -it busy-backend-1 bash
+	sudo docker exec -it busy-backend-1 zsh
 	
 start-con-terminal:
 	$(MAKE) start-frontend

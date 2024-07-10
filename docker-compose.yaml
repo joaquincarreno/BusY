@@ -12,9 +12,6 @@ services:
         source: ./frontend
         target: /srv/app
     working_dir: /srv/app
-    # networks:
-    #   default:
-    #     ipv4_address: 172.19.0.3
     command: bash -c 'npm install && npm --host run dev '
   backend:
     build:
@@ -28,4 +25,4 @@ services:
         source: ./backend
         target: /srv/app
     working_dir: /srv/app
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runscript startup && python manage.py runserver 0.0.0.0:8000"
+    command: zsh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runscript startup && python manage.py runserver 0.0.0.0:8000"
