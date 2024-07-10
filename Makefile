@@ -31,7 +31,7 @@ backend-terminal:
 	sudo docker exec -it busy-backend-1 zsh
 	
 start-con-terminal:
-	$(MAKE) start-frontend
+	$(MAKE) start
 	$(MAKE) backend-terminal
 
 clean-terminal:
