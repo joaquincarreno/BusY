@@ -160,20 +160,32 @@ def getAvailableDirections(request, recorrido, patente):
 
 
 def getOrStoreDeviationScore(recorrido, patente, sentido):
-    if not DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido).exists():
+    if DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido).exists():
+        return DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido)[0].score
+    else:
         gps = GPSRegistry.objects.filter(recorrido=recorrido, patente=patente, sentido=sentido).order_by('patente', 'date', 'time').values()
 
-        # print('micro:', patente, recorrido, sentido)
-        paradas = Routes.objects.filter(serviceTSCode=recorrido[1:] if recorrido[0] == 'T' else recorrido, serviceDirection=sentido).order_by('order')
-        ids = list(paradas.values_list('stop', flat=True))
-        stops = list(BusStops.objects.filter(id__in=ids).values())
-        s = calculateDeviationScore([[g['longitude'], g['latitude']] for g in gps], [[s['positionX'], s['positionY']] for s in stops])
+        faltan_scores = False
+        sum_scores = 0
+        for g in gps:
+            if(g.deviation == None):
+                faltan_scores = True
+                break
+            else:
+                sum_scores += g.deviation
+        if faltan_scores:
+            paradas = Routes.objects.filter(serviceTSCode=recorrido[1:] if recorrido[0] == 'T' else recorrido, serviceDirection=sentido).order_by('order')
+            ids = list(paradas.values_list('stop', flat=True))
+            stops = list(BusStops.objects.filter(id__in=ids).values())
+            s = calculateDeviationScore([[g['longitude'], g['latitude']] for g in gps], [[s['positionX'], s['positionY']] for s in stops])
+
+        else:
+            s = sum_scores / len(gps)
 
         obj = DeviationScores.objects.create(score=s, busID=patente, serviceTSCode=recorrido, serviceDirection=sentido)
         obj.save()
+        
         return obj.score
-    else:
-        return DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido)[0].score
 
 @api_view(['GET'])
 def deviationScore(request, recorrido, patente, sentido):
