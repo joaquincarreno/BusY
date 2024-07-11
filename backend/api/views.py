@@ -167,7 +167,7 @@ def getDeviationScore(recorrido, patente, sentido):
         paradas = Routes.objects.filter(serviceTSCode=recorrido[1:] if recorrido[0] == 'T' else recorrido, serviceDirection=sentido)
         ids = list(paradas.values_list('stop', flat=True))
         stops = list(BusStops.objects.filter(id__in=ids).values())
-        s = calculateDeviationScore([[g['latitude'], g['longitude']] for g in gps], [[s['positionY'], s['positionX']] for s in stops])
+        s = calculateDeviationScore([[g['latitude'], g['longitude']] for g in gps], [[s['positionX'], s['positionY']] for s in stops])
 
         obj = DeviationScores.objects.create(score=s, busID=patente, serviceTSCode=recorrido, serviceDirection=sentido)
         obj.save()
