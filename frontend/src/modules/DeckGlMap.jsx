@@ -1,10 +1,10 @@
 import { React, useEffect, useState } from "react";
-import { DeckGL } from "@deck.gl/react";
-import { GeoJsonLayer, BitmapLayer } from "@deck.gl/layers";
 
-import { IconLayer } from "@deck.gl/layers";
+import { DeckGL } from "@deck.gl/react";
+import { BitmapLayer, IconLayer } from "@deck.gl/layers";
 import { TileLayer } from "@deck.gl/geo-layers";
 import { SimpleMeshLayer } from "@deck.gl/mesh-layers";
+
 import { OBJLoader } from "@loaders.gl/obj";
 
 function DeckGlMap({
@@ -142,7 +142,6 @@ function DeckGlMap({
       initialViewState={viewState}
       onViewStateChange={onViewStateChange}
       layers={[osmMapLayer, movingBusLayer, stopsLayer]}
-      // layers={[movingBusLayer]}
       getTooltip={toolTip}
       controller={true}
     />
