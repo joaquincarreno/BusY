@@ -3,16 +3,19 @@ from api.scripts.zones import setUpZones
 from api.scripts.bus_data import setupGPSEntries
 from api.scripts.bus_stops import setupBusStops
 from api.scripts.bus_routes import setupRoutes
+from api.scripts.deviation_score import setupDeviations
 
 
 def run():
     setUpZones()
 
-    setupGPSEntries(GPSRegistry, refill=False)
+    setupGPSEntries(refill=False)
 
-    setupBusStops(BusStops, refill=False)
+    setupBusStops(refill=False)
 
-    setupRoutes(Routes, BusStops, refill=False)
+    setupRoutes(refill=False)
+
+    setupDeviations(skip=True, refill=False)
 
     print()
     print('[startup.py] scripts run succesfully')
