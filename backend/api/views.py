@@ -104,13 +104,13 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
 @api_view(['GET'])
 def getStops(request, recorrido='', sentido=''):
     if(recorrido == ''):
-        objects = list(BusStops.objects.all().values())
+        objects = list(BusStops.objects.all().values().order_by('servicio', 'sentido', 'order'))
 
     else:
         try: 
             recorrido = recorrido[1:] if recorrido[0] == 'T' else recorrido
             if(sentido != ''):
-                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection=sentido)
+                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection=sentido).order_by('order')
                 ids = list(paradas.values_list('stop', flat=True))
                 objects = list(BusStops.objects.filter(id__in=ids).values())
 
@@ -123,7 +123,7 @@ def getStops(request, recorrido='', sentido=''):
                     objects[i] = obj
 
             else:
-                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='I')
+                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='I').order_by('order')
                 idsIda = list(paradas.values_list('stop', flat=True))
                 objectsIda = list(BusStops.objects.filter(id__in=idsIda).values())
 
@@ -134,7 +134,7 @@ def getStops(request, recorrido='', sentido=''):
                     obj['direction'] = 'I'
                     objectsIda[i] = obj
 
-                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='R')
+                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='R').order_by('order')
                 idsRet = list(paradas.values_list('stop', flat=True))
                 objectsRet = list(BusStops.objects.filter(id__in=idsRet).values())
 
@@ -164,7 +164,7 @@ def getOrStoreDeviationScore(recorrido, patente, sentido):
         gps = GPSRegistry.objects.filter(recorrido=recorrido, patente=patente, sentido=sentido).order_by('patente', 'date', 'time').values()
 
         # print('micro:', patente, recorrido, sentido)
-        paradas = Routes.objects.filter(serviceTSCode=recorrido[1:] if recorrido[0] == 'T' else recorrido, serviceDirection=sentido)
+        paradas = Routes.objects.filter(serviceTSCode=recorrido[1:] if recorrido[0] == 'T' else recorrido, serviceDirection=sentido).order_by('order')
         ids = list(paradas.values_list('stop', flat=True))
         stops = list(BusStops.objects.filter(id__in=ids).values())
         s = calculateDeviationScore([[g['longitude'], g['latitude']] for g in gps], [[s['positionX'], s['positionY']] for s in stops])
