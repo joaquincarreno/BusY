@@ -7,9 +7,13 @@ from api.scripts.bus_routes import setupRoutes
 
 def run():
     setUpZones()
-    setupGPSEntries(GPSRegistry)
-    setupBusStops(BusStops)
-    setupRoutes(Routes, BusStops)
+
+    setupGPSEntries(GPSRegistry, refill=False)
+
+    setupBusStops(BusStops, refill=False)
+
+    setupRoutes(Routes, BusStops, refill=False)
+
     print()
     print('[startup.py] scripts run succesfully')
     print()
