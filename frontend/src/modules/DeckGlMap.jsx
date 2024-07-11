@@ -63,7 +63,7 @@ function DeckGlMap({
     getIcon: (d) => "marker",
     getPosition: (d) => {
       // console.log(d);
-      return [d.positionY, d.positionX];
+      return [d.positionX, d.positionY];
     },
     getSize: (d) => {
       // console.log("updated size");

@@ -54,8 +54,8 @@ def setupBusStops(refill=False):
             TSCode=row['Código paradero TS'],
             userCode=row['Código  paradero Usuario'],
             name=row['Nombre Paradero'],
-            positionX=row['geometry'].y,
-            positionY=row['geometry'].x
+            positionX=row['geometry'].x,
+            positionY=row['geometry'].y
         )
         object.save()
     print('stops ready')

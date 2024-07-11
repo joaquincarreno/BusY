@@ -33,6 +33,8 @@ def setupRoutes(refill = False):
     if(len(Routes.objects.all()) > 0):
         print('routes model was filled, skipping')
         return
+    else:
+        print('routes model was empty')
 
 
     def fill_model(row):

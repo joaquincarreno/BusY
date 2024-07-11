@@ -73,7 +73,7 @@ class MovingBus {
     } else {
       this.orientation = Math.atan(dy / dx);
     }
-    this.position = [startPosition[1] + dy * relTime, startPosition[0] + dx * relTime];
+    this.position = [startPosition[0] + dx * relTime, startPosition[1] + dy * relTime];
   }
   updateColor(time){
     if(this.currentStep < 0){

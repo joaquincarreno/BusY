@@ -10,7 +10,7 @@ from api.models import GPSRegistry
 
 def filter_points(points_df):
     # print(points_df)
-    puntos = list(zip(list(points_df['lat']), list(points_df['lon'])))
+    puntos = list(zip(list(points_df['lon']), list(points_df['lat'])))
     mascara = rdp(puntos, epsilon=0.0001, return_mask=True)
     filtered = points_df[mascara]
     print('se liberaron {} puntos para la patente {}'.format(len(points_df) - len(filtered), points_df['patente'][0]))

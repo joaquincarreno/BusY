@@ -35,7 +35,7 @@ def calculateDeviationScore(gps, stops):
     return score
 
 def objectToPoint(obj):
-    return [obj.latitude, obj.longitude]
+    return [obj.longitude, obj.latitude]
 
 
 def setupDeviations(skip=True, refill=False, clear_scores=False):
