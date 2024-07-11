@@ -159,7 +159,7 @@ def getAvailableDirections(request, recorrido, patente):
     return Response({'directions': values})
 
 
-def getDeviationScore(recorrido, patente, sentido):
+def getOrStoreDeviationScore(recorrido, patente, sentido):
     if not DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido).exists():
         gps = GPSRegistry.objects.filter(recorrido=recorrido, patente=patente, sentido=sentido).order_by('patente', 'date', 'time').values()
 
@@ -178,7 +178,7 @@ def getDeviationScore(recorrido, patente, sentido):
 @api_view(['GET'])
 def deviationScore(request, recorrido, patente, sentido):
         
-    return Response({'score': getDeviationScore(recorrido, patente, sentido)})
+    return Response({'score': getOrStoreDeviationScore(recorrido, patente, sentido)})
 
 from time import time
 @api_view(['GET'])
@@ -192,11 +192,11 @@ def listDeviationScore(request, recorrido):
     # print('[api - listDeviationScore]')
     # print(recorrido)
     # print(len(values))
-    t0 = time()
+    # t0 = time()
     for s, p in values:
         if s == '' or p =='':
             continue # caso borde que no debería pasar
-        score = getDeviationScore(recorrido=recorrido, patente=p, sentido=s)
+        score = getOrStoreDeviationScore(recorrido=recorrido, patente=p, sentido=s)
         data[s][p] = score
     # print(time() - t0)
     return Response(data)
