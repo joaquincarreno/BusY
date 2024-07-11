@@ -38,7 +38,7 @@ def objectToPoint(obj):
     return [obj.latitude, obj.longitude]
 
 
-def setupDeviations(skip=True, refill=True, clear_scores=False):
+def setupDeviations(skip=True, refill=False, clear_scores=False):
     if clear_scores:
         print('purging scores')
         DeviationScores.objects.all().delete()

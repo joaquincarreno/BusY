@@ -10,11 +10,14 @@ def run():
     setUpZones()
 
     setupGPSEntries(refill=False)
+    print()
 
     setupBusStops(refill=False)
+    print()
 
     setupRoutes(refill=False)
-
+    print()
+    
     setupDeviations(skip=True, refill=False)
 
     print()
