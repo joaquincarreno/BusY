@@ -48,7 +48,8 @@ class MovingBus {
     if(step < 0){
         // console.log('negative step')
       
-      this.position = step == -1 ? this.coordinates[0] : this.coordinates[this.nSteps-1]
+      // this.position = step == -1 ? this.coordinates[0] : this.coordinates[this.nSteps-1]
+      this.position = [0, 0]
       // this.orientation = -> se mantiene la última orientación
       return
     }
