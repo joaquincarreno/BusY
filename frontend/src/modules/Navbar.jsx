@@ -33,6 +33,11 @@ const Navbar = ({
 
   pause = false,
   pauseSetter = (_) => {},
+
+  colorMode = 0,
+  colorModeSetter = (_) => {},
+
+  deviationsAvailable = false,
 }) => {
   const createHandler = (varName, setter, unSetterers = []) => {
     return (event) => {
@@ -101,6 +106,8 @@ const Navbar = ({
     R: "Retorno",
   };
 
+  const textStyle = { fontSize: "12px" };
+
   return (
     <div className="navbar">
       <div className="navbar-left">
@@ -151,6 +158,12 @@ const Navbar = ({
 
       <div className="navbar-right">
         <div className="navbar-item">
+          <p>
+            Tiempo actual: <br />
+            {getDateTime(time)}
+          </p>
+        </div>
+        <div className="navbar-item">
           <button
             onClick={() => {
               console.log("time resetted");
@@ -168,10 +181,19 @@ const Navbar = ({
           />
         </div>
         <div className="navbar-item">
-          <p>
-            Tiempo actual: <br />
-            {getDateTime(time)}
-          </p>
+          {/* modo de color */}
+          <div style={textStyle}>Selector de color</div>
+          <select
+            value={colorMode}
+            onChange={createHandler("colorMode", colorModeSetter, [])}
+          >
+            <option value={0}>Progreso de ruta</option>
+            {deviationsAvailable ? (
+              <option value={1}>Desviación</option>
+            ) : (
+              <></>
+            )}
+          </select>
         </div>
         <div className="navbar-item">
           <input

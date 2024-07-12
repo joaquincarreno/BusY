@@ -249,6 +249,9 @@ function App() {
               stepSetter={setStep}
               pause={pause}
               pauseSetter={setPause}
+              colorMode={colorMode}
+              colorModeSetter={setColorMode}
+              deviationsAvailable={deviationsAvailable}
             />
           </div>
           <DeckGlMap
