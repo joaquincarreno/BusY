@@ -18,7 +18,7 @@ def run():
     setupRoutes(refill=False)
     print()
     
-    setupDeviations(skip=True, refill=False)
+    setupDeviations(skip=True, refill=False, clear_scores=False)
 
     print()
     print('[startup.py] scripts run succesfully')

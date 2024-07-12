@@ -42,6 +42,7 @@ def setupDeviations(skip=True, refill=False, clear_scores=False):
     if clear_scores:
         print('purging scores')
         DeviationScores.objects.all().delete()
+    
     if skip:
         print('skipping devations')
         return
