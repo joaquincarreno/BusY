@@ -54,6 +54,10 @@ function App() {
   const [selectedBus, setSelectedBus] = useState("");
   const [selectedDirection, setSelectedDirection] = useState("");
 
+  const [colorMode, setColorMode] = useState(0);
+
+  const [deviationsAvailable, setDeviationsAvailable] = useState(false);
+
   // available bus routes API call
   useEffect(() => {
     get(ROUTES_API).then((response) => {
@@ -159,6 +163,11 @@ function App() {
     });
   }, [selectedRoute, selectedDirection]);
 
+  // check deviations available
+  useEffect(() => {
+    setDeviationsAvailable(movingBuses.allBusesHaveDeviation);
+  }, [movingBuses]);
+
   const initialViewState = {
     latitude: -33.443018,
     longitude: -70.65387,
@@ -209,7 +218,7 @@ function App() {
   }, [step, pause, resetTime]);
 
   useEffect(() => {
-    movingBuses.updateBuses(time);
+    movingBuses.updateBuses(time, colorMode);
   }, [time]);
 
   return (

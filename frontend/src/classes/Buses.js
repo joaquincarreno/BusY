@@ -38,7 +38,7 @@ class Buses {
       this.latestTimeStamp = aux;
       console.log('empty busList')
     }
-    
+
     if(this.allBusesHaveDeviation){
       // si hay top deviation entonces todos tienen desviaciones,
       Object.keys(this.dict).forEach((patente) => this.dict[patente].topDeviation = this.topDeviation)
@@ -65,7 +65,7 @@ class Buses {
       return false;
     }
   }
-  updateBuses(time){
+  updateBuses(time, mode){
     const currTime = this.earliestTimeStamp + time * 1000;
     // console.log('updating buses');
     // console.log('time:', time * 1000);
@@ -73,7 +73,7 @@ class Buses {
     // console.log('in date', new Date(currTime))
     Object.keys(this.dict).map((patente) => {
       // console.log('updating', patente);
-      this.dict[patente].updateBus(currTime);
+      this.dict[patente].updateBus(currTime, mode);
     })
 
   }

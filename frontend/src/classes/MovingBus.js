@@ -26,10 +26,10 @@ class MovingBus {
     // console.log("-  logs  -");u
   }
   // updaters
-  updateBus(time){
+  updateBus(time, mode){
     this.updateStep(time);
     this.updatePosition(time);
-    this.updateColor(time);
+    this.updateColor(time, mode);
   }
   updateStep(time) {
     // console.log('currentStep', this.currentStep)
@@ -87,15 +87,32 @@ class MovingBus {
     }
     this.position = [startPosition[0] + dx * relTime, startPosition[1] + dy * relTime];
   }
-  updateColor(time){
-    if(this.currentStep < 0){
-      this.color = [0, 0, 0, 0]
-    }else{
-      // const relTime = this.getRelativeTime(this.firstTimeStamp, this.lastTimeStamp, time)
-      const relTime = (time - this.firstTimeStamp) / (this.lastTimeStamp - this.firstTimeStamp);
-      // console.log(relTime)
-      this.color = [255 * relTime, 255 * (1 - relTime), 150]
+  updateColor(time, mode){
+    // mode 0 es por tiempo transcurrido
+    // console.log('color mode', mode);
+    if(mode == 0){
+      if(this.currentStep < 0){
+        this.color = [0, 0, 0, 0]
+      }else{
+        const relTime = (time - this.firstTimeStamp) / (this.lastTimeStamp - this.firstTimeStamp);
+        // console.log(relTime)
+        this.color = [255 * relTime, 255 * (1 - relTime), 150, 255]
+      }
+      // mode 1 es por desviación
+    }else if(mode == 1){
+      if(this.currentStep < 0){
+        // console.log('alo2')
+        this.color = [0, 0, 0, 0]
+      }else if(this.topDeviation){
+        const relDeviation = this.deviations[this.currentStep] / this.topDeviation;
+        // console.log(relDeviation)
+        const r = relDeviation * 255 
+        this.color = [r, 255 - r, 51, 255]
+      }else{
+        this.color = [51, 51, 51, 255]
+      }
     }
+    
   }
 
   //getters
