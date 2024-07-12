@@ -4,10 +4,21 @@ class MovingBus {
     this.nSteps = info.coords.length 
     this.coordinates = info.coords;
     this.timeStamps = info.timeStamps.map((x) => (Date.parse(x)));
+    this.directions = info.directions;
+    this.deviations = info.deviations;
+
+
 
     // console.log(this.timeStamps)
     this.firstTimeStamp = this.timeStamps[0]
     this.lastTimeStamp = this.timeStamps[this.nSteps - 1]
+    if (null in this.deviations){
+      console.log('null in', this.patente)
+      this.topDeviation = null;
+    }else{
+      console.log('no nulls in', this.patente)
+      this.topDeviation = Math.max(...this.deviations)
+    }
     this.currentStep = 0;
     this.position = [0, 0];
     this.orientation = 0;

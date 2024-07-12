@@ -4,7 +4,8 @@ class Buses {
     // console.log('[busList]', busList)
     this.earliestTimeStamp = (new Date('3000/01/01')).getTime(); // máxima fecha posible
     this.latestTimeStamp = (new Date('1970/01/01')).getTime(); // míxima fecha posble
-    
+    this.topDeviation = 0;
+    this.allBusesHaveDeviation = true;
 
     this.dict = {};
     if(busList.length > 0){
@@ -12,7 +13,7 @@ class Buses {
       busList.forEach((b) => {
         const bus = new MovingBus(b);
         this.dict[b.patente] = bus
-        // console.log(new Date(this.dict[b.patente].firstTimeStamp))
+        // guardando límites de tiempo
         if(bus.firstTimeStamp < this.earliestTimeStamp){
           this.earliestTimeStamp = bus.firstTimeStamp
         }
@@ -20,7 +21,16 @@ class Buses {
         if(bus.lastTimeStamp > this.latestTimeStamp){
           this.latestTimeStamp = bus.lastTimeStamp
         }
+
+        // guardando mayor desviación
+        if(bus.topDeviation){
+          this.topDeviation = bus.topDeviation > this.topDeviation ? bus.topDeviation : this.topDeviation;
+        }else{
+          this.allBusesHaveDeviation = false;
+        }
       });
+      
+      
       console.log('Added the following buses:', Object.keys(this.dict))
     }else{
       const aux = this.earliestTimeStamp;
@@ -29,6 +39,19 @@ class Buses {
       console.log('empty busList')
     }
     
+    if(this.allBusesHaveDeviation){
+      // si hay top deviation entonces todos tienen desviaciones,
+      Object.keys(this.dict).forEach((patente) => this.dict[patente].topDeviation = this.topDeviation)
+      console.log('top deviations exists')
+    }else{
+      // no hay top deviation entonces les dejamos ser? no, actualizamos los que si tenían
+      Object.keys(this.dict).forEach((patente) => {
+        if(this.dict[patente].topDeviation){
+          this.dict[patente].topDeviation = this.topDeviation;
+        }
+      });
+      console.log('no top deviation')
+    }
     this.timeRange = this.latestTimeStamp - this.earliestTimeStamp;
 
     // console.log('[earliestTimeStamp]', new Date(this.earliestTimeStamp));
