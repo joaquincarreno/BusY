@@ -10,12 +10,12 @@ import "./App.css";
 // const loopLength = 1;
 // const BACKEND_IP = "http://localhost:8000/";
 const BACKEND_IP = "http://192.168.100.17:8000/";
-const BACKEND_URL = BACKEND_IP + "api/";
-const GPS_API = BACKEND_URL + "gps/";
-const STOPS_API = BACKEND_URL + "stops/";
-const ROUTES_API = BACKEND_URL + "availableRoutes/";
-const BUSES_API = BACKEND_URL + "availableBuses/";
-const DIRECTIONS_API = BACKEND_URL + "availableDirections/";
+const API_URL = BACKEND_IP + "api/";
+const GPS_API = API_URL + "gps/";
+const STOPS_API = API_URL + "stops/";
+const ROUTES_API = API_URL + "availableRoutes/";
+const BUSES_API = API_URL + "availableBuses/";
+const DIRECTIONS_API = API_URL + "availableDirections/";
 
 const ASSETS = "./src/assets/";
 
