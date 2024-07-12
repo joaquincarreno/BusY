@@ -70,6 +70,7 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
     patente_actual = results[0].patente
     coords = []
     timestamps = []
+    sentidos = []
     desviaciones = []
     i=0
     for o in results:
@@ -81,7 +82,8 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
                         'patente': patente_actual,
                         'timeStamps': timestamps,
                         'coords': coords,
-                        'deviation': desviaciones
+                        'deviation': desviaciones,
+                        'directions': sentidos
                     }
                 ]
             patente_actual = o.patente
@@ -91,11 +93,13 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
         timestamps += [str(o.date) + ' ' + str(o.time)]
         coords += [[o.longitude, o.latitude]]
         desviaciones += [o.deviation]
+        sentidos += [o.sentido]
     data += [{
         'patente': patente_actual,
         'timeStamps': timestamps,
         'coords': coords,
         'deviation': desviaciones,
+        'directions': sentidos
     }]
 
     
