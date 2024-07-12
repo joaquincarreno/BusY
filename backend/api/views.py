@@ -108,7 +108,7 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
 @api_view(['GET'])
 def getStops(request, recorrido='', sentido=''):
     if(recorrido == ''):
-        objects = list(BusStops.objects.all().values().order_by('servicio', 'sentido', 'order'))
+        objects = list(BusStops.objects.all().values())
 
     else:
         try: 
