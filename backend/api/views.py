@@ -108,53 +108,33 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
 @api_view(['GET'])
 def getStops(request, recorrido='', sentido=''):
     if(recorrido == ''):
-        objects = list(BusStops.objects.all().values())
-
+        all_objects = list(BusStops.objects.all().values())
     else:
-        try: 
-            recorrido = recorrido[1:] if recorrido[0] == 'T' else recorrido
-            if(sentido != ''):
-                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection=sentido).order_by('order')
+        recorrido = recorrido[1:] if recorrido[0] == 'T' else recorrido
+        sentidos = ['I', 'R'] if sentido == '' else [sentido]
+        all_objects = []
+        for s in sentidos:
+            try:    
+                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection=s).order_by('order')
                 ids = list(paradas.values_list('stop', flat=True))
-                objects = list(BusStops.objects.filter(id__in=ids).values())
-
+                query = BusStops.objects.filter(id__in=ids).values()
+                objects = list(query)
 
                 assert len(ids) == len(objects)
 
                 for i in range(len(ids)):
                     obj = objects[i]
-                    obj['direction'] = sentido
+                    obj['direction'] = s
+                    obj['order'] = paradas.filter(stop=obj['id'])[0].order
                     objects[i] = obj
 
-            else:
-                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='I').order_by('order')
-                idsIda = list(paradas.values_list('stop', flat=True))
-                objectsIda = list(BusStops.objects.filter(id__in=idsIda).values())
+                all_objects +=  objects
 
-                assert len(idsIda) == len(objectsIda)
-
-                for i in range(len(idsIda)):
-                    obj = objectsIda[i]
-                    obj['direction'] = 'I'
-                    objectsIda[i] = obj
-
-                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='R').order_by('order')
-                idsRet = list(paradas.values_list('stop', flat=True))
-                objectsRet = list(BusStops.objects.filter(id__in=idsRet).values())
-
-                assert len(idsRet) == len(objectsRet)
-
-                for i in range(len(idsRet)):
-                    obj = objectsRet[i]
-                    obj['direction'] = 'R'
-                    objectsRet[i] = obj
-
-                objects = objectsIda + objectsRet
-        except:
-            print('[api getStops] failed assert')
-            objects = []
+            except AssertionError:
+                print('[api getStops] route doesnt match stops for', recorrido, s)
+                objects = []
             
-    return Response({'stops': objects})
+    return Response({'stops': all_objects})
 
 @api_view(['GET'])
 def getAvailableDirections(request, recorrido, patente):
