@@ -127,7 +127,7 @@ def getStops(request, recorrido='', sentido=''):
                     obj['direction'] = s
                     obj['order'] = paradas.filter(stop=obj['id'])[0].order
                     objects[i] = obj
-
+                objects.sort(key=lambda stop: stop['order'])
                 all_objects +=  objects
 
             except AssertionError:
