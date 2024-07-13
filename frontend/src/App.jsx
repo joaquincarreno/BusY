@@ -262,6 +262,7 @@ function App() {
             busMesh={ASSETS + "bus/JETSET.obj"}
             time={time}
             showStops={showStops}
+            deviationsAvailable={deviationsAvailable}
           />
         </div>
       ) : (

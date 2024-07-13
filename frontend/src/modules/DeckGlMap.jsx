@@ -1,9 +1,10 @@
-import { React, useEffect, useState } from "react";
+import { React, useState } from "react";
 
 import { DeckGL } from "@deck.gl/react";
 import { BitmapLayer, IconLayer } from "@deck.gl/layers";
 import { TileLayer } from "@deck.gl/geo-layers";
 import { SimpleMeshLayer } from "@deck.gl/mesh-layers";
+import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 
 import { OBJLoader } from "@loaders.gl/obj";
 
@@ -15,8 +16,11 @@ function DeckGlMap({
   busMesh = null,
   time = 0,
   showStops = true,
+  deviationsAvailable = false,
 }) {
   const [scale, setScale] = useState(1);
+  const patentes = movingBuses.patentes;
+
   const onViewStateChange = ({ viewState, interactionState, oldViewState }) => {
     // console.log("viewState changed: ", viewState);
     viewStateSetter(viewState);
@@ -81,9 +85,7 @@ function DeckGlMap({
       getSize: [scale],
     },
   });
-  const patentes = Object.keys(movingBuses.dict);
-  // console.log(gpsData);
-  // console.log(movingBuses);
+
   const movingBusLayer = new SimpleMeshLayer({
     id: "buses-layer",
     data: patentes,
@@ -137,11 +139,30 @@ function DeckGlMap({
     }
   };
 
+  const deviationLayer = new HeatmapLayer({
+    id: "deviation-layer",
+    // data: movingBuses.getDeviations(),
+    data: movingBuses.getDeviations(),
+    aggregation: "MEAN",
+
+    visible: deviationsAvailable,
+
+    getPosition: (d) => {
+      return d.position;
+    },
+    getWeight: (d) => {
+      // console.log(d.position);
+      return d.weight;
+    },
+
+    radiusPixels: 15,
+  });
+
   return (
     <DeckGL
       initialViewState={viewState}
       onViewStateChange={onViewStateChange}
-      layers={[osmMapLayer, movingBusLayer, stopsLayer]}
+      layers={[osmMapLayer, movingBusLayer, stopsLayer, deviationLayer]}
       getTooltip={toolTip}
       controller={true}
     />
