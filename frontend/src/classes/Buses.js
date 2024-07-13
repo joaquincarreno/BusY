@@ -7,6 +7,7 @@ class Buses {
     this.topDeviation = 0;
     this.allBusesHaveDeviation = true;
     this.patentes = []
+    this.deviationList = []
 
     this.dict = {};
     if(busList.length > 0){
@@ -32,7 +33,7 @@ class Buses {
       });
       
       this.patentes = Object.keys(this.dict)
-      console.log('Added the following buses:', Object.keys(this.dict))
+      console.log('Added the following buses:', this.patentes)
     }else{
       const aux = this.earliestTimeStamp;
       this.earliestTimeStamp = this.latestTimeStamp;
@@ -43,6 +44,23 @@ class Buses {
     if(this.allBusesHaveDeviation){
       // si hay top deviation entonces todos tienen desviaciones,
       this.patentes.forEach((patente) => this.dict[patente].topDeviation = this.topDeviation)
+
+      const deviationCount = this.patentes.reduce((partialSum, patente) => this.dict[patente].deviations.length + partialSum, 0)
+      console.log(deviationCount)
+      this.deviationList = new Array(deviationCount)
+      var curr = 0;
+      this.patentes.map((patente) => {
+        const bus = this.dict[patente];
+        const iterator = [...Array(bus.nSteps).keys()];
+        iterator.forEach((step) => {
+          // console.log(bus.deviations[step])
+          this.deviationList[curr + step] = {
+            position: bus.coordinates[step],
+            weight: bus.deviations[step]
+          }
+        })
+        curr += bus.nSteps
+      })
       console.log('top deviations exists')
     }else{
       // no hay top deviation entonces les dejamos ser? no, actualizamos los que si tenían
@@ -57,9 +75,6 @@ class Buses {
     // time setup
     this.timeRange = this.latestTimeStamp - this.earliestTimeStamp;
 
-    // console.log('[earliestTimeStamp]', new Date(this.earliestTimeStamp));
-    // console.log('[latestTimeStamp]', new Date(this.latestTimeStamp));
-    // console.log('[timeRange]', this.timeRange)
   }
   getBus(patente) {
     if(patente in this.dict){
@@ -78,7 +93,13 @@ class Buses {
       // console.log('updating', patente);
       this.dict[patente].updateBus(currTime, mode);
     })
-
+  }
+  getDeviations(){
+    if(this.allBusesHaveDeviation){
+      return this.deviationList;
+    }else{
+      return [];
+    }
   }
 }
 
