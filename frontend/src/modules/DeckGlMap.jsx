@@ -1,12 +1,42 @@
 import { React, useState } from "react";
 
 import { DeckGL } from "@deck.gl/react";
-import { BitmapLayer, IconLayer } from "@deck.gl/layers";
+import { BitmapLayer, IconLayer, LineLayer } from "@deck.gl/layers";
 import { TileLayer } from "@deck.gl/geo-layers";
 import { SimpleMeshLayer } from "@deck.gl/mesh-layers";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 
 import { OBJLoader } from "@loaders.gl/obj";
+
+const createStopsLines = (stops) => {
+  const n = stops.length;
+  const data = new Array(n - 2);
+  var i = 0;
+  var sep = 0;
+  var prev = 0;
+  // pasamos por todas las stops menos la última, que se agrega con la penúltima
+  while (i < n - 1) {
+    // caso terminamos un sentido: reiniciamos el paso previo
+    if (prev > stops[i].order) {
+      sep = 1;
+      prev = 0;
+    } else {
+      data[i - sep] = {
+        from: [stops[i].positionX, stops[i].positionY],
+        to: [stops[i + 1].positionX, stops[i + 1].positionY],
+        color:
+          stops[i].direction == "I"
+            ? [255, 80, 80]
+            : stops[i].direction == "R"
+            ? [80, 80, 255]
+            : [80, 255, 80],
+      };
+      prev = stops[i].order;
+    }
+    i += 1;
+  }
+  return data;
+};
 
 function DeckGlMap({
   viewState,
@@ -49,6 +79,26 @@ function DeckGlMap({
       });
     },
     pickable: false,
+  });
+
+  const routeLines = stopsData[0].order
+    ? createStopsLines(stopsData)
+    : [{ from: [0, 0], to: [0, 0], color: [0, 0, 0] }];
+
+  console.log(routeLines);
+
+  const routesLayer = new LineLayer({
+    id: "routes-layer",
+    data: routeLines,
+
+    getColor: (d) => d.color,
+    getSourcePosition: (d) => {
+      // console.log(d);
+      return d.from;
+    },
+    getTargetPosition: (d) => d.to,
+    getWidth: 12,
+    pickable: true,
   });
 
   const stopsLayer = new IconLayer({
@@ -162,7 +212,13 @@ function DeckGlMap({
     <DeckGL
       initialViewState={viewState}
       onViewStateChange={onViewStateChange}
-      layers={[osmMapLayer, movingBusLayer, stopsLayer, deviationLayer]}
+      layers={[
+        osmMapLayer,
+        routesLayer,
+        stopsLayer,
+        deviationLayer,
+        movingBusLayer,
+      ]}
       getTooltip={toolTip}
       controller={true}
     />
