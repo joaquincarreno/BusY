@@ -47,15 +47,15 @@ function DeckGlMap({
       minZoom: 2,
       maxZoom: 15,
     },
-  viewStateSetter = () => {},
+    viewStateSetter = () => {},
     time = 0,
     showStops = true,
   },
   dataProp: {
-  movingBuses = {},
-  stopsData = JSON.parse([]),
-  busMesh = null,
-  deviationsAvailable = false,
+    movingBuses = {},
+    stopsData = JSON.parse([]),
+    busMesh = null,
+    deviationsAvailable = false,
   },
 }) {
   const [scale, setScale] = useState(1);
@@ -91,11 +91,10 @@ function DeckGlMap({
     pickable: false,
   });
 
+  // si hay orden en los paraderos entonces se pueden hacer líneas
   const routeLines = stopsData[0].order
     ? createStopsLines(stopsData)
     : [{ from: [0, 0], to: [0, 0], color: [0, 0, 0] }];
-
-  console.log(routeLines);
 
   const routesLayer = new LineLayer({
     id: "routes-layer",
@@ -107,6 +106,8 @@ function DeckGlMap({
       return d.from;
     },
     getTargetPosition: (d) => d.to,
+
+    visible: showStops,
     getWidth: 12,
     pickable: true,
   });
@@ -187,6 +188,23 @@ function DeckGlMap({
     },
   });
 
+  const deviationLayer = new HeatmapLayer({
+    id: "deviation-layer",
+    data: movingBuses.getDeviations(),
+    aggregation: "MEAN",
+
+    visible: deviationsAvailable,
+
+    getPosition: (d) => {
+      return d.position;
+    },
+    getWeight: (d) => {
+      return d.weight;
+    },
+
+    radiusPixels: 15,
+  });
+
   const toolTip = (object) => {
     if (object.layer && object.picked) {
       // console.log(object);
@@ -198,25 +216,6 @@ function DeckGlMap({
       }
     }
   };
-
-  const deviationLayer = new HeatmapLayer({
-    id: "deviation-layer",
-    // data: movingBuses.getDeviations(),
-    data: movingBuses.getDeviations(),
-    aggregation: "MEAN",
-
-    visible: deviationsAvailable,
-
-    getPosition: (d) => {
-      return d.position;
-    },
-    getWeight: (d) => {
-      // console.log(d.position);
-      return d.weight;
-    },
-
-    radiusPixels: 15,
-  });
 
   return (
     <DeckGL
