@@ -56,6 +56,7 @@ function DeckGlMap({
     stopsData = JSON.parse([]),
     busMesh = null,
     deviationsAvailable = false,
+    heatMapOption = 0,
   },
 }) {
   const [scale, setScale] = useState(1);
@@ -193,7 +194,7 @@ function DeckGlMap({
     data: movingBuses.getDeviations(),
     aggregation: "MEAN",
 
-    visible: deviationsAvailable,
+    visible: deviationsAvailable && heatMapOption == 1,
 
     getPosition: (d) => {
       return d.position;

@@ -54,9 +54,10 @@ function App() {
   const [selectedBus, setSelectedBus] = useState("");
   const [selectedDirection, setSelectedDirection] = useState("");
 
-  const [colorMode, setColorMode] = useState(0);
-
   const [deviationsAvailable, setDeviationsAvailable] = useState(false);
+
+  const [colorMode, setColorMode] = useState(0);
+  const [heatMapOption, setHeatMapOption] = useState(0);
 
   // available bus routes API call
   useEffect(() => {
@@ -259,9 +260,13 @@ function App() {
                 pause: pause,
                 pauseSetter: setPause,
               }}
-              colorMode={colorMode}
-              colorModeSetter={setColorMode}
-              deviationsAvailable={deviationsAvailable}
+              visControlProp={{
+                colorMode: colorMode,
+                colorModeSetter: setColorMode,
+                deviationsAvailable: deviationsAvailable,
+                heatMapOption: heatMapOption,
+                heatMapOptionSetter: setHeatMapOption,
+              }}
             />
           </div>
           <DeckGlMap
@@ -276,6 +281,7 @@ function App() {
               stopsData: stopsData["stops"],
               busMesh: ASSETS + "bus/JETSET.obj",
               deviationsAvailable: deviationsAvailable,
+              heatMapOption: heatMapOption,
             }}
           />
         </div>

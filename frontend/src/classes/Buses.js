@@ -38,6 +38,7 @@ class Buses {
       const aux = this.earliestTimeStamp;
       this.earliestTimeStamp = this.latestTimeStamp;
       this.latestTimeStamp = aux;
+      this.allBusesHaveDeviation = false;
       console.log('empty busList')
     }
     // deviations setup

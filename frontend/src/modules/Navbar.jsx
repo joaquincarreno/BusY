@@ -35,10 +35,15 @@ const Navbar = ({
     pauseSetter = (_) => {},
   },
 
-  colorMode = 0,
-  colorModeSetter = (_) => {},
+  visControlProp: {
+    colorMode = 0,
+    colorModeSetter = (_) => {},
 
-  deviationsAvailable = false,
+    deviationsAvailable = false,
+
+    heatMapOption = 0,
+    heatMapOptionSetter = (_) => {},
+  },
 }) => {
   const createHandler = (varName, setter, unSetterers = []) => {
     return (event) => {
@@ -47,7 +52,7 @@ const Navbar = ({
         setter("");
       });
       setter(value);
-      console.log("selected " + varName + ": " + value);
+      console.log("selected", varName, ": ", value);
     };
   };
 
@@ -108,7 +113,7 @@ const Navbar = ({
   };
 
   const textStyle = { fontSize: "12px" };
-
+  
   return (
     <div className="navbar">
       <div className="navbar-left">
@@ -182,6 +187,16 @@ const Navbar = ({
           />
         </div>
         <div className="navbar-item">
+          <input
+            type="range"
+            min="1"
+            max="100"
+            step="1"
+            defaultValue={10}
+            onChange={handleStepChange}
+          />
+        </div>
+        <div className="navbar-item">
           {/* modo de color */}
           <div style={textStyle}>Selector de color</div>
           <select
@@ -196,16 +211,23 @@ const Navbar = ({
             )}
           </select>
         </div>
-        <div className="navbar-item">
-          <input
-            type="range"
-            min="1"
-            max="100"
-            step="1"
-            defaultValue={10}
-            onChange={handleStepChange}
-          />
-        </div>
+        {deviationsAvailable && (
+          <div className="navbar-item">
+            {/* control heatmap */}
+            <div style={textStyle}>Heat Map</div>
+            <select
+              value={heatMapOption}
+              onChange={createHandler(
+                "heat map option",
+                heatMapOptionSetter,
+                []
+              )}
+            >
+              <option value={0}>Ocultar</option>
+              {deviationsAvailable && <option value={1}>Desviación</option>}
+            </select>
+          </div>
+        )}
         <div className="navbar-item">
           <button
             onClick={() => {
