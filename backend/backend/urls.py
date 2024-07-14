@@ -17,9 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from api.views import apiTest, getZones777, getGPS, getStops, getAvailableRoutes, getAvailableBuses, getAvailableDirections
+from api.views import apiTest, getZones777, getGPS, getStops, getAvailableRoutes, getAvailableBuses, getAvailableDirections, deviationScore, listDeviationScore
 
-from api.models import GPSRegistry, BusStops, Routes
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,16 +36,6 @@ urlpatterns = [
     path('api/availableBuses/<str:recorrido>', getAvailableBuses),
     path('api/availableBuses/<str:recorrido>/<str:sentido>', getAvailableBuses),
     path('api/availableDirections/<str:recorrido>/<str:patente>', getAvailableDirections),
+    path('api/deviationScore/<str:recorrido>/<str:patente>/<str:sentido>', deviationScore),
+    path('api/listDeviationScore/<str:recorrido>', listDeviationScore),
 ]
-
-
-# SERVER SETUP (SHOULD THIS EVEN BE HERE?)
-from api.scripts.zones import setUpZones
-from api.scripts.bus_data import setupGPSEntries
-from api.scripts.bus_stops import setupBusStops
-from api.scripts.bus_routes import setupRoutes
-
-setUpZones()
-setupGPSEntries(GPSRegistry)
-setupBusStops(BusStops)
-setupRoutes(Routes, BusStops)

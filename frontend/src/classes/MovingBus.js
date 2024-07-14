@@ -1,61 +1,129 @@
 class MovingBus {
   constructor(info) {
+    this.patente = info.patente
+    this.nSteps = info.coords.length 
     this.coordinates = info.coords;
-    const first = Date.parse(info.timeStamps[0]);
-    const timeRange =
-      Date.parse(info.timeStamps[info.timeStamps.length - 1]) - first;
-    this.timeStamps = info.timeStamps.map(
-      (x) => (Date.parse(x) - first) / timeRange
-    );
+    this.timeStamps = info.timeStamps.map((x) => (Date.parse(x)));
+    this.directions = info.directions;
+    this.deviations = info.deviations;
+
+
+
+    // console.log(this.timeStamps)
+    this.firstTimeStamp = this.timeStamps[0]
+    this.lastTimeStamp = this.timeStamps[this.nSteps - 1]
+    if (null in this.deviations){
+      console.log('null in', this.patente)
+      this.topDeviation = null;
+    }else{
+      console.log('no nulls in', this.patente)
+      this.topDeviation = Math.max(...this.deviations)
+    }
     this.currentStep = 0;
     this.position = [0, 0];
     this.orientation = 0;
+    this.color = [0, 0, 0, 255]
     // console.log("-  logs  -");u
   }
+  // updaters
+  updateBus(time, mode){
+    this.updateStep(time);
+    this.updatePosition(time);
+    this.updateColor(time, mode);
+  }
   updateStep(time) {
+    // console.log('currentStep', this.currentStep)
+    if(time < this.timeStamps[0]){
+      this.currentStep = -1
+      // console.log('time earlier than first step for', this.patente, 'setting step to -1')
+      
+      // console.log(new Date(time), '<' , new Date(this.timeStamps[0]))
+      return
+    }
     var i = 0;
-    while (time > this.timeStamps[i + 1]) {
+    while (time > this.timeStamps[i]) {
       i = i + 1;
-      if (i >= this.timeStamps.lenght) {
-        return new Error("time out of range");
+      if (i >= this.nSteps - 1) {
+        this.currentStep = -2
+        // console.log('time later than last step for', this.patente, 'setting step to -2')
+        
+        // console.log(new Date(time), '>' , new Date(this.timeStamps[this.nSteps-1]))
+        return
       }
     }
-    if (this.currentStep != i) {
-      this.currentStep = i;
+    // console.log('newStep', i)
+    this.currentStep = i; 
+  }
+  updatePosition(time) {
+    const step = this.currentStep;
+    if(step < 0){
+        // console.log('negative step')
+      
+      // this.position = step == -1 ? this.coordinates[0] : this.coordinates[this.nSteps-1]
+      this.position = [0, 0]
+      // this.orientation = -> se mantiene la última orientación
+      return
     }
-  }
-  getRelativeTime(start, end, current) {
-    end = end - start;
-    current = current - start;
-    return current / end;
-  }
-  getCurrentCoordinates(step, relativeTime) {
-    const start = this.coordinates[step];
-    const end = this.coordinates[step + 1];
-    // console.log("[getCurrentCoords] step count = ");
-    // console.log(this.coordinates.length);
-    const dx = end[0] - start[0];
-    const dy = end[1] - start[1];
-    // console.log("getCurrentCoords: dx=", dx, "dy=", dy);
+    const startTime = this.timeStamps[step];
+    const endTime = this.timeStamps[step + 1];
+    const relTime = (time - startTime) / (endTime - startTime)
+    
+    const startPosition = this.coordinates[step];
+    const endPosition = this.coordinates[step + 1];
+
+    // console.log(this.patente);     
+    // console.log(this.currentStep);
+    // console.log(this.nSteps);
+    
+    // console.log(endPosition)
+    // console.log(time)
+    const dx = endPosition[0] - startPosition[0];
+    const dy = endPosition[1] - startPosition[1];
+    
     if (dx == 0) {
       this.orientation = dy >= 0 ? Math.PI : -Math.PI;
     } else {
       this.orientation = Math.atan(dy / dx);
     }
-    return [start[1] + dy * relativeTime, start[0] + dx * relativeTime];
+    this.position = [startPosition[0] + dx * relTime, startPosition[1] + dy * relTime];
   }
-  getPosition(time) {
-    this.updateStep(time);
-    const step = this.currentStep;
-    const relTime = this.getRelativeTime(
-      this.timeStamps[step],
-      this.timeStamps[step + 1],
-      time
-    );
-    return this.getCurrentCoordinates(step, relTime);
+  updateColor(time, mode){
+    // mode 0 es por tiempo transcurrido
+    // console.log('color mode', mode);
+    if(mode == 0){
+      if(this.currentStep < 0){
+        this.color = [0, 0, 0, 0]
+      }else{
+        const relTime = (time - this.firstTimeStamp) / (this.lastTimeStamp - this.firstTimeStamp);
+        // console.log(relTime)
+        this.color = [255 * relTime, 255 * (1 - relTime), 150, 255]
+      }
+      // mode 1 es por desviación
+    }else if(mode == 1){
+      if(this.currentStep < 0){
+        // console.log('alo2')
+        this.color = [0, 0, 0, 0]
+      }else if(this.topDeviation){
+        const relDeviation = this.deviations[this.currentStep] / this.topDeviation;
+        // console.log(relDeviation)
+        const r = relDeviation * 255 
+        this.color = [r, 255 - r, 51, 255]
+      }else{
+        this.color = [51, 51, 51, 255]
+      }
+    }
+    
   }
+
+  //getters
   getOrientation() {
     return (360 * this.orientation) / (2 * Math.PI);
+  }
+  getPosition(){
+    return this.position;
+  }
+  getColor(){
+    return this.color;
   }
 }
 

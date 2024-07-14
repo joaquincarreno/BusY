@@ -9,8 +9,9 @@ from django.db.models.query import QuerySet
 
 from api.serializers import GPSRegistrySerializer
 from api.scripts.zones import getZonesGdf
+from api.scripts.deviation_score import calculateDeviationScore
 
-from api.models import GPSRegistry, BusStops, Routes
+from api.models import GPSRegistry, BusStops, Routes, DeviationScores
 
 from time import time
 
@@ -45,8 +46,6 @@ def getAvailableBuses(request, recorrido='X00', sentido='X'):
 
     return Response({'buses': values})
 
-from django.db.models import Q
-
 @api_view(['GET'])
 def getGPS(request, recorrido= '', patente='', sentido=''):
     # print(patente)
@@ -71,6 +70,8 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
     patente_actual = results[0].patente
     coords = []
     timestamps = []
+    sentidos = []
+    desviaciones = []
     i=0
     for o in results:
         i+=1
@@ -80,18 +81,25 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
                     {
                         'patente': patente_actual,
                         'timeStamps': timestamps,
-                        'coords': coords
+                        'coords': coords,
+                        'deviations': desviaciones,
+                        'directions': sentidos
                     }
                 ]
             patente_actual = o.patente
             coords = []
             timestamps = []
+            desviaciones = []
         timestamps += [str(o.date) + ' ' + str(o.time)]
-        coords += [[o.latitude, o.longitude]]
+        coords += [[o.longitude, o.latitude]]
+        desviaciones += [o.deviation]
+        sentidos += [o.sentido]
     data += [{
         'patente': patente_actual,
         'timeStamps': timestamps,
-        'coords': coords
+        'coords': coords,
+        'deviations': desviaciones,
+        'directions': sentidos
     }]
 
     
@@ -100,51 +108,94 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
 @api_view(['GET'])
 def getStops(request, recorrido='', sentido=''):
     if(recorrido == ''):
-        objects = list(BusStops.objects.all().values())
-
+        all_objects = list(BusStops.objects.all().values())
     else:
         recorrido = recorrido[1:] if recorrido[0] == 'T' else recorrido
-        if(sentido != ''):
-            paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection=sentido)
-            ids = list(paradas.values_list('stop', flat=True))
-            objects = list(BusStops.objects.filter(id__in=ids).values())
+        sentidos = ['I', 'R'] if sentido == '' else [sentido]
+        all_objects = []
+        for s in sentidos:
+            try:    
+                paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection=s).order_by('order')
+                ids = list(paradas.values_list('stop', flat=True))
+                query = BusStops.objects.filter(id__in=ids).values()
+                objects = list(query)
 
-            assert len(ids) == len(objects)
+                assert len(ids) == len(objects)
 
-            for i in range(len(ids)):
-                obj = objects[i]
-                obj['direction'] = sentido
-                objects[i] = obj
+                for i in range(len(ids)):
+                    obj = objects[i]
+                    obj['direction'] = s
+                    obj['order'] = paradas.filter(stop=obj['id'])[0].order
+                    objects[i] = obj
+                objects.sort(key=lambda stop: stop['order'])
+                all_objects +=  objects
 
-        else:
-            paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='I')
-            idsIda = list(paradas.values_list('stop', flat=True))
-            objectsIda = list(BusStops.objects.filter(id__in=idsIda).values())
-
-            assert len(idsIda) == len(objectsIda)
-
-            for i in range(len(idsIda)):
-                obj = objectsIda[i]
-                obj['direction'] = 'I'
-                objectsIda[i] = obj
-
-            paradas = Routes.objects.filter(serviceTSCode=recorrido, serviceDirection='R')
-            idsRet = list(paradas.values_list('stop', flat=True))
-            objectsRet = list(BusStops.objects.filter(id__in=idsRet).values())
-
-            assert len(idsRet) == len(objectsRet)
-
-            for i in range(len(idsRet)):
-                obj = objectsRet[i]
-                obj['direction'] = 'R'
-                objectsRet[i] = obj
-
-            objects = objectsIda + objectsRet
+            except AssertionError:
+                print('[api getStops] route doesnt match stops for', recorrido, s)
+                objects = []
             
-    return Response({'stops': objects})
+    return Response({'stops': all_objects})
 
 @api_view(['GET'])
 def getAvailableDirections(request, recorrido, patente):
     values = GPSRegistry.objects.filter(recorrido=recorrido, patente=patente).values_list('sentido', flat=True).distinct()
 
     return Response({'directions': values})
+
+
+def getOrStoreDeviationScore(recorrido, patente, sentido):
+    if DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido).exists():
+        print('existía el deviationScore para', recorrido, sentido, patente)
+        return DeviationScores.objects.filter(busID=patente,serviceTSCode=recorrido, serviceDirection=sentido)[0].score
+    else:
+        print('no existe el devaitionScore para', recorrido, sentido, patente)
+        gps = GPSRegistry.objects.filter(recorrido=recorrido, patente=patente, sentido=sentido).order_by('patente', 'date', 'time')
+
+        faltan_scores = False
+        sum_scores = 0
+        for g in gps:
+            if(g.deviation == None):
+                faltan_scores = True
+                break
+            else:
+                sum_scores += g.deviation
+        if faltan_scores:
+            paradas = Routes.objects.filter(serviceTSCode=recorrido[1:] if recorrido[0] == 'T' else recorrido, serviceDirection=sentido).order_by('order')
+            ids = list(paradas.values_list('stop', flat=True))
+            stops = list(BusStops.objects.filter(id__in=ids).values())
+            s = calculateDeviationScore([[g.longitude, g.latitude] for g in gps], [[s['positionX'], s['positionY']] for s in stops])
+            print('score calculado desde 0')
+        else:
+            print('score calculado con desviaciones')
+            s = sum_scores / len(gps)
+
+        obj = DeviationScores.objects.create(score=s, busID=patente, serviceTSCode=recorrido, serviceDirection=sentido)
+        obj.save()
+        
+        return obj.score
+
+@api_view(['GET'])
+def deviationScore(request, recorrido, patente, sentido):
+        
+    return Response({'score': getOrStoreDeviationScore(recorrido, patente, sentido)})
+
+from time import time
+@api_view(['GET'])
+def listDeviationScore(request, recorrido):
+    data = {
+        'I': {},
+        'R': {}
+    }
+    registries = GPSRegistry.objects.filter(recorrido=recorrido)
+    values = registries.values_list('sentido', 'patente').distinct()
+    # print('[api - listDeviationScore]')
+    # print(recorrido)
+    # print(len(values))
+    # t0 = time()
+    for s, p in values:
+        if s == '' or p =='':
+            continue # caso borde que no debería pasar
+        score = getOrStoreDeviationScore(recorrido=recorrido, patente=p, sentido=s)
+        data[s][p] = score
+    # print(time() - t0)
+    return Response(data)

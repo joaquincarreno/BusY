@@ -1,16 +1,16 @@
-import geopandas as gpd
 import pandas as pd
 import numpy as np
-from shapely import Point
 from rdp import rdp
 import dask.dataframe as dd
 import os
 
 from api.scripts.constants import buses_raw, buses_processed, buses_sample
 
+from api.models import GPSRegistry
+
 def filter_points(points_df):
     # print(points_df)
-    puntos = list(zip(list(points_df['lat']), list(points_df['lon'])))
+    puntos = list(zip(list(points_df['lon']), list(points_df['lat'])))
     mascara = rdp(puntos, epsilon=0.0001, return_mask=True)
     filtered = points_df[mascara]
     print('se liberaron {} puntos para la patente {}'.format(len(points_df) - len(filtered), points_df['patente'][0]))
@@ -32,8 +32,6 @@ def process_file(file_name):
 
 
 def read_gps(date, sample=False):
-    # if sample:
-    #     return pd.read_csv(buses_processed / 'sample.gps.csv', sep=';')
     gps = pd.read_csv(buses_raw / date, sep=';')
 
     value_counts = gps['patente'].value_counts()
@@ -46,18 +44,22 @@ def read_gps(date, sample=False):
     return filtered
 
         
-def setupGPSEntries(model, fill=False):
-    # model.objects.all().delete()
-    if not fill:
+def setupGPSEntries(refill=False):
+    if not refill:
+        print('GPS not refilling')
         return
+    
+    print('deleting all GPS entries for refill')
+    GPSRegistry.objects.all().delete()
     files=os.listdir(buses_raw)
-    print(files)
+    
+    print('files to process', files)
     for f in files:
         if(not (buses_processed / f).exists()):
-            print('processing ' + f)
+            print('processing', f)
             process_file(f)   
         else:
-            print(f + ' already processed')     
+            print(f, 'already processed')     
         data = read_gps(f)
         step = 0.0
         l = len(data)
@@ -67,7 +69,7 @@ def setupGPSEntries(model, fill=False):
             row = data.iloc[i, :]
             datetime = row['datetime'].split(' ')
             recorrido = row['recorrido']
-            object = model(
+            object = GPSRegistry(
                 patente = row['patente'],
                 recorrido = recorrido.split(' ')[0],
                 sentido = recorrido[-1],

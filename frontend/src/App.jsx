@@ -10,12 +10,12 @@ import "./App.css";
 // const loopLength = 1;
 // const BACKEND_IP = "http://localhost:8000/";
 const BACKEND_IP = "http://192.168.100.17:8000/";
-const BACKEND_URL = BACKEND_IP + "api/";
-const GPS_API = BACKEND_URL + "gps/";
-const STOPS_API = BACKEND_URL + "stops/";
-const ROUTES_API = BACKEND_URL + "availableRoutes/";
-const BUSES_API = BACKEND_URL + "availableBuses/";
-const DIRECTIONS_API = BACKEND_URL + "availableDirections/";
+const API_URL = BACKEND_IP + "api/";
+const GPS_API = API_URL + "gps/";
+const STOPS_API = API_URL + "stops/";
+const ROUTES_API = API_URL + "availableRoutes/";
+const BUSES_API = API_URL + "availableBuses/";
+const DIRECTIONS_API = API_URL + "availableDirections/";
 
 const ASSETS = "./src/assets/";
 
@@ -53,6 +53,11 @@ function App() {
   const [showStops, setShowStops] = useState(false);
   const [selectedBus, setSelectedBus] = useState("");
   const [selectedDirection, setSelectedDirection] = useState("");
+
+  const [deviationsAvailable, setDeviationsAvailable] = useState(false);
+
+  const [colorMode, setColorMode] = useState(0);
+  const [heatMapOption, setHeatMapOption] = useState(0);
 
   // available bus routes API call
   useEffect(() => {
@@ -159,6 +164,11 @@ function App() {
     });
   }, [selectedRoute, selectedDirection]);
 
+  // check deviations available
+  useEffect(() => {
+    setDeviationsAvailable(movingBuses.allBusesHaveDeviation);
+  }, [movingBuses]);
+
   const initialViewState = {
     latitude: -33.443018,
     longitude: -70.65387,
@@ -209,7 +219,7 @@ function App() {
   }, [step, pause, resetTime]);
 
   useEffect(() => {
-    movingBuses.updateBuses(time);
+    movingBuses.updateBuses(time, colorMode);
   }, [time]);
 
   return (
@@ -220,36 +230,59 @@ function App() {
         >
           <div>
             <Navbar
-              availableRoutes={availableRoutes}
-              routeSetter={setSelectedRoute}
-              selectedRoute={selectedRoute}
-              availableBuses={availableBuses}
-              selectedBus={selectedBus}
-              busSetter={setSelectedBus}
-              availableDirections={availableDirections}
-              selectedDirection={selectedDirection}
-              directionSetter={setSelectedDirection}
-              showStops={showStops}
-              setShowStops={setShowStops}
-              stopCount={stopsData["stops"].length}
-              time={time}
-              timeResetter={setResetTime}
-              firstTimeStamp={firstDate}
-              lastTimeStamp={lastDate}
-              step={step}
-              stepSetter={setStep}
-              pause={pause}
-              pauseSetter={setPause}
+              routeProp={{
+                selectedRoute: selectedRoute,
+                availableRoutes: availableRoutes,
+                routeSetter: setSelectedRoute,
+              }}
+              busesProp={{
+                selectedBus: selectedBus,
+                availableBuses: availableBuses,
+                busSetter: setSelectedBus,
+              }}
+              directionsProp={{
+                availableDirections: availableDirections,
+                selectedDirection: selectedDirection,
+                directionSetter: setSelectedDirection,
+              }}
+              stopsProp={{
+                showStops: showStops,
+                setShowStops: setShowStops,
+                stopCount: stopsData["stops"].length,
+              }}
+              timeControlProp={{
+                time: time,
+                timeResetter: setResetTime,
+                firstTimeStamp: firstDate,
+                lastTimeStamp: lastDate,
+                step: step,
+                stepSetter: setStep,
+                pause: pause,
+                pauseSetter: setPause,
+              }}
+              visControlProp={{
+                colorMode: colorMode,
+                colorModeSetter: setColorMode,
+                deviationsAvailable: deviationsAvailable,
+                heatMapOption: heatMapOption,
+                heatMapOptionSetter: setHeatMapOption,
+              }}
             />
           </div>
           <DeckGlMap
-            viewState={viewState}
-            viewStateSetter={setViewState}
-            movingBuses={movingBuses}
-            stopsData={stopsData["stops"]}
-            busMesh={ASSETS + "bus/JETSET.obj"}
-            time={time}
-            showStops={showStops}
+            renderProp={{
+              viewState: viewState,
+              viewStateSetter: setViewState,
+              time: time,
+              showStops: showStops,
+            }}
+            dataProp={{
+              movingBuses: movingBuses,
+              stopsData: stopsData["stops"],
+              busMesh: ASSETS + "bus/JETSET.obj",
+              deviationsAvailable: deviationsAvailable,
+              heatMapOption: heatMapOption,
+            }}
           />
         </div>
       ) : (

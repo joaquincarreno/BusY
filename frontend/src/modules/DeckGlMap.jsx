@@ -1,22 +1,67 @@
-import { React, useEffect, useState } from "react";
-import { DeckGL } from "@deck.gl/react";
-import { GeoJsonLayer, BitmapLayer } from "@deck.gl/layers";
+import { React, useState } from "react";
 
-import { IconLayer } from "@deck.gl/layers";
+import { DeckGL } from "@deck.gl/react";
+import { BitmapLayer, IconLayer, LineLayer } from "@deck.gl/layers";
 import { TileLayer } from "@deck.gl/geo-layers";
 import { SimpleMeshLayer } from "@deck.gl/mesh-layers";
+import { HeatmapLayer } from "@deck.gl/aggregation-layers";
+
 import { OBJLoader } from "@loaders.gl/obj";
 
+const createStopsLines = (stops) => {
+  const n = stops.length;
+  const data = new Array(n - 2);
+  var i = 0;
+  var sep = 0;
+  var prev = 0;
+  // pasamos por todas las stops menos la última, que se agrega con la penúltima
+  while (i < n - 1) {
+    // caso terminamos un sentido: reiniciamos el paso previo
+    if (prev > stops[i].order) {
+      sep = 1;
+      prev = 0;
+    } else {
+      data[i - sep] = {
+        from: [stops[i].positionX, stops[i].positionY],
+        to: [stops[i + 1].positionX, stops[i + 1].positionY],
+        color:
+          stops[i].direction == "I"
+            ? [255, 80, 80]
+            : stops[i].direction == "R"
+            ? [80, 80, 255]
+            : [80, 255, 80],
+      };
+      prev = stops[i].order;
+    }
+    i += 1;
+  }
+  return data;
+};
+
 function DeckGlMap({
-  viewState,
-  viewStateSetter = () => {},
-  movingBuses = {},
-  stopsData = JSON.parse([]),
-  busMesh = null,
-  time = 0,
-  showStops = true,
+  renderProp: {
+    viewState = {
+      latitude: -33.443018,
+      longitude: -70.65387,
+      zoom: 10,
+      minZoom: 2,
+      maxZoom: 15,
+    },
+    viewStateSetter = () => {},
+    time = 0,
+    showStops = true,
+  },
+  dataProp: {
+    movingBuses = {},
+    stopsData = JSON.parse([]),
+    busMesh = null,
+    deviationsAvailable = false,
+    heatMapOption = 0,
+  },
 }) {
   const [scale, setScale] = useState(1);
+  const patentes = movingBuses.patentes;
+
   const onViewStateChange = ({ viewState, interactionState, oldViewState }) => {
     // console.log("viewState changed: ", viewState);
     viewStateSetter(viewState);
@@ -45,6 +90,27 @@ function DeckGlMap({
       });
     },
     pickable: false,
+  });
+
+  // si hay orden en los paraderos entonces se pueden hacer líneas
+  const routeLines = stopsData[0].order
+    ? createStopsLines(stopsData)
+    : [{ from: [0, 0], to: [0, 0], color: [0, 0, 0] }];
+
+  const routesLayer = new LineLayer({
+    id: "routes-layer",
+    data: routeLines,
+
+    getColor: (d) => d.color,
+    getSourcePosition: (d) => {
+      // console.log(d);
+      return d.from;
+    },
+    getTargetPosition: (d) => d.to,
+
+    visible: showStops,
+    getWidth: 12,
+    pickable: true,
   });
 
   const stopsLayer = new IconLayer({
@@ -81,9 +147,7 @@ function DeckGlMap({
       getSize: [scale],
     },
   });
-  const patentes = Object.keys(movingBuses.dict);
-  // console.log(gpsData);
-  // console.log(movingBuses);
+
   const movingBusLayer = new SimpleMeshLayer({
     id: "buses-layer",
     data: patentes,
@@ -125,6 +189,23 @@ function DeckGlMap({
     },
   });
 
+  const deviationLayer = new HeatmapLayer({
+    id: "deviation-layer",
+    data: movingBuses.getDeviations(),
+    aggregation: "MEAN",
+
+    visible: deviationsAvailable && heatMapOption == 1,
+
+    getPosition: (d) => {
+      return d.position;
+    },
+    getWeight: (d) => {
+      return d.weight;
+    },
+
+    radiusPixels: 15,
+  });
+
   const toolTip = (object) => {
     if (object.layer && object.picked) {
       // console.log(object);
@@ -141,8 +222,13 @@ function DeckGlMap({
     <DeckGL
       initialViewState={viewState}
       onViewStateChange={onViewStateChange}
-      layers={[osmMapLayer, movingBusLayer, stopsLayer]}
-      // layers={[movingBusLayer]}
+      layers={[
+        osmMapLayer,
+        routesLayer,
+        stopsLayer,
+        deviationLayer,
+        movingBusLayer,
+      ]}
       getTooltip={toolTip}
       controller={true}
     />

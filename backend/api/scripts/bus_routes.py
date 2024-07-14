@@ -2,6 +2,8 @@ import pandas as pd
 
 from api.scripts.constants import current_paradas
 
+from api.models import Routes, BusStops
+
 def load_data():
     df = pd.read_excel(current_paradas, dtype={'Orden': int, 'Código TS': str, 'Variante': str, 'Sentido Servicio': str})
 
@@ -22,38 +24,37 @@ def load_data():
 
     return df
 
-    
+def setupRoutes(refill = False):
 
-ALLREADY_FILLED = False
+    if(refill):
+        Routes.objects.all().delete()
+        print('deleted all route data')
 
-def setupRoutes(routeModel, stopsModel, empty_and_refill = False):
-    global ALLREADY_FILLED
-
-    if(not ALLREADY_FILLED and empty_and_refill):
-        routeModel.objects.all().delete()
-    elif(len(routeModel.objects.all()) > 0):
+    if(len(Routes.objects.all()) > 0):
+        print('routes model was filled, skipping')
         return
+    else:
+        print('routes model was empty')
 
 
     def fill_model(row):
         try:
-            stop = stopsModel.obje.get(TSCode=row['Código paradero TS'])
-            object = routeModel(
+            stop = BusStops.objects.get(TSCode=row['Código paradero TS'])
+            object = Routes(
                 stop = stop,
                 serviceTSCode = row['Servicio TS'],
                 serviceDirection = row['Sentido Servicio'],
-                order =  row['Orden'],
-                variant =  row['Variante'],
+                order = row['Orden'],
+                variant = row['Variante'],
             )
             object.save()
-        except stopsModel.DoesNotExist:
+        except BusStops.DoesNotExist:
             print('Stop {ts_code} not found'.format(ts_code=row['Código paradero TS']))
-        except stopsModel.MultipleObjectsReturned:
+        except BusStops.MultipleObjectsReturned:
             print('Multiples stops found with the TS code {ts_code}'.format(ts_code=row['Código paradero TS']))
 
-    print('Filling the Stops routeModel')
+    print('Filling the Route model')
     df = load_data()
     df.apply(fill_model, axis=1)
-    print('Stops routeModel filled with ', len(routeModel.objects.all()), ' stops.')
-    ALLREADY_FILLED = True
+    print('models.Routes filled with ', len(Routes.objects.all()), ' stops.')
     

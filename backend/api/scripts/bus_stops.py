@@ -1,21 +1,22 @@
 import geopandas as gpd
 import pandas as pd
-import numpy as np
 from shapely import Point
-from rdp import rdp
-import dask.dataframe as dd
-import os
 
 from api.scripts.constants import current_paradas
+
+from api.models import BusStops
 
 def fix_crs(geodf):
     return geodf.set_crs().to_crs()
 
-def setupBusStops(model, refill=False):
+def setupBusStops(refill=False):
     if(refill):
-        model.objects.all().delete()
-    if(len(model.objects.all()) != 0):
+        print('emptying bus stops model for refill')
+        BusStops.objects.all().delete()
+    if(len(BusStops.objects.all()) > 0):
+        print('bus stops models was filled, skipping')
         return
+    
     print('setting stops')
     df = pd.read_excel(current_paradas)
 
@@ -49,7 +50,7 @@ def setupBusStops(model, refill=False):
     for i in final.index:
         row = final.iloc[i, :]
         # print(i)
-        object = model(
+        object = BusStops(
             TSCode=row['Código paradero TS'],
             userCode=row['Código  paradero Usuario'],
             name=row['Nombre Paradero'],

@@ -5,34 +5,45 @@ const VEL_MIN = 1.0 / 24 / 60 / 60; // un segundo por segundo
 const VEL_MAX = 90.0 / 24 / 60 / 60; // 1.5 min por segundo
 
 const Navbar = ({
-  availableRoutes = [],
-  availableBuses = [],
+  routeProp: {
+    selectedRoute = "",
+    availableRoutes = [],
+    routeSetter = (_) => {},
+  },
 
-  selectedRoute = "",
-  routeSetter = (_) => {},
+  busesProp: { selectedBus = "", availableBuses = [], busSetter = (_) => {} },
 
-  selectedBus = "",
-  busSetter = (_) => {},
+  directionsProp: {
+    availableDirections = [],
+    selectedDirection = "",
+    directionSetter = (_) => {},
+  },
 
-  availableDirections = [],
-  selectedDirection = "",
-  directionSetter = (_) => {},
+  stopsProp: { showStops = false, setShowStops = (_) => {}, stopCount = 0 },
 
-  showStops = false,
-  setShowStops = (_) => {},
-  stopCount = 0,
+  timeControlProp: {
+    time = 0,
+    timeResetter = (_) => {},
 
-  time = 0,
-  timeResetter = (_) => {},
+    firstTimeStamp = new Date("2018/01/01"),
+    lastTimeStamp = new Date("2019/12/31"),
 
-  firstTimeStamp = new Date("2018/01/01"),
-  lastTimeStamp = new Date("2019/12/31"),
+    step = 0.001,
+    stepSetter = (_) => {},
 
-  step = 0.001,
-  stepSetter = (_) => {},
+    pause = false,
+    pauseSetter = (_) => {},
+  },
 
-  pause = false,
-  pauseSetter = (_) => {},
+  visControlProp: {
+    colorMode = 0,
+    colorModeSetter = (_) => {},
+
+    deviationsAvailable = false,
+
+    heatMapOption = 0,
+    heatMapOptionSetter = (_) => {},
+  },
 }) => {
   const createHandler = (varName, setter, unSetterers = []) => {
     return (event) => {
@@ -41,7 +52,7 @@ const Navbar = ({
         setter("");
       });
       setter(value);
-      console.log("selected " + varName + ": " + value);
+      console.log("selected", varName, ": ", value);
     };
   };
 
@@ -101,6 +112,8 @@ const Navbar = ({
     R: "Retorno",
   };
 
+  const textStyle = { fontSize: "12px" };
+  
   return (
     <div className="navbar">
       <div className="navbar-left">
@@ -151,6 +164,12 @@ const Navbar = ({
 
       <div className="navbar-right">
         <div className="navbar-item">
+          <p>
+            Tiempo actual: <br />
+            {getDateTime(time)}
+          </p>
+        </div>
+        <div className="navbar-item">
           <button
             onClick={() => {
               console.log("time resetted");
@@ -168,12 +187,6 @@ const Navbar = ({
           />
         </div>
         <div className="navbar-item">
-          <p>
-            Tiempo actual: <br />
-            {getDateTime(time)}
-          </p>
-        </div>
-        <div className="navbar-item">
           <input
             type="range"
             min="1"
@@ -183,6 +196,38 @@ const Navbar = ({
             onChange={handleStepChange}
           />
         </div>
+        <div className="navbar-item">
+          {/* modo de color */}
+          <div style={textStyle}>Selector de color</div>
+          <select
+            value={colorMode}
+            onChange={createHandler("colorMode", colorModeSetter, [])}
+          >
+            <option value={0}>Progreso de ruta</option>
+            {deviationsAvailable ? (
+              <option value={1}>Desviación</option>
+            ) : (
+              <></>
+            )}
+          </select>
+        </div>
+        {deviationsAvailable && (
+          <div className="navbar-item">
+            {/* control heatmap */}
+            <div style={textStyle}>Heat Map</div>
+            <select
+              value={heatMapOption}
+              onChange={createHandler(
+                "heat map option",
+                heatMapOptionSetter,
+                []
+              )}
+            >
+              <option value={0}>Ocultar</option>
+              {deviationsAvailable && <option value={1}>Desviación</option>}
+            </select>
+          </div>
+        )}
         <div className="navbar-item">
           <button
             onClick={() => {
