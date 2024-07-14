@@ -229,40 +229,54 @@ function App() {
         >
           <div>
             <Navbar
-              availableRoutes={availableRoutes}
-              routeSetter={setSelectedRoute}
-              selectedRoute={selectedRoute}
-              availableBuses={availableBuses}
-              selectedBus={selectedBus}
-              busSetter={setSelectedBus}
-              availableDirections={availableDirections}
-              selectedDirection={selectedDirection}
-              directionSetter={setSelectedDirection}
-              showStops={showStops}
-              setShowStops={setShowStops}
-              stopCount={stopsData["stops"].length}
-              time={time}
-              timeResetter={setResetTime}
-              firstTimeStamp={firstDate}
-              lastTimeStamp={lastDate}
-              step={step}
-              stepSetter={setStep}
-              pause={pause}
-              pauseSetter={setPause}
+              routeProp={{
+                selectedRoute: selectedRoute,
+                availableRoutes: availableRoutes,
+                routeSetter: setSelectedRoute,
+              }}
+              busesProp={{
+                selectedBus: selectedBus,
+                availableBuses: availableBuses,
+                busSetter: setSelectedBus,
+              }}
+              directionsProp={{
+                availableDirections: availableDirections,
+                selectedDirection: selectedDirection,
+                directionSetter: setSelectedDirection,
+              }}
+              stopsProp={{
+                showStops: showStops,
+                setShowStops: setShowStops,
+                stopCount: stopsData["stops"].length,
+              }}
+              timeControlProp={{
+                time: time,
+                timeResetter: setResetTime,
+                firstTimeStamp: firstDate,
+                lastTimeStamp: lastDate,
+                step: step,
+                stepSetter: setStep,
+                pause: pause,
+                pauseSetter: setPause,
+              }}
               colorMode={colorMode}
               colorModeSetter={setColorMode}
               deviationsAvailable={deviationsAvailable}
             />
           </div>
           <DeckGlMap
-            viewState={viewState}
-            viewStateSetter={setViewState}
-            movingBuses={movingBuses}
-            stopsData={stopsData["stops"]}
-            busMesh={ASSETS + "bus/JETSET.obj"}
-            time={time}
-            showStops={showStops}
-            deviationsAvailable={deviationsAvailable}
+            renderProp={{
+              viewState: viewState,
+              viewStateSetter: setViewState,
+              time: time,
+              showStops: showStops,
+            }}
+            dataProp={{
+              movingBuses: movingBuses,
+              stopsData: stopsData["stops"],
+              busMesh: ASSETS + "bus/JETSET.obj",
+              deviationsAvailable: deviationsAvailable,
+            }}
           />
         </div>
       ) : (

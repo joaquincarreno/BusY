@@ -39,14 +39,24 @@ const createStopsLines = (stops) => {
 };
 
 function DeckGlMap({
-  viewState,
+  renderProp: {
+    viewState = {
+      latitude: -33.443018,
+      longitude: -70.65387,
+      zoom: 10,
+      minZoom: 2,
+      maxZoom: 15,
+    },
   viewStateSetter = () => {},
+    time = 0,
+    showStops = true,
+  },
+  dataProp: {
   movingBuses = {},
   stopsData = JSON.parse([]),
   busMesh = null,
-  time = 0,
-  showStops = true,
   deviationsAvailable = false,
+  },
 }) {
   const [scale, setScale] = useState(1);
   const patentes = movingBuses.patentes;

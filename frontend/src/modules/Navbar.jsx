@@ -5,34 +5,35 @@ const VEL_MIN = 1.0 / 24 / 60 / 60; // un segundo por segundo
 const VEL_MAX = 90.0 / 24 / 60 / 60; // 1.5 min por segundo
 
 const Navbar = ({
-  availableRoutes = [],
-  availableBuses = [],
+  routeProp: {
+    selectedRoute = "",
+    availableRoutes = [],
+    routeSetter = (_) => {},
+  },
 
-  selectedRoute = "",
-  routeSetter = (_) => {},
+  busesProp: { selectedBus = "", availableBuses = [], busSetter = (_) => {} },
 
-  selectedBus = "",
-  busSetter = (_) => {},
+  directionsProp: {
+    availableDirections = [],
+    selectedDirection = "",
+    directionSetter = (_) => {},
+  },
 
-  availableDirections = [],
-  selectedDirection = "",
-  directionSetter = (_) => {},
+  stopsProp: { showStops = false, setShowStops = (_) => {}, stopCount = 0 },
 
-  showStops = false,
-  setShowStops = (_) => {},
-  stopCount = 0,
+  timeControlProp: {
+    time = 0,
+    timeResetter = (_) => {},
 
-  time = 0,
-  timeResetter = (_) => {},
+    firstTimeStamp = new Date("2018/01/01"),
+    lastTimeStamp = new Date("2019/12/31"),
 
-  firstTimeStamp = new Date("2018/01/01"),
-  lastTimeStamp = new Date("2019/12/31"),
+    step = 0.001,
+    stepSetter = (_) => {},
 
-  step = 0.001,
-  stepSetter = (_) => {},
-
-  pause = false,
-  pauseSetter = (_) => {},
+    pause = false,
+    pauseSetter = (_) => {},
+  },
 
   colorMode = 0,
   colorModeSetter = (_) => {},
