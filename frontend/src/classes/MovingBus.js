@@ -14,10 +14,10 @@ class MovingBus {
     this.firstTimeStamp = this.timeStamps[0]
     this.lastTimeStamp = this.timeStamps[this.nSteps - 1]
     if (null in this.deviations){
-      console.log('null in', this.patente)
+      // console.log('null in', this.patente)
       this.topDeviation = null;
     }else{
-      console.log('no nulls in', this.patente)
+      // console.log('no nulls in', this.patente)
       this.topDeviation = Math.max(...this.deviations)
     }
     this.currentStep = 0;

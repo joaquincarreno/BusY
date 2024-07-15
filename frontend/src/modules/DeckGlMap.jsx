@@ -206,6 +206,23 @@ function DeckGlMap({
     radiusPixels: 15,
   });
 
+  const speedsLayer = new HeatmapLayer({
+    id: "speeds-layer",
+    data: movingBuses.getSpeeds(),
+    aggregation: "MEAN",
+
+    visible: heatMapOption == 2,
+
+    getPosition: (d) => {
+      return d.position;
+    },
+    getWeight: (d) => {
+      return d.weight;
+    },
+
+    radiusPixels: 15,
+  });
+
   const toolTip = (object) => {
     if (object.layer && object.picked) {
       // console.log(object);
@@ -227,6 +244,7 @@ function DeckGlMap({
         routesLayer,
         stopsLayer,
         deviationLayer,
+        speedsLayer,
         movingBusLayer,
       ]}
       getTooltip={toolTip}

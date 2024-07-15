@@ -140,10 +140,11 @@ function App() {
       setFirstDate(newBuses.earliestTimeStamp);
       setLastDate(newBuses.latestTimeStamp);
       setLoopLenght(newBuses.timeRange / 1000);
-      console.log("[gps api call] updated loop");
-      console.log("start", newBuses.earliestTimeStamp);
-      console.log("end", newBuses.latestTimeStamp);
-      console.log("lenght", newBuses.timeRange / 1000);
+      console.log("[gps api call] created buses, logging data");
+      console.log("data step count:", newBuses.totalSteps);
+      console.log("time start", newBuses.earliestTimeStamp);
+      console.log("time end", newBuses.latestTimeStamp);
+      console.log("loop lenght", newBuses.timeRange / 1000);
     }
   }, [gpsData]);
 
