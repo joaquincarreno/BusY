@@ -7,6 +7,8 @@ class Buses {
     this.patentes = [];
     this.totalSteps = 0;
 
+    this.speedList = []
+
     this.earliestTimeStamp = (new Date('3000/01/01')).getTime(); // máxima fecha posible
     this.latestTimeStamp = (new Date('1970/01/01')).getTime(); // míxima fecha posble
 
@@ -18,12 +20,16 @@ class Buses {
     this.createBuses();
 
     // fill deviations
-    this.fillDeviations();
+    this.fillDeviationList();
+
+    // create speeds keys
+    this.fillSpeedList()
 
     // time setup
     this.timeRange = this.latestTimeStamp - this.earliestTimeStamp;
-
   }
+
+  // getters
   getBus(patente) {
     if(patente in this.dict){
       return this.dict[patente];
@@ -49,13 +55,18 @@ class Buses {
       return [];
     }
   }
+  getSpeeds(){
+    return this.speedList
+  }
 
+  // data creation
   createBuses(){
     if(this.origData.length > 0){
       console.log('Adding', this.origData.length ,'buses to dict');
       this.origData.forEach((b) => {
         const bus = new MovingBus(b);
         this.dict[b.patente] = bus
+
         // guardando límites de tiempo
         if(bus.firstTimeStamp < this.earliestTimeStamp){
           this.earliestTimeStamp = bus.firstTimeStamp
@@ -85,8 +96,7 @@ class Buses {
       console.log('empty busData')
     }
   }
-
-  fillDeviations(){
+  fillDeviationList(){
     if(this.allBusesHaveDeviation){
       // si hay top deviation entonces todos tienen desviaciones,
       this.patentes.forEach((patente) => this.dict[patente].topDeviation = this.topDeviation)
@@ -117,6 +127,25 @@ class Buses {
       });
       console.log('no top deviation')
     }
+  }
+  fillSpeedList(){
+    this.speedList = new Array(this.totalSteps);
+    var i = 0;
+    this.patentes.forEach((p) => {
+      console.log(p)
+      const bus = this.getBus(p);
+      const n = bus.nSteps;
+      var j = 0;
+      while(j < n){
+        this.speedList[i+j] = {
+          weight: bus.speeds[j], 
+          position: bus.coordinates[j]
+        };
+        j+=1
+      }
+      i += j;
+    })
+    console.log('speeds keys size:', this.speedList.length)
   }
 }
 

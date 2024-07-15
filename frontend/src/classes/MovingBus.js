@@ -6,6 +6,7 @@ class MovingBus {
     this.timeStamps = info.timeStamps.map((x) => (Date.parse(x)));
     this.directions = info.directions;
     this.deviations = info.deviations;
+    this.speeds = info.speeds;
 
 
 
