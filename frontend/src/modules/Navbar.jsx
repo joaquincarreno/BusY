@@ -196,13 +196,14 @@ const Navbar = ({
         </div>
         <div className="navbar-item">
           {/* modo de color */}
-          <div style={textStyle}>Selector de color</div>
+          <div style={textStyle}>Color del bus</div>
           <select
             value={colorMode}
             onChange={createHandler("colorMode", colorModeSetter, [])}
           >
             <option value={0}>Progreso de ruta</option>
             {deviationsAvailable && <option value={1}>Desviación</option>}
+            <option value={2}>Velocidad</option>
           </select>
         </div>
         <div className="navbar-item">

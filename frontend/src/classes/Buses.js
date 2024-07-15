@@ -7,6 +7,7 @@ class Buses {
     this.patentes = [];
     this.totalSteps = 0;
 
+    this.topSpeed = 0;
     this.speedList = []
 
     this.earliestTimeStamp = (new Date('3000/01/01')).getTime(); // máxima fecha posible
@@ -75,6 +76,9 @@ class Buses {
           this.latestTimeStamp = bus.lastTimeStamp
         }
 
+        // guardamos velocidad máxima
+        this.topSpeed = this.topSpeed < bus.topSpeed ? bus.topSpeed : this.topSpeed;
+
         // guardando mayor desviación
         if(bus.topDeviation){
           this.topDeviation = bus.topDeviation > this.topDeviation ? bus.topDeviation : this.topDeviation;
@@ -88,6 +92,7 @@ class Buses {
       
       this.patentes = Object.keys(this.dict)
       console.log('Added the following buses:', this.patentes)
+      // console.log('top speed:', this.topSpeed)
     }else{
       const aux = this.earliestTimeStamp;
       this.earliestTimeStamp = this.latestTimeStamp;
@@ -133,6 +138,7 @@ class Buses {
     var i = 0;
     this.patentes.forEach((p) => {
       const bus = this.getBus(p);
+      bus.topSpeed = this.topSpeed;
       const n = bus.nSteps;
       var j = 0;
       while(j < n){
