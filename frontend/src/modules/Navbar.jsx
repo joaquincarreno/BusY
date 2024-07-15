@@ -205,24 +205,18 @@ const Navbar = ({
             {deviationsAvailable && <option value={1}>Desviación</option>}
           </select>
         </div>
-        {deviationsAvailable && (
-          <div className="navbar-item">
-            {/* control heatmap */}
-            <div style={textStyle}>Heat Map</div>
-            <select
-              value={heatMapOption}
-              onChange={createHandler(
-                "heat map option",
-                heatMapOptionSetter,
-                []
-              )}
-            >
-              <option value={0}>Ocultar</option>
-              {deviationsAvailable && <option value={1}>Desviación</option>}
-              <option value={2}>Velocidades</option>
-            </select>
-          </div>
-        )}
+        <div className="navbar-item">
+          {/* control heatmap */}
+          <div style={textStyle}>Heat Map</div>
+          <select
+            value={heatMapOption}
+            onChange={createHandler("heat map option", heatMapOptionSetter, [])}
+          >
+            <option value={0}>Ocultar</option>
+            {deviationsAvailable && <option value={1}>Desviación</option>}
+            <option value={2}>Velocidades</option>
+          </select>
+        </div>
         <div className="navbar-item">
           <button
             onClick={() => {
