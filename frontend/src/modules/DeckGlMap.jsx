@@ -207,6 +207,10 @@ function DeckGlMap({
     radiusPixels: 15,
   });
 
+  const colorRangeHeatmap = [
+    [165, 165, 165, 255],
+    [135, 195, 135, 255],
+  ];
   const speedsLayer = new HeatmapLayer({
     id: "speeds-layer",
     data: movingBuses.getSpeeds(),
@@ -221,7 +225,9 @@ function DeckGlMap({
       return d.weight;
     },
 
-    radiusPixels: 15,
+    colorRange: colorRangeHeatmap,
+    // threshold: 0.5,
+    radiusPixels: 25,
   });
 
   const toolTip = (object) => {
