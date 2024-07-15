@@ -93,9 +93,10 @@ function DeckGlMap({
   });
 
   // si hay orden en los paraderos entonces se pueden hacer líneas
-  const routeLines = stopsData[0].order
-    ? createStopsLines(stopsData)
-    : [{ from: [0, 0], to: [0, 0], color: [0, 0, 0] }];
+  const routeLines =
+    stopsData[0] && stopsData[0].order
+      ? createStopsLines(stopsData)
+      : [{ from: [0, 0], to: [0, 0], color: [0, 0, 0] }];
 
   const routesLayer = new LineLayer({
     id: "routes-layer",

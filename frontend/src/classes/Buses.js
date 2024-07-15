@@ -132,7 +132,6 @@ class Buses {
     this.speedList = new Array(this.totalSteps);
     var i = 0;
     this.patentes.forEach((p) => {
-      console.log(p)
       const bus = this.getBus(p);
       const n = bus.nSteps;
       var j = 0;
