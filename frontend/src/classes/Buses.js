@@ -1,28 +1,83 @@
 import MovingBus from "./MovingBus";
 class Buses {
-  constructor(busList) {
-    // console.log('[busList]', busList)
-    this.earliestTimeStamp = (new Date('3000/01/01')).getTime(); // máxima fecha posible
-    this.latestTimeStamp = (new Date('1970/01/01')).getTime(); // míxima fecha posble
-    this.topDeviation = 0;
-    this.allBusesHaveDeviation = true;
-    this.patentes = []
-    this.deviationList = []
+  constructor(busData) {
+    this.origData = busData
 
     this.dict = {};
-    if(busList.length > 0){
-      console.log('Adding', busList.length ,'buses to dict');
-      busList.forEach((b) => {
+    this.patentes = [];
+    this.totalSteps = 0;
+
+    this.topSpeed = 0;
+    this.speedList = []
+
+    this.earliestTimeStamp = (new Date('3000/01/01')).getTime(); // máxima fecha posible
+    this.latestTimeStamp = (new Date('1970/01/01')).getTime(); // míxima fecha posble
+
+    this.topDeviation = 0;
+    this.allBusesHaveDeviation = true;
+    this.deviationList = [];
+
+    // create data dict
+    this.createBuses();
+
+    // fill deviations
+    this.fillDeviationList();
+
+    // create speeds keys
+    this.fillSpeedList()
+
+    // time setup
+    this.timeRange = this.latestTimeStamp - this.earliestTimeStamp;
+  }
+
+  // getters
+  getBus(patente) {
+    if(patente in this.dict){
+      return this.dict[patente];
+    }else{
+      return false;
+    }
+  }
+  updateBuses(time, mode){
+    const currTime = this.earliestTimeStamp + time * 1000;
+    // console.log('updating buses');
+    // console.log('time:', time * 1000);
+    // console.log('currTime:', currTime)
+    // console.log('in date', new Date(currTime))
+    this.patentes.map((patente) => {
+      // console.log('updating', patente);
+      this.dict[patente].updateBus(currTime, mode);
+    })
+  }
+  getDeviations(){
+    if(this.allBusesHaveDeviation){
+      return this.deviationList;
+    }else{
+      return [];
+    }
+  }
+  getSpeeds(){
+    return this.speedList
+  }
+
+  // data creation
+  createBuses(){
+    if(this.origData.length > 0){
+      console.log('Adding', this.origData.length ,'buses to dict');
+      this.origData.forEach((b) => {
         const bus = new MovingBus(b);
         this.dict[b.patente] = bus
+
         // guardando límites de tiempo
         if(bus.firstTimeStamp < this.earliestTimeStamp){
           this.earliestTimeStamp = bus.firstTimeStamp
         }
-        
         if(bus.lastTimeStamp > this.latestTimeStamp){
           this.latestTimeStamp = bus.lastTimeStamp
         }
+
+        // guardamos velocidad máxima
+        this.topSpeed = this.topSpeed < bus.topSpeed ? bus.topSpeed : this.topSpeed;
 
         // guardando mayor desviación
         if(bus.topDeviation){
@@ -30,18 +85,23 @@ class Buses {
         }else{
           this.allBusesHaveDeviation = false;
         }
+
+        // contando la cantidad de puntos totales
+        this.totalSteps += bus.nSteps
       });
       
       this.patentes = Object.keys(this.dict)
       console.log('Added the following buses:', this.patentes)
+      // console.log('top speed:', this.topSpeed)
     }else{
       const aux = this.earliestTimeStamp;
       this.earliestTimeStamp = this.latestTimeStamp;
       this.latestTimeStamp = aux;
       this.allBusesHaveDeviation = false;
-      console.log('empty busList')
+      console.log('empty busData')
     }
-    // deviations setup
+  }
+  fillDeviationList(){
     if(this.allBusesHaveDeviation){
       // si hay top deviation entonces todos tienen desviaciones,
       this.patentes.forEach((patente) => this.dict[patente].topDeviation = this.topDeviation)
@@ -72,35 +132,25 @@ class Buses {
       });
       console.log('no top deviation')
     }
-
-    // time setup
-    this.timeRange = this.latestTimeStamp - this.earliestTimeStamp;
-
   }
-  getBus(patente) {
-    if(patente in this.dict){
-      return this.dict[patente];
-    }else{
-      return false;
-    }
-  }
-  updateBuses(time, mode){
-    const currTime = this.earliestTimeStamp + time * 1000;
-    // console.log('updating buses');
-    // console.log('time:', time * 1000);
-    // console.log('currTime:', currTime)
-    // console.log('in date', new Date(currTime))
-    this.patentes.map((patente) => {
-      // console.log('updating', patente);
-      this.dict[patente].updateBus(currTime, mode);
+  fillSpeedList(){
+    this.speedList = new Array(this.totalSteps);
+    var i = 0;
+    this.patentes.forEach((p) => {
+      const bus = this.getBus(p);
+      bus.topSpeed = this.topSpeed;
+      const n = bus.nSteps;
+      var j = 0;
+      while(j < n){
+        this.speedList[i+j] = {
+          weight: bus.speeds[j], 
+          position: bus.coordinates[j]
+        };
+        j+=1
+      }
+      i += j;
     })
-  }
-  getDeviations(){
-    if(this.allBusesHaveDeviation){
-      return this.deviationList;
-    }else{
-      return [];
-    }
+    console.log('speeds keys size:', this.speedList.length)
   }
 }
 

@@ -113,7 +113,7 @@ const Navbar = ({
   };
 
   const textStyle = { fontSize: "12px" };
-  
+
   return (
     <div className="navbar">
       <div className="navbar-left">
@@ -139,7 +139,7 @@ const Navbar = ({
 
         <div className="navbar-item">
           {/* selector de sentido */}
-          {availableDirections.length > 0 ? (
+          {availableDirections.length > 0 && (
             <select
               value={selectedDirection}
               onChange={createHandler("direction", directionSetter)}
@@ -156,8 +156,6 @@ const Navbar = ({
                 </option>
               )}
             </select>
-          ) : (
-            <></>
           )}
         </div>
       </div>
@@ -198,36 +196,28 @@ const Navbar = ({
         </div>
         <div className="navbar-item">
           {/* modo de color */}
-          <div style={textStyle}>Selector de color</div>
+          <div style={textStyle}>Color del bus</div>
           <select
             value={colorMode}
             onChange={createHandler("colorMode", colorModeSetter, [])}
           >
             <option value={0}>Progreso de ruta</option>
-            {deviationsAvailable ? (
-              <option value={1}>Desviación</option>
-            ) : (
-              <></>
-            )}
+            {deviationsAvailable && <option value={1}>Desviación</option>}
+            <option value={2}>Velocidad</option>
           </select>
         </div>
-        {deviationsAvailable && (
-          <div className="navbar-item">
-            {/* control heatmap */}
-            <div style={textStyle}>Heat Map</div>
-            <select
-              value={heatMapOption}
-              onChange={createHandler(
-                "heat map option",
-                heatMapOptionSetter,
-                []
-              )}
-            >
-              <option value={0}>Ocultar</option>
-              {deviationsAvailable && <option value={1}>Desviación</option>}
-            </select>
-          </div>
-        )}
+        <div className="navbar-item">
+          {/* control heatmap */}
+          <div style={textStyle}>Heat Map</div>
+          <select
+            value={heatMapOption}
+            onChange={createHandler("heat map option", heatMapOptionSetter, [])}
+          >
+            <option value={0}>Ocultar</option>
+            {deviationsAvailable && <option value={1}>Desviación</option>}
+            <option value={2}>Velocidades</option>
+          </select>
+        </div>
         <div className="navbar-item">
           <button
             onClick={() => {

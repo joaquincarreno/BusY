@@ -4,6 +4,7 @@ from api.scripts.bus_data import setupGPSEntries
 from api.scripts.bus_stops import setupBusStops
 from api.scripts.bus_routes import setupRoutes
 from api.scripts.deviation_score import setupDeviations
+from api.scripts.speeds import setupSpeeds
 
 
 def run():
@@ -19,7 +20,10 @@ def run():
     print()
     
     setupDeviations(skip=True, refill=False, clear_scores=False)
-
     print()
+
+    setupSpeeds(skip=False, force=False)
+    print()
+
     print('[startup.py] scripts run succesfully')
     print()

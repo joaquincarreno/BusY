@@ -93,9 +93,10 @@ function DeckGlMap({
   });
 
   // si hay orden en los paraderos entonces se pueden hacer líneas
-  const routeLines = stopsData[0].order
-    ? createStopsLines(stopsData)
-    : [{ from: [0, 0], to: [0, 0], color: [0, 0, 0] }];
+  const routeLines =
+    stopsData[0] && stopsData[0].order
+      ? createStopsLines(stopsData)
+      : [{ from: [0, 0], to: [0, 0], color: [0, 0, 0] }];
 
   const routesLayer = new LineLayer({
     id: "routes-layer",
@@ -206,6 +207,29 @@ function DeckGlMap({
     radiusPixels: 15,
   });
 
+  const colorRangeHeatmap = [
+    [165, 165, 165, 255],
+    [135, 195, 135, 255],
+  ];
+  const speedsLayer = new HeatmapLayer({
+    id: "speeds-layer",
+    data: movingBuses.getSpeeds(),
+    aggregation: "MEAN",
+
+    visible: heatMapOption == 2,
+
+    getPosition: (d) => {
+      return d.position;
+    },
+    getWeight: (d) => {
+      return d.weight;
+    },
+
+    colorRange: colorRangeHeatmap,
+    // threshold: 0.5,
+    radiusPixels: 25,
+  });
+
   const toolTip = (object) => {
     if (object.layer && object.picked) {
       // console.log(object);
@@ -227,6 +251,7 @@ function DeckGlMap({
         routesLayer,
         stopsLayer,
         deviationLayer,
+        speedsLayer,
         movingBusLayer,
       ]}
       getTooltip={toolTip}

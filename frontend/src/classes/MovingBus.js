@@ -6,6 +6,8 @@ class MovingBus {
     this.timeStamps = info.timeStamps.map((x) => (Date.parse(x)));
     this.directions = info.directions;
     this.deviations = info.deviations;
+    this.speeds = info.speeds;
+    this.topSpeed = Math.max(...this.speeds)
 
 
 
@@ -13,10 +15,10 @@ class MovingBus {
     this.firstTimeStamp = this.timeStamps[0]
     this.lastTimeStamp = this.timeStamps[this.nSteps - 1]
     if (null in this.deviations){
-      console.log('null in', this.patente)
+      // console.log('null in', this.patente)
       this.topDeviation = null;
     }else{
-      console.log('no nulls in', this.patente)
+      // console.log('no nulls in', this.patente)
       this.topDeviation = Math.max(...this.deviations)
     }
     this.currentStep = 0;
@@ -88,16 +90,18 @@ class MovingBus {
     this.position = [startPosition[0] + dx * relTime, startPosition[1] + dy * relTime];
   }
   updateColor(time, mode){
+    
+    if(this.currentStep < 0){
+      this.color = [0, 0, 0, 0]
+      
+    } else
     // mode 0 es por tiempo transcurrido
-    // console.log('color mode', mode);
     if(mode == 0){
-      if(this.currentStep < 0){
-        this.color = [0, 0, 0, 0]
-      }else{
+      
         const relTime = (time - this.firstTimeStamp) / (this.lastTimeStamp - this.firstTimeStamp);
         // console.log(relTime)
         this.color = [255 * relTime, 255 * (1 - relTime), 150, 255]
-      }
+      
       // mode 1 es por desviación
     }else if(mode == 1){
       if(this.currentStep < 0){
@@ -111,6 +115,13 @@ class MovingBus {
       }else{
         this.color = [51, 51, 51, 255]
       }
+      // mode 2 es por velocidad
+    }else if(mode == 2){
+      const relSpeed = this.speeds[this.currentStep] / this.topSpeed;
+      // console.log(this.speeds[this.currentStep])
+      // console.log(relSpeed)
+      const r = relSpeed * 255
+      this.color = [255 - r, r, 51, 255]
     }
     
   }
