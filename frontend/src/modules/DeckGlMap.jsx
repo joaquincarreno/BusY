@@ -130,7 +130,7 @@ function DeckGlMap({
     data: stopsData,
     getIcon: (d) => "marker",
     getPosition: (d) => {
-      return [d.positionX, d.positionY, 50 - 25 * scale];
+      return [d.positionX, d.positionY];
     },
     getColor: (d) => {
       const s = d.direction;
@@ -165,7 +165,7 @@ function DeckGlMap({
     getPosition: (d) => {
       const bus = movingBuses.getBus(d);
       if (bus) {
-        return [...bus.getPosition(), 80 - 40 * scale];
+        return bus.getPosition();
       } else {
         console.log("patente", d, "no fue encontrado entre", movingBuses.dict);
         return [0, 0];
@@ -237,6 +237,7 @@ function DeckGlMap({
       if (element.layer.id == "buses-layer") {
         return element.object;
       } else if (element.layer.id == "stops-layer") {
+        console.log(element);
         return element.object.name;
       }
     }
