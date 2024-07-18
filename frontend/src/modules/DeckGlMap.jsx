@@ -244,6 +244,7 @@ function DeckGlMap({
   };
 
   return (
+    // <div className="map">
     <DeckGL
       initialViewState={viewState}
       onViewStateChange={onViewStateChange}
@@ -257,7 +258,8 @@ function DeckGlMap({
       ]}
       getTooltip={toolTip}
       controller={true}
-    />
+    ></DeckGL>
+    // </div>
   );
 }
 

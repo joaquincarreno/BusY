@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import "./App.css";
 import DeckGlMap from "./modules/DeckGlMap";
 import Navbar from "./modules/Navbar";
 import get from "axios";
 import Buses from "./classes/Buses";
-import "./App.css";
+import Leyend from "./modules/Leyend";
+
+import { useState, useEffect } from "react";
 
 // time managment constants
 // const intervalMS = 8;
@@ -285,6 +287,7 @@ function App() {
               heatMapOption: heatMapOption,
             }}
           />
+          <Leyend />
         </div>
       ) : (
         <div>
