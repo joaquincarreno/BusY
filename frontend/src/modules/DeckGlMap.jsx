@@ -154,16 +154,12 @@ function DeckGlMap({
     },
   });
 
-  const movingBusLayer = new SimpleMeshLayer({
+  const movingBusLayer = new IconLayer({
     id: "buses-layer",
     data: patentes,
-    mesh: busMesh,
-    loaders: [OBJLoader],
+    getIcon: (_) => "bus",
     getPosition: (d) => {
-      // console.log(d);
-      // console.log(movingBuses);
       const bus = movingBuses.getBus(d);
-      // console.log(bus);
       if (bus) {
         return bus.getPosition();
       } else {
@@ -171,26 +167,22 @@ function DeckGlMap({
         return [0, 0];
       }
     },
-
     getColor: (d) => {
       const bus = movingBuses.getBus(d);
       return bus.getColor();
     },
-    getOrientation: (d) => {
-      const bus = movingBuses.getBus(d);
-      return [0, bus.getOrientation(), 90];
+    getSize: (d) => {
+      return 80 - 40 * scale;
     },
-    getScale: (d) => {
-      const s = 120 - 60 * scale;
-      // console.log("scale updated", s);
-      return [s, s, s];
-    },
+    iconAtlas: iconAtlas,
+    iconMapping: iconMapping,
     visible: true,
+
     pickable: true,
+
     updateTriggers: {
       getPosition: [time],
       getColor: [time],
-      getOrientation: [time],
       getScale: [scale],
     },
   });
