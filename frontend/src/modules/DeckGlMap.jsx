@@ -8,6 +8,12 @@ import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 
 import { OBJLoader } from "@loaders.gl/obj";
 
+import iconMapping from "../assets/icon-atlas.json";
+import iconAtlas from "../assets/icon-atlas.png";
+// por transaparencia, estos archivos se obtuvieron originalmente de:
+// "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
+// y posterioremente se les agregó el logo del bus
+
 const createStopsLines = (stops) => {
   const n = stops.length;
   const data = new Array(n - 2);
@@ -117,32 +123,31 @@ function DeckGlMap({
   const stopsLayer = new IconLayer({
     id: "stops-layer",
     data: stopsData,
-    getColor: (d) => {
-      const s = d.direction;
-      if (s == "I") {
-        return [255, 80, 80];
-      } else if (s == "R") {
-        return [80, 80, 255];
-      } else {
-        return [80, 255, 80];
-      }
-    },
     getIcon: (d) => "marker",
     getPosition: (d) => {
       // console.log(d);
       return [d.positionX, d.positionY];
     },
+    getColor: (d) => {
+      const s = d.direction;
+      if (s == "I") {
+        return [255, 80, 80];
+      } else if (s == "R") {
+        return [80, 80, 240];
+      } else {
+        return [80, 240, 80];
+      }
+    },
     getSize: (d) => {
       // console.log("updated size");
       return 50 - 25 * scale;
     },
-    iconAtlas:
-      "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
-    iconMapping:
-      "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.json",
-    pickable: true,
+    iconAtlas: iconAtlas,
+    iconMapping: iconMapping,
 
     visible: showStops,
+
+    pickable: true,
 
     updateTriggers: {
       getSize: [scale],
