@@ -220,14 +220,17 @@ const Navbar = ({
         </div>
         <div className="navbar-item">
           <button
+            className="stops-button"
             onClick={() => {
               setShowStops(!showStops);
             }}
           >
             {stopCount > 0
               ? showStops
-                ? "ocultar paraderos"
-                : "mostrar paraderos"
+                ? "ocultar\
+                paraderos"
+                : "mostrar\
+                paraderos"
               : "no hay paraderos"}
           </button>
         </div>

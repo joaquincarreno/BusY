@@ -28,7 +28,7 @@
 
 .navbar-item {
     color: white;
-    padding: 14px;
+    padding: 7px;
     text-decoration: none;
     text-align: center;
 }
@@ -83,4 +83,9 @@ button:hover {
 
 button:focus {
     outline: none;
+}
+
+.stops-button {
+    width: 100px;
+    height: 55px
 }
