@@ -287,7 +287,7 @@ function App() {
               heatMapOption: heatMapOption,
             }}
           />
-          <Leyend />
+          <Leyend colorMode={colorMode} heatMapOption={heatMapOption} />
         </div>
       ) : (
         <div>

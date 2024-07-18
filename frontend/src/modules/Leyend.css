@@ -1,17 +1,72 @@
-.box {
+.wrapper {
     position: absolute;
     bottom: 0;  
     left: 0;
-    width: auto;
-    height: auto;
+    width: 450px;
+    /* height: auto; */
+    
     display: flex;
     border-radius: 15px;
     background-color: rgba(0, 0, 0, 0.8);
+    font-size: smaller;
 }
 
-/* .close-button {
+.leyend-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.button-wrapper {
+    /* height: auto; */
+    /* position: absolute; */
+    align-self: flex-end;
+}
+.leyend-button {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+
+.stops-leyend {
+    margin: 5%;
+    width: 110%;
+    /* display: inline-block; */
+}
+
+.box {
+    float: left;
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgba(0, 0, 0, .5);
+}
+
+.ida {
+    background: #f07878;
+}
+
+.vuelta {
+    background: #7878f0;
+}
+
+.no-info {
+    background: #78f078;
+}
+
+.heatmap-limits {
     position: absolute;
-    top: 0;
-    right: 0;    
-    margin-left: 500px;   
-} */
+    top: -20px;
+}
+
+.heatmap-min {
+    left: 10px;
+}
+
+.heatmap-max {
+    right: 10px;
+}
+
+.gradient {
+    width: 100%;
+    height: 25px;
+}
