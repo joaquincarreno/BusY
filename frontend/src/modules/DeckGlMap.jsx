@@ -127,8 +127,7 @@ function DeckGlMap({
     data: stopsData,
     getIcon: (d) => "marker",
     getPosition: (d) => {
-      // console.log(d);
-      return [d.positionX, d.positionY];
+      return [d.positionX, d.positionY, 50 - 25 * scale];
     },
     getColor: (d) => {
       const s = d.direction;
@@ -163,7 +162,7 @@ function DeckGlMap({
     getPosition: (d) => {
       const bus = movingBuses.getBus(d);
       if (bus) {
-        return bus.getPosition();
+        return [...bus.getPosition(), 80 - 40 * scale];
       } else {
         console.log("patente", d, "no fue encontrado entre", movingBuses.dict);
         return [0, 0];
