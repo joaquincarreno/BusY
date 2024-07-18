@@ -120,6 +120,8 @@ function DeckGlMap({
     pickable: true,
   });
 
+  // const iconMapping = require("../assets/icon-atlas.json");
+
   const stopsLayer = new IconLayer({
     id: "stops-layer",
     data: stopsData,
@@ -227,14 +229,13 @@ function DeckGlMap({
     radiusPixels: 25,
   });
 
-  const toolTip = (object) => {
-    if (object.layer && object.picked) {
-      // console.log(object);
-      if (object.layer.id == "buses-layer") {
-        return patentes[object.index];
-      } else if (object.layer.id == "stops-layer") {
-        // console.log(stopsData["stops"][object.index]);
-        return stopsData[object.index].name;
+  const toolTip = (element) => {
+    if (element.layer && element.picked) {
+      // console.log(element);
+      if (element.layer.id == "buses-layer") {
+        return element.object;
+      } else if (element.layer.id == "stops-layer") {
+        return element.object.name;
       }
     }
   };
