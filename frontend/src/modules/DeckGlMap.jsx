@@ -135,11 +135,11 @@ function DeckGlMap({
     getColor: (d) => {
       const s = d.direction;
       if (s == "I") {
-        return [255, 80, 80];
+        return [240, 120, 120];
       } else if (s == "R") {
-        return [80, 80, 240];
+        return [120, 120, 240];
       } else {
-        return [80, 240, 80];
+        return [120, 240, 120];
       }
     },
     getSize: (d) => {
