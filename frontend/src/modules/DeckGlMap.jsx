@@ -77,7 +77,10 @@ function DeckGlMap({
 
   const osmMapLayer = new TileLayer({
     id: "TileLayer",
-    data: "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    // distintas alternativas de mapas libres encontradas en https://wiki.openstreetmap.org/wiki/Raster_tile_providers
+    data: "https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    // data: "https://b.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    // data: "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
     maxZoom: 19,
     minZoom: 0,
 
