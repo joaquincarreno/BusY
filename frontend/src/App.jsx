@@ -22,7 +22,14 @@ const DIRECTIONS_API = API_URL + "availableDirections/";
 const ASSETS = "./src/assets/";
 
 function App() {
-  //
+  const [viewState, setViewState] = useState({
+    latitude: -33.443018,
+    longitude: -70.65387,
+    zoom: 10,
+    minZoom: 2,
+    maxZoom: 15,
+  });
+
   const [time, setTime] = useState(0);
   const [resetTime, setResetTime] = useState(false);
   const [step, setStep] = useState(5);
@@ -134,6 +141,7 @@ function App() {
     setGpsReady(true);
   }, [selectedRoute, selectedBus, selectedDirection]);
 
+  // update busData
   useEffect(() => {
     if (selectedRoute != "") {
       const newBuses = new Buses(gpsData);
@@ -175,16 +183,7 @@ function App() {
     setDeviationsAvailable(movingBuses.allBusesHaveDeviation);
   }, [movingBuses]);
 
-  const initialViewState = {
-    latitude: -33.443018,
-    longitude: -70.65387,
-    zoom: 10,
-    minZoom: 2,
-    maxZoom: 15,
-  };
-
-  const [viewState, setViewState] = useState(initialViewState);
-
+  // follow bus
   useEffect(() => {
     if (selectedBus != "" && movingBuses.getBus(selectedBus)) {
       const bus = movingBuses.getBus(selectedBus);
@@ -201,6 +200,34 @@ function App() {
       });
     }
   }, [time]);
+
+  // update heatmap range
+  useEffect(() => {
+    if (heatMapOption == 0) {
+      // case: hidden
+      setHeatMapRange([0, 1]);
+    } else if (heatMapOption == 1) {
+      // case: deviations
+      setHeatMapRange([0, movingBuses.topDeviation]);
+    } else if (heatMapOption == 2) {
+      // case: speeds
+      setHeatMapRange([0, movingBuses.topSpeed]);
+    }
+  }, [heatMapOption, movingBuses]);
+
+  // update bus color range
+  useEffect(() => {
+    if (colorMode == 0) {
+      // case: progress
+      setBusRange([0, 1]);
+    } else if (colorMode == 1) {
+      // case: deviations
+      setBusRange([0, movingBuses.topDeviation]);
+    } else if (colorMode == 2) {
+      // case: speeds
+      setBusRange([0, movingBuses.topSpeed]);
+    }
+  }, [colorMode, movingBuses]);
 
   const [pause, setPause] = useState(true);
 
@@ -291,12 +318,16 @@ function App() {
             }}
           />
           <Leyend
-            busColorMode={colorMode}
-            heatMapMode={heatMapOption}
-            busMin={busRange[0]}
-            busMax={busRange[1]}
-            heatMapMin={heatMapRange[0]}
-            heatMapMax={heatMapRange[1]}
+            busProp={{
+              busColorMode: colorMode,
+              busMin: busRange[0],
+              busMax: busRange[1],
+            }}
+            heatMapProp={{
+              heatMapMode: heatMapOption,
+              heatMapMin: heatMapRange[0],
+              heatMapMax: heatMapRange[1],
+            }}
           />
         </div>
       ) : (

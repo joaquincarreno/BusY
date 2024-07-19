@@ -50,12 +50,8 @@ const busColorScale = (mode) => {
 };
 
 function Leyend({
-  busColorMode = 0,
-  heatMapMode = 0,
-  busMin = 0,
-  busMax = 1,
-  heatMapMin = 0,
-  heatMapMax = 1,
+  busProp: { busColorMode = 0, busMin = 0, busMax = 1 },
+  heatMapProp: { heatMapMode = 0, heatMapMin = 0, heatMapMax = 1 },
 }) {
   const [display, setDisplay] = useState(true);
 
@@ -85,10 +81,12 @@ function Leyend({
             </div>
             {heatMapMode != 0 && (
               <div>
-                Escala color Heatmap:
+                {"Escala color Heatmap " +
+                  (heatMapMode == 1 ? "(km):" : "") +
+                  (heatMapMode == 2 ? "(km/h):" : "")}
                 <div style={{ position: "relative" }}>
                   <span className="heatmap-limits heatmap-min">
-                    {heatMapMin}
+                    {heatMapMin.toFixed(1)}
                   </span>
                   <div
                     className="gradient"
@@ -97,21 +95,27 @@ function Leyend({
                     }}
                   />
                   <span className="heatmap-limits heatmap-max">
-                    {heatMapMax}
+                    {heatMapMax.toFixed(1)}
                   </span>
                 </div>
               </div>
             )}
-            Escala color buses:
+            {busColorMode == 0 && "Progreso de bus"}
+            {busColorMode == 1 && "Desviación (km)"}
+            {busColorMode == 2 && "Velocidad (km/h)"}
             <div style={{ position: "relative" }}>
-              <span className="heatmap-limits heatmap-min">{busMin}</span>
+              <span className="heatmap-limits heatmap-min">
+                {busMin.toFixed(1)}
+              </span>
               <div
                 className="gradient"
                 style={{
                   backgroundImage: busColorScale(busColorMode),
                 }}
               />
-              <span className="heatmap-limits heatmap-max">{busMax}</span>
+              <span className="heatmap-limits heatmap-max">
+                {busMax.toFixed(1)}
+              </span>
             </div>
           </div>
         </div>
