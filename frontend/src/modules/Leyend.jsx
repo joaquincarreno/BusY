@@ -57,10 +57,10 @@ function Leyend({
 
   if (display) {
     return (
-      <div className="wrapper">
+      <div className="legend-wrapper">
         <div className="button-wrapper">
           <button className="leyend-button" onClick={() => setDisplay(false)}>
-            x
+            ❔
           </button>
         </div>
         <div className="leyend-content">
@@ -123,10 +123,10 @@ function Leyend({
     );
   } else {
     return (
-      <div className="wrapper">
+      <div className="legend-wrapper">
         <div className="button-wrapper">
           <button className="leyend-element" onClick={() => setDisplay(true)}>
-            ?
+            ❔
           </button>
         </div>
       </div>
