@@ -2,15 +2,62 @@ import { useState } from "react";
 
 import "./Leyend.css";
 
+const generateGradientStyle = (colors) => {
+  var colorScale = "linear-gradient(to right";
+  colors.forEach((c) => {
+    colorScale += ", " + c;
+  });
+  colorScale += ")";
+  return colorScale;
+};
+
+const heatMapColorScale = (mode) => {
+  const color1deviations = "#baa368";
+  const color2deviations = "#a31515";
+
+  const color1speeds = "#a5a5a5";
+  const color2speeds = "#87c387";
+
+  const colorList =
+    mode == 1
+      ? [color1deviations, color2deviations]
+      : mode == 2
+      ? [color1speeds, color2speeds]
+      : ["#FF0000", "#0000FF"];
+  return generateGradientStyle(colorList);
+};
+
+const busColorScale = (mode) => {
+  const color1progress = "#ff0095";
+  const color2progress = "#00ff95";
+
+  const color1deviations = "#baa368";
+  const color2deviations = "#a31515";
+
+  const color1speeds = "#a5a5a5";
+  const color2speeds = "#87c387";
+
+  const colorList =
+    mode == 0
+      ? [color1progress, color2progress]
+      : mode == 1
+      ? [color1deviations, color2deviations]
+      : mode == 2
+      ? [color1speeds, color2speeds]
+      : ["#FF0000", "#0000FF"];
+
+  return generateGradientStyle(colorList);
+};
+
 function Leyend({
-  colorMode = 0,
-  heatMapOption = 0,
+  busColorMode = 0,
+  heatMapMode = 0,
+  busMin = 0,
+  busMax = 1,
   heatMapMin = 0,
   heatMapMax = 1,
 }) {
   const [display, setDisplay] = useState(true);
-
-  heatMapOption = 1;
 
   if (display) {
     return (
@@ -36,9 +83,9 @@ function Leyend({
               <div className="box no-info" />
               Sin sentido
             </div>
-            {heatMapOption != 0 && (
+            {heatMapMode != 0 && (
               <div>
-                Escala del Heatmap:
+                Escala color Heatmap:
                 <div style={{ position: "relative" }}>
                   <span className="heatmap-limits heatmap-min">
                     {heatMapMin}
@@ -46,8 +93,7 @@ function Leyend({
                   <div
                     className="gradient"
                     style={{
-                      backgroundImage:
-                        "linear-gradient(to right, #4880EC, #019CAD)",
+                      backgroundImage: heatMapColorScale(heatMapMode),
                     }}
                   />
                   <span className="heatmap-limits heatmap-max">
@@ -56,6 +102,17 @@ function Leyend({
                 </div>
               </div>
             )}
+            Escala color buses:
+            <div style={{ position: "relative" }}>
+              <span className="heatmap-limits heatmap-min">{busMin}</span>
+              <div
+                className="gradient"
+                style={{
+                  backgroundImage: busColorScale(busColorMode),
+                }}
+              />
+              <span className="heatmap-limits heatmap-max">{busMax}</span>
+            </div>
           </div>
         </div>
       </div>

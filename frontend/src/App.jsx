@@ -61,6 +61,9 @@ function App() {
   const [colorMode, setColorMode] = useState(0);
   const [heatMapOption, setHeatMapOption] = useState(0);
 
+  const [heatMapRange, setHeatMapRange] = useState([0, 1]);
+  const [busRange, setBusRange] = useState([0, 1]);
+
   // available bus routes API call
   useEffect(() => {
     get(ROUTES_API).then((response) => {
@@ -287,7 +290,14 @@ function App() {
               heatMapOption: heatMapOption,
             }}
           />
-          <Leyend colorMode={colorMode} heatMapOption={heatMapOption} />
+          <Leyend
+            busColorMode={colorMode}
+            heatMapMode={heatMapOption}
+            busMin={busRange[0]}
+            busMax={busRange[1]}
+            heatMapMin={heatMapRange[0]}
+            heatMapMax={heatMapRange[1]}
+          />
         </div>
       ) : (
         <div>
