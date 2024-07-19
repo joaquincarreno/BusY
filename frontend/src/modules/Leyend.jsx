@@ -101,7 +101,7 @@ function Leyend({
               </div>
             )}
             {busColorMode == 0 && "Progreso de bus"}
-            {busColorMode == 1 && "Desviación (km)"}
+            {busColorMode == 1 && "Desviación (m)"}
             {busColorMode == 2 && "Velocidad (km/h)"}
             <div style={{ position: "relative" }}>
               <span className="heatmap-limits heatmap-min">
