@@ -57,7 +57,6 @@ function DeckGlMap({
   dataProp: {
     movingBuses = {},
     stopsData = JSON.parse([]),
-    busMesh = null,
     deviationsAvailable = false,
     heatMapOption = 0,
   },
@@ -72,14 +71,20 @@ function DeckGlMap({
     // console.log(viewState.zoom);
   };
 
-  const osmMapLayer = new TileLayer({
-    id: "TileLayer",
-    // distintas alternativas de mapas libres encontradas en https://wiki.openstreetmap.org/wiki/Raster_tile_providers
-    data: "https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
-    // data: "https://b.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
-    // data: "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    maxZoom: 19,
-    minZoom: 0,
+  // distintas alternativas de mapas libres encontradas en https://wiki.openstreetmap.org/wiki/Raster_tile_providers
+  const mapProviders = [
+    "https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
+    "https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png",
+    "https://b.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  ];
+
+  const baseMapLayer = new TileLayer({
+    id: "base-map",
+    data: mapProviders[2],
+    // maxZoom: 19,
+    // minZoom: 0,
 
     renderSubLayers: (props) => {
       const { boundingBox } = props.tile;
@@ -252,7 +257,7 @@ function DeckGlMap({
       initialViewState={viewState}
       onViewStateChange={onViewStateChange}
       layers={[
-        osmMapLayer,
+        baseMapLayer,
         deviationLayer,
         speedsLayer,
         routesLayer,
