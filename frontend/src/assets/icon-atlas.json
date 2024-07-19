@@ -20,7 +20,7 @@
     "y": 128,
     "width": 128,
     "height": 128,
-    "anchorY": 256,
+    "anchorY": 128,
     "mask": true
   }
 }
