@@ -253,10 +253,10 @@ function DeckGlMap({
       onViewStateChange={onViewStateChange}
       layers={[
         osmMapLayer,
-        routesLayer,
-        stopsLayer,
         deviationLayer,
         speedsLayer,
+        routesLayer,
+        stopsLayer,
         movingBusLayer,
       ]}
       getTooltip={toolTip}
