@@ -11,7 +11,13 @@ const Navbar = ({
     routeSetter = (_) => {},
   },
 
-  busesProp: { selectedBus = "", availableBuses = [], busSetter = (_) => {} },
+  busesProp: {
+    selectedBus = "",
+    availableBuses = [],
+    busSetter = (_) => {},
+    // followBus = false,
+    setFollowBus = (_) => {},
+  },
 
   directionsProp: {
     availableDirections = [],
@@ -127,6 +133,7 @@ const Navbar = ({
             createHandler("route", routeSetter, [directionSetter, busSetter])
           )}
         </div>
+
         <div className="navbar-item">
           {/* selector de bus */}
           {createSelector(
@@ -158,6 +165,19 @@ const Navbar = ({
             </select>
           )}
         </div>
+
+        {selectedBus != "" && (
+          <div className="navbar-item">
+            <div style={textStyle}>Seguir bus</div>
+            <div
+              onChange={(e) => {
+                setFollowBus(e.target.checked);
+              }}
+            >
+              <input type="checkbox" />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="navbar-right">

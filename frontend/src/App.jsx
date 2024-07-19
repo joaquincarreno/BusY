@@ -63,6 +63,8 @@ function App() {
   const [selectedBus, setSelectedBus] = useState("");
   const [selectedDirection, setSelectedDirection] = useState("");
 
+  const [followSelectedBus, setFollowBus] = useState(false);
+
   const [deviationsAvailable, setDeviationsAvailable] = useState(false);
 
   const [colorMode, setColorMode] = useState(0);
@@ -185,7 +187,11 @@ function App() {
 
   // follow bus
   useEffect(() => {
-    if (selectedBus != "" && movingBuses.getBus(selectedBus)) {
+    if (
+      selectedBus != "" &&
+      followSelectedBus &&
+      movingBuses.getBus(selectedBus)
+    ) {
       const bus = movingBuses.getBus(selectedBus);
       const coords = bus.getPosition();
       const bearing = bus.getOrientation();
@@ -272,6 +278,8 @@ function App() {
                 selectedBus: selectedBus,
                 availableBuses: availableBuses,
                 busSetter: setSelectedBus,
+                // followBus: followSelectedBus,
+                setFollowBus: setFollowBus,
               }}
               directionsProp={{
                 availableDirections: availableDirections,

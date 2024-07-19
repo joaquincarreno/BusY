@@ -28,8 +28,8 @@ const heatMapColorScale = (mode) => {
 };
 
 const busColorScale = (mode) => {
-  const color1progress = "#ff0095";
-  const color2progress = "#00ff95";
+  const color1progress = "#00ff95";
+  const color2progress = "#ff0095";
 
   const color1deviations = "#baa368";
   const color2deviations = "#a31515";
