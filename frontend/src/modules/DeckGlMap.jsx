@@ -5,7 +5,6 @@ import { BitmapLayer, IconLayer, LineLayer } from "@deck.gl/layers";
 import { TileLayer } from "@deck.gl/geo-layers";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 
-
 import iconMapping from "../assets/icon-atlas.json";
 import iconAtlas from "../assets/icon-atlas.png";
 // por transaparencia, estos archivos se obtuvieron originalmente de:
@@ -241,7 +240,7 @@ function DeckGlMap({
       if (element.layer.id == "buses-layer") {
         return element.object;
       } else if (element.layer.id == "stops-layer") {
-        console.log(element);
+        // console.log(element);
         return element.object.name;
       }
     }
