@@ -11,6 +11,14 @@ import iconAtlas from "../assets/icon-atlas.png";
 // "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
 // y posterioremente se les agregó el logo del bus
 
+// distintas alternativas de mapas libres encontradas en https://wiki.openstreetmap.org/wiki/Raster_tile_providers
+const mapProviders = [
+  "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
+  "https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png",
+  "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  "https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+];
+
 const createStopsLines = (stops) => {
   const n = stops.length;
   const data = new Array(n - 2);
@@ -60,6 +68,7 @@ function DeckGlMap({
     deviationsAvailable = false,
     heatMapOption = 0,
   },
+  baseMap = 1,
 }) {
   const [scale, setScale] = useState(1);
   const patentes = movingBuses.patentes;
@@ -70,18 +79,10 @@ function DeckGlMap({
     setScale((viewState.zoom - 2) / 13);
     // console.log(viewState.zoom);
   };
-
-  // distintas alternativas de mapas libres encontradas en https://wiki.openstreetmap.org/wiki/Raster_tile_providers
-  const mapProviders = [
-    "https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
-    "https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png",
-    "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    "https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
-  ];
-
+  console.log(baseMap);
   const baseMapLayer = new TileLayer({
     id: "base-map",
-    data: mapProviders[1],
+    data: mapProviders[baseMap],
     // maxZoom: 19,
     // minZoom: 0,
 

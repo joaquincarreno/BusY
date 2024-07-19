@@ -74,6 +74,8 @@ function App() {
   const [heatMapRange, setHeatMapRange] = useState([0, 1]);
   const [busRange, setBusRange] = useState([0, 1]);
 
+  const [selectedBaseMap, setBaseMap] = useState(1);
+
   // available bus routes API call
   useEffect(() => {
     get(ROUTES_API).then((response) => {
@@ -326,6 +328,7 @@ function App() {
               deviationsAvailable: deviationsAvailable,
               heatMapOption: heatMapOption,
             }}
+            baseMap={selectedBaseMap}
           />
           <Leyend
             busProp={{
@@ -339,7 +342,7 @@ function App() {
               heatMapMax: heatMapRange[1],
             }}
           />
-          <VisController />
+          <VisController baseMap={selectedBaseMap} setBaseMap={setBaseMap} />
         </div>
       ) : (
         <div>

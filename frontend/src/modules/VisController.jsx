@@ -60,7 +60,7 @@ const genGradientStyle = (scheme) => {
   return `linear-gradient(to right, ${colorMap.join(", ")})`;
 };
 
-function VisController({}) {
+function VisController({ baseMap, setBaseMap }) {
   const [hide, setHide] = useState(true);
   const [selectedScheme, setSelectedScheme] = useState(posibleColorSchemes[0]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -89,7 +89,12 @@ function VisController({}) {
         <div className="controller-element">
           <div>Mapa base:</div>
           <div>
-            <select>
+            <select
+              value={baseMap}
+              onChange={(e) => {
+                setBaseMap(e.target.value);
+              }}
+            >
               <option value={0}>Carto - Light</option>
               <option value={1}>Carto - Dark</option>
               <option value={2}>OSM Standard</option>
