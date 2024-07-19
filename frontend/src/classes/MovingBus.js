@@ -95,33 +95,26 @@ class MovingBus {
       this.color = [0, 0, 0, 0]
       
     } else
-    // mode 0 es por tiempo transcurrido
+    // mode 0 es por progreso de ruta
     if(mode == 0){
       
         const relTime = (time - this.firstTimeStamp) / (this.lastTimeStamp - this.firstTimeStamp);
         // console.log(relTime)
         this.color = [255 * relTime, 255 * (1 - relTime), 150, 255]
       
-      // mode 1 es por desviación
+    // mode 1 es por desviación
     }else if(mode == 1){
-      if(this.currentStep < 0){
-        // console.log('alo2')
-        this.color = [0, 0, 0, 0]
-      }else if(this.topDeviation){
+      if(this.topDeviation){
         const relDeviation = this.deviations[this.currentStep] / this.topDeviation;
-        // console.log(relDeviation)
-        const r = relDeviation * 255 
-        this.color = [r, 255 - r, 51, 255]
+        this.color = [186 - 23 * relDeviation, 163 - 142 * relDeviation, 104 - 83 * relDeviation, 255]
       }else{
         this.color = [51, 51, 51, 255]
       }
       // mode 2 es por velocidad
     }else if(mode == 2){
       const relSpeed = this.speeds[this.currentStep] / this.topSpeed;
-      // console.log(this.speeds[this.currentStep])
-      // console.log(relSpeed)
-      const r = relSpeed * 255
-      this.color = [255 - r, r, 51, 255]
+
+      this.color = [165 - 30 * relSpeed, 165 + 30 * relSpeed, 165 - 30 * relSpeed, 255]
     }
     
   }

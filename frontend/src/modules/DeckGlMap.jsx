@@ -3,10 +3,8 @@ import { React, useState } from "react";
 import { DeckGL } from "@deck.gl/react";
 import { BitmapLayer, IconLayer, LineLayer } from "@deck.gl/layers";
 import { TileLayer } from "@deck.gl/geo-layers";
-import { SimpleMeshLayer } from "@deck.gl/mesh-layers";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 
-import { OBJLoader } from "@loaders.gl/obj";
 
 import iconMapping from "../assets/icon-atlas.json";
 import iconAtlas from "../assets/icon-atlas.png";
@@ -191,6 +189,10 @@ function DeckGlMap({
     },
   });
 
+  const colorRangeHeatmapDevs = [
+    [186, 163, 104, 255],
+    [163, 21, 21, 255],
+  ];
   const deviationLayer = new HeatmapLayer({
     id: "deviation-layer",
     data: movingBuses.getDeviations(),
@@ -205,10 +207,12 @@ function DeckGlMap({
       return d.weight;
     },
 
+    colorRange: colorRangeHeatmapDevs,
+
     radiusPixels: 15,
   });
 
-  const colorRangeHeatmap = [
+  const colorRangeHeatmapSpeeds = [
     [165, 165, 165, 255],
     [135, 195, 135, 255],
   ];
@@ -226,7 +230,7 @@ function DeckGlMap({
       return d.weight;
     },
 
-    colorRange: colorRangeHeatmap,
+    colorRange: colorRangeHeatmapSpeeds,
     // threshold: 0.5,
     radiusPixels: 25,
   });
