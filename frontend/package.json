@@ -17,6 +17,7 @@
     "@deck.gl/react": "^9.0.21",
     "@loaders.gl/obj": "^4.2.2",
     "axios": "^1.7.2",
+    "colormap": "^2.3.2",
     "deck.gl": "^9.0.21",
     "react": "^18.2.0",
     "react-dom": "^18.3.1"

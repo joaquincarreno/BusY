@@ -4,6 +4,7 @@ import Navbar from "./modules/Navbar";
 import get from "axios";
 import Buses from "./classes/Buses";
 import Leyend from "./modules/Leyend";
+import VisController from "./modules/VisController";
 
 import { useState, useEffect } from "react";
 
@@ -338,6 +339,7 @@ function App() {
               heatMapMax: heatMapRange[1],
             }}
           />
+          <VisController />
         </div>
       ) : (
         <div>
