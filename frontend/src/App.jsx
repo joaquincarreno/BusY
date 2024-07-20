@@ -10,10 +10,6 @@ import colormap from "colormap";
 
 import { useState, useEffect } from "react";
 
-// time managment constants
-// const intervalMS = 8;
-// const loopLength = 1;
-// const BACKEND_IP = "http://localhost:8000/";
 const BACKEND_IP = "http://192.168.100.17:8000/";
 const API_URL = BACKEND_IP + "api/";
 const GPS_API = API_URL + "gps/";
@@ -323,7 +319,6 @@ function App() {
                 selectedBus: selectedBus,
                 availableBuses: availableBuses,
                 busSetter: setSelectedBus,
-                // followBus: followSelectedBus,
                 setFollowBus: setFollowBus,
               }}
               directionsProp={{
@@ -365,7 +360,6 @@ function App() {
             dataProp={{
               movingBuses: movingBuses,
               stopsData: stopsData["stops"],
-              busMesh: ASSETS + "bus/JETSET.obj",
               deviationsAvailable: deviationsAvailable,
               heatMapOption: heatMapOption,
             }}

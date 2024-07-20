@@ -1,8 +1,6 @@
 from time import time
 
-import numpy as np
 import geopandas as gpd
-import pandas as pd
 from shapely import Point, LineString, distance
 
 from api.models import GPSRegistry, Routes, BusStops, DeviationScores

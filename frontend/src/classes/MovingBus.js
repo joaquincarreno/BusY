@@ -13,17 +13,14 @@ class MovingBus {
     this.firstTimeStamp = this.timeStamps[0]
     this.lastTimeStamp = this.timeStamps[this.nSteps - 1]
     if (null in this.deviations){
-      // console.log('null in', this.patente)
       this.topDeviation = null;
     }else{
-      // console.log('no nulls in', this.patente)
       this.topDeviation = Math.max(...this.deviations)
     }
     this.currentStep = 0;
     this.position = [0, 0];
     this.orientation = 0;
     this.color = [0, 0, 0, 255]
-    // console.log("-  logs  -");u
   }
   // updaters
   updateBus(time, mode, colorRange){
@@ -32,12 +29,8 @@ class MovingBus {
     this.updateColor(time, mode, colorRange);
   }
   updateStep(time) {
-    // console.log('currentStep', this.currentStep)
     if(time < this.timeStamps[0]){
       this.currentStep = -1
-      // console.log('time earlier than first step for', this.patente, 'setting step to -1')
-      
-      // console.log(new Date(time), '<' , new Date(this.timeStamps[0]))
       return
     }
     var i = 0;
@@ -45,9 +38,6 @@ class MovingBus {
       i = i + 1;
       if (i >= this.nSteps - 1) {
         this.currentStep = -2
-        // console.log('time later than last step for', this.patente, 'setting step to -2')
-        
-        // console.log(new Date(time), '>' , new Date(this.timeStamps[this.nSteps-1]))
         return
       }
     }
@@ -57,9 +47,6 @@ class MovingBus {
   updatePosition(time) {
     const step = this.currentStep;
     if(step < 0){
-        // console.log('negative step')
-      
-      // this.position = step == -1 ? this.coordinates[0] : this.coordinates[this.nSteps-1]
       this.position = [0, 0]
       // this.orientation = -> se mantiene la última orientación
       return
@@ -71,12 +58,6 @@ class MovingBus {
     const startPosition = this.coordinates[step];
     const endPosition = this.coordinates[step + 1];
 
-    // console.log(this.patente);     
-    // console.log(this.currentStep);
-    // console.log(this.nSteps);
-    
-    // console.log(endPosition)
-    // console.log(time)
     const dx = endPosition[0] - startPosition[0];
     const dy = endPosition[1] - startPosition[1];
     

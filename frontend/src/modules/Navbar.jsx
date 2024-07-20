@@ -1,9 +1,6 @@
 import React from "react";
 import "./Navbar.css";
 
-const VEL_MIN = 1.0 / 24 / 60 / 60; // un segundo por segundo
-const VEL_MAX = 90.0 / 24 / 60 / 60; // 1.5 min por segundo
-
 const Navbar = ({
   routeProp: {
     selectedRoute = "",
@@ -15,7 +12,6 @@ const Navbar = ({
     selectedBus = "",
     availableBuses = [],
     busSetter = (_) => {},
-    // followBus = false,
     setFollowBus = (_) => {},
   },
 

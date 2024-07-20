@@ -5,8 +5,6 @@ import { BitmapLayer, IconLayer, LineLayer } from "@deck.gl/layers";
 import { TileLayer } from "@deck.gl/geo-layers";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 
-import colormap from "colormap";
-
 import iconMapping from "../assets/icon-atlas.json";
 import iconAtlas from "../assets/icon-atlas.png";
 // por transaparencia, estos archivos se obtuvieron originalmente de:
@@ -146,7 +144,6 @@ function DeckGlMap({
       }
     },
     getSize: (d) => {
-      // console.log("updated size");
       return 50 - 25 * scale;
     },
     iconAtlas: iconAtlas,
@@ -195,7 +192,6 @@ function DeckGlMap({
   });
 
   const heatMapData = movingBuses.heatMapData;
-  // console.log(heatMapData);
 
   const deviationLayer = new HeatmapLayer({
     id: "deviation-layer",
@@ -246,7 +242,6 @@ function DeckGlMap({
       if (element.layer.id == "buses-layer") {
         return element.object;
       } else if (element.layer.id == "stops-layer") {
-        // console.log(element);
         return element.object.name;
       }
     }

@@ -4,7 +4,7 @@ from rdp import rdp
 import dask.dataframe as dd
 import os
 
-from api.scripts.constants import buses_raw, buses_processed, buses_sample
+from api.scripts.constants import buses_raw, buses_processed
 
 from api.models import GPSRegistry
 

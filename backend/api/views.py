@@ -1,22 +1,12 @@
-from django.shortcuts import render
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from django.core import serializers
-
 from django.db.models.query import QuerySet
 
-from api.serializers import GPSRegistrySerializer
 from api.scripts.zones import getZonesGdf
 from api.scripts.deviation_score import calculateDeviationScore
 
 from api.models import GPSRegistry, BusStops, Routes, DeviationScores
-
-from time import time
-
-import pandas as pd
-import geopandas as gpd
 
 @api_view(['GET'])
 def apiTest(request):

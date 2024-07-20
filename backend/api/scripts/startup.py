@@ -1,4 +1,3 @@
-from api.models import GPSRegistry, BusStops, Routes
 from api.scripts.zones import setUpZones
 from api.scripts.bus_data import setupGPSEntries
 from api.scripts.bus_stops import setupBusStops
