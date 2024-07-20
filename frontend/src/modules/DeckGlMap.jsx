@@ -5,6 +5,8 @@ import { BitmapLayer, IconLayer, LineLayer } from "@deck.gl/layers";
 import { TileLayer } from "@deck.gl/geo-layers";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 
+import colormap from "colormap";
+
 import iconMapping from "../assets/icon-atlas.json";
 import iconAtlas from "../assets/icon-atlas.png";
 // por transaparencia, estos archivos se obtuvieron originalmente de:
@@ -67,6 +69,10 @@ function DeckGlMap({
     stopsData = JSON.parse([]),
     deviationsAvailable = false,
     heatMapOption = 0,
+  },
+  colorSchemeProp: {
+    busesColorScheme = "viridis",
+    heatMapColorScheme = "inferno",
   },
   baseMap = 1,
 }) {
@@ -193,10 +199,13 @@ function DeckGlMap({
     },
   });
 
-  const colorRangeHeatmapDevs = [
-    [186, 163, 104, 255],
-    [163, 21, 21, 255],
-  ];
+  const colorRangeHeatmap = colormap({
+    colormap: heatMapColorScheme,
+    nshades: 20,
+    format: "rgba",
+  }).map((color) => [color[0], color[1], color[2]]);
+
+  // console.log(colorRangeHeatmap);
   const deviationLayer = new HeatmapLayer({
     id: "deviation-layer",
     data: movingBuses.getDeviations(),
@@ -211,15 +220,11 @@ function DeckGlMap({
       return d.weight;
     },
 
-    colorRange: colorRangeHeatmapDevs,
+    colorRange: colorRangeHeatmap,
 
     radiusPixels: 15,
   });
 
-  const colorRangeHeatmapSpeeds = [
-    [165, 165, 165, 255],
-    [135, 195, 135, 255],
-  ];
   const speedsLayer = new HeatmapLayer({
     id: "speeds-layer",
     data: movingBuses.getSpeeds(),
@@ -234,7 +239,7 @@ function DeckGlMap({
       return d.weight;
     },
 
-    colorRange: colorRangeHeatmapSpeeds,
+    colorRange: colorRangeHeatmap,
     // threshold: 0.5,
     radiusPixels: 25,
   });
@@ -252,7 +257,6 @@ function DeckGlMap({
   };
 
   return (
-    // <div className="map">
     <DeckGL
       initialViewState={viewState}
       onViewStateChange={onViewStateChange}
@@ -267,7 +271,6 @@ function DeckGlMap({
       getTooltip={toolTip}
       controller={true}
     ></DeckGL>
-    // </div>
   );
 }
 

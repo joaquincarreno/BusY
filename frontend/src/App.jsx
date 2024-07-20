@@ -267,6 +267,11 @@ function App() {
     movingBuses.updateBuses(time, colorMode);
   }, [time]);
 
+  const colorSchemeProp = {
+    busesColorScheme: colorSchemeBuses,
+    heatMapColorScheme: colorSchemeHeatMap,
+  };
+
   return (
     <>
       {gpsReady && stopsReady && routesReady && availableBusesReady ? (
@@ -330,6 +335,7 @@ function App() {
               deviationsAvailable: deviationsAvailable,
               heatMapOption: heatMapOption,
             }}
+            colorSchemeProp={colorSchemeProp}
             baseMap={selectedBaseMap}
           />
           <Leyend
