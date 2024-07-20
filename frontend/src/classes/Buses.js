@@ -1,4 +1,23 @@
 import MovingBus from "./MovingBus";
+
+const discreteSpeeds = (s) => {
+  if(s < 5) {
+    return 0;
+  }else if(s < 10){
+    return 1;
+  }else if(s < 15){
+    return 2;
+  }else if(s < 20){
+    return 3;
+  }else if(s < 30){
+    return 4;
+  }else if(s < 60){
+    return 5;
+  }else{
+    return 6;
+  }
+}
+
 class Buses {
   constructor(busData) {
     this.origData = busData
@@ -143,7 +162,8 @@ class Buses {
       var j = 0;
       while(j < n){
         this.speedList[i+j] = {
-          weight: bus.speeds[j], 
+          // weight: bus.speeds[j], 
+          weight: discreteSpeeds(bus.speeds[j]), 
           position: bus.coordinates[j]
         };
         j+=1

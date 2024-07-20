@@ -240,8 +240,7 @@ function DeckGlMap({
     },
 
     colorRange: colorRangeHeatmap,
-    // threshold: 0.5,
-    radiusPixels: 25,
+    // radiusPixels: 25,
   });
 
   const toolTip = (element) => {
