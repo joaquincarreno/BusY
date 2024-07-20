@@ -60,21 +60,33 @@ const genGradientStyle = (scheme) => {
   return `linear-gradient(to right, ${colorMap.join(", ")})`;
 };
 
-function VisController({ baseMap, setBaseMap }) {
+function VisController({
+  baseMap = 1,
+  setBaseMap = (_) => {},
+  schemeBuses = "viridis",
+  setSchemeBuses = (_) => {},
+  schemeHeatMap = "inferno",
+  setSchemeHeatMap = (_) => {},
+}) {
   const [hide, setHide] = useState(true);
-  const [selectedScheme, setSelectedScheme] = useState(posibleColorSchemes[0]);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [currentStyle, setCurrentSyle] = useState(
-    genGradientStyle(posibleColorSchemes[0])
+  const [showDropdown1, setShowDropdown1] = useState(false);
+  const [showDropdown2, setShowDropdown2] = useState(false);
+  const [styleBuses, setStyleBuses] = useState(genGradientStyle(schemeBuses));
+  const [styleHeatMap, setStyleHeatMap] = useState(
+    genGradientStyle(schemeHeatMap)
   );
 
-  const handleOptionClick = (scheme, style) => {
-    setSelectedScheme(scheme);
-    setShowDropdown(false);
-    setCurrentSyle(style);
+  const updateSchemeOptionBuses = (scheme, style) => {
+    setShowDropdown1(false);
+    setStyleBuses(style);
+    setSchemeBuses(scheme);
   };
 
-  //   console.log(gradients);
+  const updateSchemeHeatMap = (scheme, style) => {
+    setShowDropdown2(false);
+    setStyleHeatMap(style);
+    setSchemeHeatMap(scheme);
+  };
 
   if (hide) {
     return (
@@ -101,16 +113,16 @@ function VisController({ baseMap, setBaseMap }) {
               <option value={3}>OSM Humanitario</option>
             </select>
           </div>
-          <div>Selección de color</div>
+          <div>Esquema de color Buses</div>
           <div className="dropdown">
             <button
               className="dropdown-toggle"
-              onClick={() => setShowDropdown(!showDropdown)}
-              style={{ background: currentStyle }}
+              onClick={() => setShowDropdown1(!showDropdown1)}
+              style={{ background: styleBuses }}
             >
-              {selectedScheme}
+              {schemeBuses}
             </button>
-            {showDropdown && (
+            {showDropdown1 && (
               <ul className="dropdown-menu">
                 {posibleColorSchemes.map((scheme) => {
                   const style = genGradientStyle(scheme);
@@ -118,7 +130,34 @@ function VisController({ baseMap, setBaseMap }) {
                     <li
                       key={scheme}
                       className="dropdown-item"
-                      onClick={() => handleOptionClick(scheme, style)}
+                      onClick={() => updateSchemeOptionBuses(scheme, style)}
+                    >
+                      <div className="gradient" style={{ background: style }} />
+                      <span className="scheme-name">{scheme}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+          <div>Esquema de color HeatMap</div>
+          <div className="dropdown">
+            <button
+              className="dropdown-toggle"
+              onClick={() => setShowDropdown2(!showDropdown2)}
+              style={{ background: styleHeatMap }}
+            >
+              {schemeHeatMap}
+            </button>
+            {showDropdown2 && (
+              <ul className="dropdown-menu">
+                {posibleColorSchemes.map((scheme) => {
+                  const style = genGradientStyle(scheme);
+                  return (
+                    <li
+                      key={scheme}
+                      className="dropdown-item"
+                      onClick={() => updateSchemeHeatMap(scheme, style)}
                     >
                       <div className="gradient" style={{ background: style }} />
                       <span className="scheme-name">{scheme}</span>

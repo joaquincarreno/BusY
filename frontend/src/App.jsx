@@ -75,6 +75,8 @@ function App() {
   const [busRange, setBusRange] = useState([0, 1]);
 
   const [selectedBaseMap, setBaseMap] = useState(1);
+  const [colorSchemeBuses, setColorSchemeBuses] = useState("viridis");
+  const [colorSchemeHeatMap, setColorSchemeHeatMap] = useState("inferno");
 
   // available bus routes API call
   useEffect(() => {
@@ -342,7 +344,14 @@ function App() {
               heatMapMax: heatMapRange[1],
             }}
           />
-          <VisController baseMap={selectedBaseMap} setBaseMap={setBaseMap} />
+          <VisController
+            baseMap={selectedBaseMap}
+            setBaseMap={setBaseMap}
+            schemeBuses={colorSchemeBuses}
+            setSchemeBuses={setColorSchemeBuses}
+            schemeHeatMap={colorSchemeHeatMap}
+            setSchemeHeatMap={setColorSchemeHeatMap}
+          />
         </div>
       ) : (
         <div>

@@ -79,7 +79,7 @@ function DeckGlMap({
     setScale((viewState.zoom - 2) / 13);
     // console.log(viewState.zoom);
   };
-  console.log(baseMap);
+
   const baseMapLayer = new TileLayer({
     id: "base-map",
     data: mapProviders[baseMap],
