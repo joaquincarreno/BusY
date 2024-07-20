@@ -98,7 +98,7 @@ function VisController({
     return (
       <div className="controller-wrapper">
         <button onClick={() => setHide(true)}>⚙️</button>
-        <div className="controller-element">
+        <div className="controller-content">
           <div>Mapa base:</div>
           <div>
             <select
@@ -132,8 +132,12 @@ function VisController({
                       className="dropdown-item"
                       onClick={() => updateSchemeOptionBuses(scheme, style)}
                     >
-                      <div className="gradient" style={{ background: style }} />
-                      <span className="scheme-name">{scheme}</span>
+                      <span
+                        className="scheme-name"
+                        style={{ backgroundImage: style }}
+                      >
+                        {scheme}
+                      </span>
                     </li>
                   );
                 })}
@@ -159,8 +163,12 @@ function VisController({
                       className="dropdown-item"
                       onClick={() => updateSchemeHeatMap(scheme, style)}
                     >
-                      <div className="gradient" style={{ background: style }} />
-                      <span className="scheme-name">{scheme}</span>
+                      <span
+                        className="scheme-name"
+                        style={{ background: style }}
+                      >
+                        {scheme}
+                      </span>
                     </li>
                   );
                 })}
