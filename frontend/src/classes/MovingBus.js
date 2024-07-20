@@ -9,8 +9,6 @@ class MovingBus {
     this.speeds = info.speeds;
     this.topSpeed = Math.max(...this.speeds)
 
-
-
     // console.log(this.timeStamps)
     this.firstTimeStamp = this.timeStamps[0]
     this.lastTimeStamp = this.timeStamps[this.nSteps - 1]

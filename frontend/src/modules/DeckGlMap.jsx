@@ -194,10 +194,12 @@ function DeckGlMap({
     },
   });
 
-  // console.log(colorRangeHeatmap);
+  const heatMapData = movingBuses.heatMapData;
+  // console.log(heatMapData);
+
   const deviationLayer = new HeatmapLayer({
     id: "deviation-layer",
-    data: movingBuses.getDeviations(),
+    data: heatMapData,
     aggregation: "MEAN",
 
     visible: deviationsAvailable && heatMapOption == 1,
@@ -206,7 +208,7 @@ function DeckGlMap({
       return d.position;
     },
     getWeight: (d) => {
-      return d.weight;
+      return d.deviation;
     },
 
     colorRange: heatMapColorRange,
@@ -216,7 +218,13 @@ function DeckGlMap({
 
   const speedsLayer = new HeatmapLayer({
     id: "speeds-layer",
-    data: movingBuses.getSpeeds(),
+    data: heatMapData.filter((d) => {
+      if (d.deviation != null) {
+        return d.deviation < 100;
+      } else {
+        return true;
+      }
+    }),
     aggregation: "MEAN",
 
     visible: heatMapOption == 2,
@@ -225,7 +233,7 @@ function DeckGlMap({
       return d.position;
     },
     getWeight: (d) => {
-      return d.weight;
+      return d.speed;
     },
 
     colorRange: heatMapColorRange,

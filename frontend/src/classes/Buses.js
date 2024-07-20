@@ -36,14 +36,19 @@ class Buses {
     this.allBusesHaveDeviation = true;
     this.deviationList = [];
 
+    this.heatMapData = []
+
     // create data dict
     this.createBuses();
 
-    // fill deviations
-    this.fillDeviationList();
+    // fill heatMapData
+    this.fillHeatMapData()
 
-    // create speeds keys
-    this.fillSpeedList()
+    // // fill deviations
+    // this.fillDeviationList();
+
+    // // create speeds keys
+    // this.fillSpeedList()
 
     // time setup
     this.timeRange = this.latestTimeStamp - this.earliestTimeStamp;
@@ -117,57 +122,88 @@ class Buses {
       console.log('empty busData')
     }
   }
-  fillDeviationList(){
-    if(this.allBusesHaveDeviation){
-      // si hay top deviation entonces todos tienen desviaciones,
-      this.patentes.forEach((patente) => this.dict[patente].topDeviation = this.topDeviation)
+  // fillDeviationList(){
+  //   if(this.allBusesHaveDeviation){
+  //     // si hay top deviation entonces todos tienen desviaciones,
+  //     this.patentes.forEach((patente) => this.dict[patente].topDeviation = this.topDeviation)
 
-      const deviationCount = this.patentes.reduce((partialSum, patente) => this.dict[patente].deviations.length + partialSum, 0)
-      console.log(deviationCount)
-      this.deviationList = new Array(deviationCount)
-      var curr = 0;
-      this.patentes.map((patente) => {
-        const bus = this.dict[patente];
-        const iterator = [...Array(bus.nSteps).keys()];
-        iterator.forEach((step) => {
-          // console.log(bus.deviations[step])
-          this.deviationList[curr + step] = {
-            position: bus.coordinates[step],
-            weight: bus.deviations[step]
-          }
-        })
-        curr += bus.nSteps
-      })
-      console.log('top deviations exists')
-    }else{
-      // no hay top deviation entonces les dejamos ser? no, actualizamos los que si tenían
-      this.patentes.forEach((patente) => {
-        if(this.dict[patente].topDeviation){
-          this.dict[patente].topDeviation = this.topDeviation;
-        }
-      });
-      console.log('no top deviation')
-    }
-  }
-  fillSpeedList(){
-    this.speedList = new Array(this.totalSteps);
+  //     const deviationCount = this.patentes.reduce((partialSum, patente) => this.dict[patente].deviations.length + partialSum, 0)
+  //     console.log(deviationCount)
+  //     this.deviationList = new Array(deviationCount)
+  //     var curr = 0;
+  //     this.patentes.map((patente) => {
+  //       const bus = this.dict[patente];
+  //       const iterator = [...Array(bus.nSteps).keys()];
+  //       iterator.forEach((step) => {
+  //         // console.log(bus.deviations[step])
+  //         this.deviationList[curr + step] = {
+  //           position: bus.coordinates[step],
+  //           weight: bus.deviations[step]
+  //         }
+  //       })
+  //       curr += bus.nSteps
+  //     })
+  //     console.log('top deviations exists')
+  //   }else{
+  //     // no hay top deviation entonces les dejamos ser? no, actualizamos los que si tenían
+  //     this.patentes.forEach((patente) => {
+  //       if(this.dict[patente].topDeviation){
+  //         this.dict[patente].topDeviation = this.topDeviation;
+  //       }
+  //     });
+  //     console.log('no top deviation')
+  //   }
+  // }
+  // fillSpeedList(){
+  //   this.speedList = new Array(this.totalSteps);
+  //   var i = 0;
+  //   this.patentes.forEach((p) => {
+  //     const bus = this.getBus(p);
+  //     bus.topSpeed = this.topSpeed;
+  //     const n = bus.nSteps;
+  //     var j = 0;
+  //     while(j < n){
+  //       this.speedList[i+j] = {
+  //         weight: bus.speeds[j], 
+  //         // weight: discreteSpeeds(bus.speeds[j]), 
+  //         position: bus.coordinates[j]
+  //       };
+  //       j+=1
+  //     }
+  //     i += j;
+  //   })
+  //   console.log('speeds keys size:', this.speedList.length)
+  // }
+  fillHeatMapData(){
+    this.heatMapData = new Array(this.totalSteps + 1);
     var i = 0;
     this.patentes.forEach((p) => {
+      // si hay top deviation entonces todos tienen desviaciones
       const bus = this.getBus(p);
+      if(bus.topDeviation){
+        this.dict[p].topDeviation = this.topDeviation;
+      }
+
       bus.topSpeed = this.topSpeed;
+
       const n = bus.nSteps;
       var j = 0;
       while(j < n){
-        this.speedList[i+j] = {
-          weight: bus.speeds[j], 
-          // weight: discreteSpeeds(bus.speeds[j]), 
+        this.heatMapData[i+j] = {
+          speed: bus.speeds[j], 
+          deviation: bus.deviations[j],
           position: bus.coordinates[j]
         };
         j+=1
       }
       i += j;
     })
-    console.log('speeds keys size:', this.speedList.length)
+    // caso base para asegurarse que el rango de velocidades sea [0-6]
+    this.heatMapData[this.totalSteps] = {
+      speed: 6,
+      deviation: 0,
+      position: [0,0]
+    }
   }
 }
 
