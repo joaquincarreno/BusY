@@ -1,74 +1,112 @@
-.legend-wrapper {
+.legend {
     position: absolute;
     bottom: 0;  
     left: 0;
-    width: 400px;
-    /* width: auto; */
-    /* height: auto; */
-    
-    display: flex;
     border-radius: 15px;
     flex-direction: row;
     background-color: rgba(0, 0, 0, 0.8);
     font-size: smaller;
+}
+.legend-open{
+    width: 400px;
+    display: flex;
+    flex-direction: row;
+}
+.leyend-closed {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
 }
 
 .leyend-content {
     width: 100%;
     height: 100%;
     display: flex;
+    flex-flow: column nowrap;
     justify-content: center;
+    align-items: center;
+    margin: 5%;
 }
 
 .button-wrapper {
-    /* height: auto; */
-    /* position: absolute; */
     align-self: flex-end;
 }
+
 .leyend-button {
+    width: 45px;
+    height: 45px
     background-color: rgba(0, 0, 0, 0);
 }
 
 
-.stops-leyend {
-    margin: 5%;
-    width: 110%;
+.stops-container {
+    margin: 0%;
+    width: 75%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
     /* display: inline-block; */
+}
+
+.stops-row{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    gap: 5px
 }
 
 .box {
     float: left;
     width: 20px;
     height: 20px;
-    border: 1px solid rgba(0, 0, 0, .5);
+    border: 1px solid rgba(240, 240, 240, 0.5);
 }
 
-.ida {
-    background: #f07878;
+
+.discrete-scale-container{
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: baseline;
+    /* width: 100%; */
 }
 
-.vuelta {
-    background: #7878f0;
+.discrete-scale-row{
+    display: flex;
+    width: 100%;
+    align-items: baseline;
+    justify-content:center;
+    flex-flow: row nowrap;
 }
 
-.no-info {
-    background: #78f078;
+.discrete-scale-element{
+    /* width: 50px; */
+    width: fit-content;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: space-around;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
-.heatmap-limits {
-    position: absolute;
-    top: -20px;
+.continuous-scale-container{
+    width:100%;
 }
 
-.heatmap-min {
-    left: 10px;
+.continuous-scale-ranges{
+    display:flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
 }
 
-.heatmap-max {
-    right: 10px;
+.continuous-scale{
+    position: relative;
+    /* margin-top: 15px; */
+    width: 100%;
 }
-
-.gradient {
+.scale-gradient {
     width: 100%;
     height: 25px;
+    border-radius: 5px;
 }

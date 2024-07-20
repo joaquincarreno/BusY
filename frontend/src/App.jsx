@@ -377,11 +377,13 @@ function App() {
               busColorMode: colorMode,
               busMin: busRange[0],
               busMax: busRange[1],
+              busColorRange: colorRangeBuses,
             }}
             heatMapProp={{
               heatMapMode: heatMapOption,
               heatMapMin: heatMapRange[0],
               heatMapMax: heatMapRange[1],
+              heatMapColorRange: colorRangeHeatMap,
             }}
           />
           <VisController
