@@ -102,7 +102,7 @@ function Leyend({
           busColorRange
         )
       : createContinuousScale(
-          busColorMode == 0 ? "Progreso del recorrido" : "Desviación (km)",
+          busColorMode == 0 ? "Progreso del recorrido" : "Desviación (m)",
           busMin,
           busMax,
           busColorRange
@@ -111,7 +111,7 @@ function Leyend({
   const heatMapLeyend =
     heatMapMode == 1
       ? createContinuousScale(
-          "Escala de Heat Map (km)",
+          "Escala de Heat Map (m)",
           heatMapMin,
           heatMapMin,
           heatMapColorRange
@@ -125,7 +125,7 @@ function Leyend({
 
   if (display) {
     return (
-      <div className="legend">
+      <div className="legend-wrapper">
         <div className="legend-open">
           <div className="button-wrapper">
             <button className="leyend-button" onClick={() => setDisplay(false)}>
@@ -157,7 +157,7 @@ function Leyend({
     );
   } else {
     return (
-      <div className="legend">
+      <div className="legend-wrapper">
         <div className="legend-closed">
           <div className="button-wrapper">
             <button className="leyend-button" onClick={() => setDisplay(true)}>
