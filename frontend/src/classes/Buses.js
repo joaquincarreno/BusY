@@ -1,6 +1,6 @@
 import MovingBus from "./MovingBus";
 
-const discreteSpeeds = (s) => {
+const discreteSpeed = (s) => {
   if(s < 5) {
     return 0;
   }else if(s < 10){
@@ -57,15 +57,10 @@ class Buses {
       return false;
     }
   }
-  updateBuses(time, mode){
+  updateBuses(time, mode, colorRange){
     const currTime = this.earliestTimeStamp + time * 1000;
-    // console.log('updating buses');
-    // console.log('time:', time * 1000);
-    // console.log('currTime:', currTime)
-    // console.log('in date', new Date(currTime))
     this.patentes.map((patente) => {
-      // console.log('updating', patente);
-      this.dict[patente].updateBus(currTime, mode);
+      this.dict[patente].updateBus(currTime, mode, colorRange);
     })
   }
   getDeviations(){
@@ -97,6 +92,8 @@ class Buses {
 
         // guardamos velocidad máxima
         this.topSpeed = this.topSpeed < bus.topSpeed ? bus.topSpeed : this.topSpeed;
+
+        bus.speeds = bus.speeds.map((s) => discreteSpeed(s))
 
         // guardando mayor desviación
         if(bus.topDeviation){
@@ -162,8 +159,8 @@ class Buses {
       var j = 0;
       while(j < n){
         this.speedList[i+j] = {
-          // weight: bus.speeds[j], 
-          weight: discreteSpeeds(bus.speeds[j]), 
+          weight: bus.speeds[j], 
+          // weight: discreteSpeeds(bus.speeds[j]), 
           position: bus.coordinates[j]
         };
         j+=1

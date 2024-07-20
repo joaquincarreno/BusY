@@ -6,6 +6,8 @@ import Buses from "./classes/Buses";
 import Leyend from "./modules/Leyend";
 import VisController from "./modules/VisController";
 
+import colormap from "colormap";
+
 import { useState, useEffect } from "react";
 
 // time managment constants
@@ -30,6 +32,8 @@ function App() {
     minZoom: 8,
     maxZoom: 18,
   });
+
+  const [pause, setPause] = useState(true);
 
   const [time, setTime] = useState(0);
   const [resetTime, setResetTime] = useState(false);
@@ -76,7 +80,21 @@ function App() {
 
   const [selectedBaseMap, setBaseMap] = useState(1);
   const [colorSchemeBuses, setColorSchemeBuses] = useState("viridis");
+  const [colorRangeBuses, setColorRangeBuses] = useState(
+    colormap({
+      colormap: "viridis",
+      nshades: 20,
+      format: "rgba",
+    }).map((c) => [c[0], c[1], c[2]])
+  );
   const [colorSchemeHeatMap, setColorSchemeHeatMap] = useState("inferno");
+  const [colorRangeHeatMap, setColorRangeHeatMap] = useState(
+    colormap({
+      colormap: "inferno",
+      nshades: 20,
+      format: "rgba",
+    }).map((c) => [c[0], c[1], c[2]])
+  );
 
   // available bus routes API call
   useEffect(() => {
@@ -241,8 +259,6 @@ function App() {
     }
   }, [colorMode, movingBuses]);
 
-  const [pause, setPause] = useState(true);
-
   // time passing
   useEffect(() => {
     const interval = setInterval(() => {
@@ -263,14 +279,32 @@ function App() {
     return () => clearInterval(interval);
   }, [step, pause, resetTime]);
 
+  // update heatmap color range
   useEffect(() => {
-    movingBuses.updateBuses(time, colorMode);
-  }, [time]);
+    setColorRangeHeatMap(
+      colormap({
+        colormap: colorSchemeHeatMap,
+        nshades: 70,
+        format: "rgba",
+      }).map((c) => [c[0], c[1], c[2]])
+    );
+  }, [colorSchemeHeatMap]);
 
-  const colorSchemeProp = {
-    busesColorScheme: colorSchemeBuses,
-    heatMapColorScheme: colorSchemeHeatMap,
-  };
+  // update buses color range
+  useEffect(() => {
+    setColorRangeBuses(
+      colormap({
+        colormap: colorSchemeBuses,
+        nshades: 70,
+        format: "rgba",
+      }).map((c) => [c[0], c[1], c[2]])
+    );
+  }, [colorSchemeBuses]);
+
+  // update buses
+  useEffect(() => {
+    movingBuses.updateBuses(time, colorMode, colorRangeBuses);
+  }, [time]);
 
   return (
     <>
@@ -335,7 +369,7 @@ function App() {
               deviationsAvailable: deviationsAvailable,
               heatMapOption: heatMapOption,
             }}
-            colorSchemeProp={colorSchemeProp}
+            heatMapColorRange={colorRangeHeatMap}
             baseMap={selectedBaseMap}
           />
           <Leyend

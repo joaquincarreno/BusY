@@ -70,10 +70,7 @@ function DeckGlMap({
     deviationsAvailable = false,
     heatMapOption = 0,
   },
-  colorSchemeProp: {
-    busesColorScheme = "viridis",
-    heatMapColorScheme = "inferno",
-  },
+  heatMapColorRange = [],
   baseMap = 1,
 }) {
   const [scale, setScale] = useState(1);
@@ -130,8 +127,6 @@ function DeckGlMap({
     getWidth: 12,
     pickable: true,
   });
-
-  // const iconMapping = require("../assets/icon-atlas.json");
 
   const stopsLayer = new IconLayer({
     id: "stops-layer",
@@ -199,12 +194,6 @@ function DeckGlMap({
     },
   });
 
-  const colorRangeHeatmap = colormap({
-    colormap: heatMapColorScheme,
-    nshades: 20,
-    format: "rgba",
-  }).map((color) => [color[0], color[1], color[2]]);
-
   // console.log(colorRangeHeatmap);
   const deviationLayer = new HeatmapLayer({
     id: "deviation-layer",
@@ -220,7 +209,7 @@ function DeckGlMap({
       return d.weight;
     },
 
-    colorRange: colorRangeHeatmap,
+    colorRange: heatMapColorRange,
 
     radiusPixels: 15,
   });
@@ -239,7 +228,7 @@ function DeckGlMap({
       return d.weight;
     },
 
-    colorRange: colorRangeHeatmap,
+    colorRange: heatMapColorRange,
     // radiusPixels: 25,
   });
 
