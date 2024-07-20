@@ -91,12 +91,15 @@ function VisController({
   if (hide) {
     return (
       <div className="controller-wrapper">
-        <button onClick={() => setHide(false)}>⚙️</button>
+        <div className="controller-close">
+          <button onClick={() => setHide(false)}>⚙️</button>
+        </div>
       </div>
     );
   } else {
     return (
       <div className="controller-wrapper">
+        <div className="controller-open">
         <button onClick={() => setHide(true)}>⚙️</button>
         <div className="controller-content">
           <div>Mapa base:</div>
@@ -175,6 +178,7 @@ function VisController({
               </ul>
             )}
           </div>
+        </div>
         </div>
       </div>
     );

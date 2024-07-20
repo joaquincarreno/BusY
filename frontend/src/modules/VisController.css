@@ -2,14 +2,27 @@
     position: absolute;
     bottom: 0;
     right: 0;
+    width: auto;
+    height: auto;
+    border-radius: 15px;
+    background-color: rgba(0, 0, 0, 0.8);
+    font-size: smaller;
+}
+
+.controller-open {
     width: 350px;
     height: auto;
     display: flex;
     flex-direction: row-reverse;
     align-items: flex-end;
-    border-radius: 15px;
-    background-color: rgba(0, 0, 0, 0.8);
-    font-size: smaller;
+}
+
+.controller-close {
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-end;
 }
 
 .controller-content {
