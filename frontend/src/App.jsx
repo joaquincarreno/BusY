@@ -204,29 +204,6 @@ function App() {
     setDeviationsAvailable(movingBuses.allBusesHaveDeviation);
   }, [movingBuses]);
 
-  // follow bus
-  useEffect(() => {
-    if (
-      selectedBus != "" &&
-      followSelectedBus &&
-      movingBuses.getBus(selectedBus)
-    ) {
-      const bus = movingBuses.getBus(selectedBus);
-      const coords = bus.getPosition();
-      // const bearing = bus.getOrientation();
-      setViewState({
-        longitude: coords[0],
-        latitude: coords[1],
-        zoom: viewState.zoom,
-        minZoom: 12,
-        maxZoom: 18,
-        // pitch: 50,
-        bearing: viewState.bearing,
-        pitch: viewState.pitch,
-      });
-    }
-  }, [time]);
-
   // update heatmap range
   useEffect(() => {
     if (heatMapOption == 0) {
@@ -297,9 +274,28 @@ function App() {
     );
   }, [colorSchemeBuses]);
 
-  // update buses
+  // update buses & follow bus
   useEffect(() => {
     movingBuses.updateBuses(time, colorMode, colorRangeBuses);
+    if (
+      selectedBus != "" &&
+      followSelectedBus &&
+      movingBuses.getBus(selectedBus)
+    ) {
+      const bus = movingBuses.getBus(selectedBus);
+      const coords = bus.getPosition();
+      // const bearing = bus.getOrientation();
+      setViewState({
+        longitude: coords[0],
+        latitude: coords[1],
+        zoom: viewState.zoom,
+        minZoom: 12,
+        maxZoom: 18,
+        // pitch: 50,
+        bearing: viewState.bearing,
+        pitch: viewState.pitch,
+      });
+    }
   }, [time]);
 
   return (
