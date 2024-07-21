@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import "./Leyend.css";
+import "./Legend.css";
 
 const generateGradientStyle = (colors) => {
   var colorScale = "linear-gradient(to right";
@@ -65,7 +65,7 @@ const createDiscreteScale = (scaleTitle, valueRanges, nRows, colorRange) => {
   );
 };
 
-function Leyend({
+function Legend({
   busProp: {
     // 0: progress, 1: deviation, 2: speeds
     busColorMode = 0,
@@ -93,7 +93,7 @@ function Leyend({
     ">60",
   ];
 
-  const busColorLeyend =
+  const busColorLegend =
     busColorMode == 2
       ? createDiscreteScale(
           "Color de buses (km/h)",
@@ -108,7 +108,7 @@ function Leyend({
           busColorRange
         );
 
-  const heatMapLeyend =
+  const heatMapLegend =
     heatMapMode == 1
       ? createContinuousScale(
           "Escala de Heat Map (m)",
@@ -128,11 +128,11 @@ function Leyend({
       <div className="legend-wrapper">
         <div className="legend-open">
           <div className="button-wrapper">
-            <button className="leyend-button" onClick={() => setDisplay(false)}>
+            <button className="legend-button" onClick={() => setDisplay(false)}>
               ❔
             </button>
           </div>
-          <div className="leyend-content">
+          <div className="legend-content">
             <div className="stops-container">
               {/* cajas que indican sentido */}
               Colores de Paraderos
@@ -149,8 +149,8 @@ function Leyend({
                 Sin sentido
               </div>
             </div>
-            {busColorLeyend}
-            {heatMapMode != 0 && heatMapLeyend}
+            {busColorLegend}
+            {heatMapMode != 0 && heatMapLegend}
           </div>
         </div>
       </div>
@@ -160,7 +160,7 @@ function Leyend({
       <div className="legend-wrapper">
         <div className="legend-closed">
           <div className="button-wrapper">
-            <button className="leyend-button" onClick={() => setDisplay(true)}>
+            <button className="legend-button" onClick={() => setDisplay(true)}>
               ❔
             </button>
           </div>
@@ -169,4 +169,4 @@ function Leyend({
     );
   }
 }
-export default Leyend;
+export default Legend;

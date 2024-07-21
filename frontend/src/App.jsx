@@ -3,7 +3,7 @@ import DeckGlMap from "./modules/DeckGlMap";
 import Navbar from "./modules/Navbar";
 import get from "axios";
 import Buses from "./classes/Buses";
-import Leyend from "./modules/Leyend";
+import Legend from "./modules/Legend";
 import VisController from "./modules/VisController";
 
 import colormap from "colormap";
@@ -366,7 +366,7 @@ function App() {
             heatMapColorRange={colorRangeHeatMap}
             baseMap={selectedBaseMap}
           />
-          <Leyend
+          <Legend
             busProp={{
               busColorMode: colorMode,
               busMin: busRange[0],
