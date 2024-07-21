@@ -31,15 +31,18 @@ def process_file(file_name):
     
 
 
-def read_gps(date, sample=False):
-    gps = pd.read_csv(buses_raw / date, sep=';')
+def read_gps(filename, sample=False):
+    print('reading', buses_raw / filename)
+    gps = pd.read_csv(buses_raw / filename, sep=';')
 
     value_counts = gps['patente'].value_counts()
-    multiple_entries = value_counts[value_counts > 1].index
+    min_count = 10
+    # todo: debería ser cambiado a mínimo 2? o mínimo 10?
+    multiple_entries = value_counts[value_counts > min_count].index
 
     filtered = gps[gps['patente'].isin(multiple_entries)]
 
-    print(str(len(gps) - len(filtered)) + ' buses with single gps entry')
+    print(str(len(gps) - len(filtered)) + ' buses with less than {filter} gps entry'.format(filter=min_count))
 
     return filtered
 
@@ -82,6 +85,6 @@ def setupGPSEntries(refill=False):
             step+=1
             progress = step / l
             if(progress > limiter):
-                print('progress: ' + str(progress) + '%')
+                print('progress: ' + str(100 * progress) + '%')
                 limiter += 0.01
         print('done with ' + str(f))
