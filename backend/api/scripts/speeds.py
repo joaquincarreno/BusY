@@ -39,7 +39,7 @@ def saveSpeeds(row):
 
 CRS_ORIG = 'EPSG:9152'
 CRS_PROJ = 'EPSG:20048'
-
+from time import time
 def setupSpeeds(skip=True, force=False):
     if skip:
         print('skipping speeds')
@@ -54,6 +54,7 @@ def setupSpeeds(skip=True, force=False):
     total_steps = len(llaves)
     current_step = 0
     print('total steps:', total_steps)
+    t0 = time()
     for r, s in llaves:
         if r == '' or s == '':
             continue
@@ -77,3 +78,4 @@ def setupSpeeds(skip=True, force=False):
         grouped_df.apply(saveSpeeds, axis=1)
         current_step += 1
         print('done, progress:', 100 * current_step / total_steps)
+    print('total time elapsed: {time}'.format(round(time()-t0, 1)))

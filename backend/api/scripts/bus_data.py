@@ -13,7 +13,8 @@ def filter_points(points_df):
     puntos = list(zip(list(points_df['lon']), list(points_df['lat'])))
     mascara = rdp(puntos, epsilon=0.0001, return_mask=True)
     filtered = points_df[mascara]
-    print('se liberaron {} puntos para la patente {}'.format(len(points_df) - len(filtered), points_df['patente'][0]))
+    # print(points_df['patente'].iloc[0])
+    print('se liberaron {} puntos para la patente {}'.format(len(points_df) - len(filtered), points_df['patente'].iloc[0]))
     if(len(filtered) > 2):
         return filtered
     else:
@@ -26,14 +27,16 @@ def process_file(file_name):
     ddf['id'] = ddf['patente']+'-:-'+ddf['recorrido']
     # print(len(ddf))
     proccessed = ddf.groupby('id').apply(filter_points).drop(columns=['id']).compute()
-    proccessed.to_csv(buses_processed / file_name)
+    proccessed.to_csv(buses_processed / file_name, index=False, sep=',')
     print('done')
     
 
 
 def read_gps(filename, sample=False):
-    print('reading', buses_raw / filename)
-    gps = pd.read_csv(buses_raw / filename, sep=';')
+    print('reading', buses_processed / filename)
+    gps = pd.read_csv(buses_processed / filename, sep=',')
+
+    print(gps.columns)
 
     value_counts = gps['patente'].value_counts()
     min_count = 10
@@ -45,7 +48,7 @@ def read_gps(filename, sample=False):
     print(str(len(gps) - len(filtered)) + ' buses with less than {filter} gps entry'.format(filter=min_count))
 
     return filtered
-
+from time import time
         
 def setupGPSEntries(refill=False):
     if not refill:
@@ -68,8 +71,9 @@ def setupGPSEntries(refill=False):
         l = len(data)
         limiter = 0.0
         progress = 0.0
+        t0 = time()
         for i in data.index:
-            row = data.iloc[i, :]
+            row = data.loc[i, :]
             datetime = row['datetime'].split(' ')
             recorrido = row['recorrido']
             object = GPSRegistry(
@@ -85,6 +89,7 @@ def setupGPSEntries(refill=False):
             step+=1
             progress = step / l
             if(progress > limiter):
-                print('progress: ' + str(100 * progress) + '%')
-                limiter += 0.01
+                estimated_time = round((l - step) * (time() - t0) / step, 1)
+                print('progress: ' + str(100 * progress) + '%, elapsed time', round(time()-t0, 1), ', estimated time until finished:', estimated_time)
+                limiter += 0.005
         print('done with ' + str(f))

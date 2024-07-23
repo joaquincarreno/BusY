@@ -21,7 +21,7 @@ def run():
     setupDeviations(skip=True, refill=False, clear_scores=False)
     print()
 
-    setupSpeeds(skip=False, force=False)
+    setupSpeeds(skip=True, force=False)
     print()
 
     print('[startup.py] scripts run succesfully')

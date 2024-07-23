@@ -8,6 +8,8 @@ from api.scripts.deviation_score import calculateDeviationScore
 
 from api.models import GPSRegistry, BusStops, Routes, DeviationScores
 
+from time import time
+
 @api_view(['GET'])
 def apiTest(request):
     return Response(data="todo parece funcionar bien :D")
@@ -20,12 +22,14 @@ def getZones777(request):
 
 @api_view(['GET'])
 def getAvailableRoutes(request):
-    objects = GPSRegistry.objects.values_list('recorrido', flat=True).distinct()
-
+    t0 = time()
+    objects = GPSRegistry.objects.values_list('recorrido', flat=True).order_by('recorrido').distinct()
+    print('routes retrieved in {dt} with a total lenght of {n}'.format(dt=time()-t0, n=len(objects)))
     return Response(list(objects))
 
 @api_view(['GET'])
 def getAvailableBuses(request, recorrido='X00', sentido='X'):
+    t0 = time()
     if recorrido == 'X00':
         values = GPSRegistry.objects.values_list('patente', flat=True).distinct()
     else:
@@ -33,13 +37,14 @@ def getAvailableBuses(request, recorrido='X00', sentido='X'):
             values = GPSRegistry.objects.filter(recorrido=recorrido).values_list('patente', flat=True).distinct()
         else:
             values = GPSRegistry.objects.filter(recorrido=recorrido, sentido=sentido).values_list('patente', flat=True).distinct()
-
-    return Response({'buses': values})
+    
+    print('routes retrieved in {dt} with a total lenght of {n}'.format(dt=time()-t0, n=len(values)))
+    return Response({'buses': values.order_by('patente')})
 
 @api_view(['GET'])
 def getGPS(request, recorrido= '', patente='', sentido=''):
     # print(patente)
-
+    t0 = time()
     objects = GPSRegistry.objects.filter(recorrido=recorrido).order_by('patente', 'date', 'time')
     
     if(patente != ''):
@@ -54,6 +59,7 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
 
     # print(results)
     if(len(results) == 0):
+        print(time()-t0)
         return Response([])
 
     data = []
@@ -82,6 +88,8 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
             coords = []
             timestamps = []
             desviaciones = []
+            sentidos = []
+            velocidades = []
         timestamps += [str(o.date) + ' ' + str(o.time)]
         coords += [[o.longitude, o.latitude]]
         desviaciones += [o.deviation]
@@ -96,11 +104,13 @@ def getGPS(request, recorrido= '', patente='', sentido=''):
         'speeds': velocidades
     }]
 
+    print('routes retrieved in {dt} with a total lenght of {n}'.format(dt=time()-t0, n=len(results)))
     
     return Response(data)
 
 @api_view(['GET'])
 def getStops(request, recorrido='', sentido=''):
+    t0 = time()
     if(recorrido == ''):
         all_objects = list(BusStops.objects.all().values())
     else:
@@ -127,13 +137,16 @@ def getStops(request, recorrido='', sentido=''):
             except AssertionError:
                 print('[api getStops] route doesnt match stops for', recorrido, s)
                 objects = []
-            
+    
+    print('routes retrieved in {dt} with a total lenght of {n}'.format(dt=time()-t0, n=len(all_objects)))
     return Response({'stops': all_objects})
 
 @api_view(['GET'])
 def getAvailableDirections(request, recorrido, patente):
+    t0 = time()
     values = GPSRegistry.objects.filter(recorrido=recorrido, patente=patente).values_list('sentido', flat=True).distinct()
-
+    
+    print('routes retrieved in {dt} with a total lenght of {n}'.format(dt=time()-t0, n=len(values)))
     return Response({'directions': values})
 
 
