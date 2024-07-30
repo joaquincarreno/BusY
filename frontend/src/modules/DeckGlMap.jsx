@@ -84,8 +84,6 @@ function DeckGlMap({
   const baseMapLayer = new TileLayer({
     id: "base-map",
     data: mapProviders[baseMap],
-    // maxZoom: 19,
-    // minZoom: 0,
 
     renderSubLayers: (props) => {
       const { boundingBox } = props.tile;

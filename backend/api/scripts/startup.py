@@ -17,12 +17,12 @@ def run():
 
     setupRoutes(refill=False)
     print()
-    
-    setupDeviations(skip=True, refill=False, clear_scores=False)
+
+    setupDeviations(skip=False, refill=False, clear_scores=False)
     print()
 
-    setupSpeeds(skip=True, force=False)
+    setupSpeeds(skip=False, force=False)
     print()
 
-    print('[startup.py] scripts run succesfully')
+    print("[startup.py] scripts run succesfully")
     print()
